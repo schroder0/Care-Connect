@@ -74,7 +74,7 @@ mongoose
     console.error('Database  error:', err)
   })
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5001
 
 const server = http.createServer(app)
 initSocket(server)
