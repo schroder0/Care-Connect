@@ -14,7 +14,7 @@ import {
 const UpdateAvailability = () => {
   const { userData } = useAuth()
   const doctorId = userData?.id
-  
+
   const [date, setDate] = useState('')
   const [slots, setSlots] = useState([''])
 

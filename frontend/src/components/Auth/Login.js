@@ -21,9 +21,12 @@ const Login = () => {
     e.preventDefault()
     try {
       const response = await loginService({ username, password })
-      console.log('Login response:', response.data.user) // eslint-disable-line no-console
-      const { role, ...user } = response.data.user
-      login(role, user) // Update auth state with user role and user data
+      console.log('Login response:', response.data) // eslint-disable-line no-console
+
+      const { token, user } = response.data
+      const { role, ...userData } = user
+
+      login(role, userData, token) // Update auth state with user role, user data, and token
       navigate('/') // Redirect to the home page or any other page
     } catch (error) {
       console.error('Login failed:', error) // eslint-disable-line no-console
