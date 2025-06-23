@@ -3,7 +3,7 @@ import { fetchProfile } from './profileUtils'
 import { useAuth } from '../../contexts/AuthContext'
 import { Container, Typography, Avatar, CircularProgress } from '@mui/material'
 
-const API_URL = 'http://localhost:5000/api'
+const API_URL = 'http://localhost:5001/api'
 
 const UserProfile = () => {
   const [profile, setProfile] = useState({

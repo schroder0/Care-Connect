@@ -1,7 +1,7 @@
 let socket
 
 const connect = (userId) => {
-  socket = new WebSocket(`ws://localhost:5000?userId=${userId}`)
+  socket = new WebSocket(`ws://localhost:5001?userId=${userId}`)
 
   socket.onopen = () => {
     console.info('WebSocket connection established')
