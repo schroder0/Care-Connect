@@ -16,38 +16,64 @@ const API_URL = 'http://localhost:5001/api'
 const UpdateProfile = () => {
   const { userData } = useAuth()
   const userId = userData?.id
-
   const [formData, setFormData] = useState({
     userId,
     username: '',
     email: '',
     phoneNumber: '',
     medicalId: '',
+    specialty: '',
+    location: '',
   })
   const [profile, setProfile] = useState({
-    username: '',
-    email: '',
+    username: '',    email: '',
     phoneNumber: '',
     medicalId: '',
     profilePicture: '',
+    role: '',
+    specialty: '',
+    location: '',
   })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchProfile(userData, setLoading, setProfile, API_URL)
   }, [userData])
+  // Update formData when profile is loaded
+  useEffect(() => {
+    if (profile.username) {
+      setFormData({
+        userId,
+        username: profile.username,
+        email: profile.email,
+        phoneNumber: profile.phoneNumber,
+        medicalId: profile.medicalId,
+        specialty: profile.specialty || '',
+        location: profile.location || '',
+      })
+    }
+  }, [profile, userId])
 
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prevData) => ({ ...prevData, [name]: value }))
   }
-
   const handleSubmit = (e) => {
     e.preventDefault()
     updateProfile(formData)
       .then((response) => {
         console.log(response.data) // eslint-disable-line no-console
         alert('Profile updated successfully')
+        // Update the profile state to reflect the changes
+        setProfile({
+          ...profile,
+          username: formData.username,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          medicalId: formData.medicalId,
+          specialty: formData.specialty,
+          location: formData.location,
+        })
       })
       .catch((error) => {
         console.error(error) // eslint-disable-line no-console
@@ -61,11 +87,10 @@ const UpdateProfile = () => {
         <Typography variant="h4" gutterBottom align="center">
           Update Profile
         </Typography>
-        <form onSubmit={handleSubmit}>
-          <TextField
+        <form onSubmit={handleSubmit}>          <TextField
             label="Username"
             name="username"
-            value={profile.username}
+            value={formData.username}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -74,7 +99,7 @@ const UpdateProfile = () => {
           <TextField
             label="Email"
             name="email"
-            value={profile.email}
+            value={formData.email}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -83,21 +108,47 @@ const UpdateProfile = () => {
           <TextField
             label="Phone Number"
             name="phoneNumber"
-            value={profile.phoneNumber}
+            value={formData.phoneNumber}
             onChange={handleChange}
             fullWidth
             margin="normal"
             variant="outlined"
-          />
-          <TextField
+          />          <TextField
             label="Medical ID"
             name="medicalId"
-            value={profile.medicalId}
+            value={formData.medicalId}
             onChange={handleChange}
             fullWidth
             margin="normal"
             variant="outlined"
           />
+          
+          {/* Doctor-specific fields */}
+          {profile.role === 'doctor' && (
+            <>
+              <TextField
+                label="Specialty"
+                name="specialty"
+                value={formData.specialty}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                placeholder="e.g., Cardiology, Dermatology, Internal Medicine"
+              />
+              <TextField
+                label="Location"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                placeholder="e.g., City Hospital, Downtown Clinic"
+              />
+            </>
+          )}
+          
           <Box mt={2} display="flex" justifyContent="center">
             <Button
               type="submit"

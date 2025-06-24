@@ -6,8 +6,8 @@ const { sendNotification } = require('../services/notificationService')
 
 exports.bookAppointment = async (req, res) => {
   const {
-    doctorId,
-    patientName,
+    doctorMedicalId,
+    patientMedicalId,
     date,
     time,
     symptoms,
@@ -16,56 +16,58 @@ exports.bookAppointment = async (req, res) => {
   } = req.body
 
   try {
-    const doctor = await Doctor.findById(doctorId)
+    // Find doctor by medical ID
+    const doctor = await User.findOne({ 
+      medicalId: doctorMedicalId, 
+      role: 'doctor' 
+    })
 
     if (!doctor) {
-      return res.status(404).json({ message: 'Doctor not found' })
+      return res.status(404).json({ message: 'Doctor not found with this medical ID' })
     }
 
-    // Add null check for doctor
-    if (!doctor.name) {
-      return res.status(404).json({ message: 'Doctor name not found' })
+    // Find patient by medical ID
+    const patient = await User.findOne({ 
+      medicalId: patientMedicalId, 
+      role: 'patient' 
+    })
+
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found with this medical ID' })
     }
 
-    const availability = doctor?.availability.find(
-      (a) => a.date.toISOString().split('T')[0] === date,
-    )
-    if (!availability) {
-      return res.status(404).json({ message: 'No availability on this date' })
-    }
-
-    const slot = availability.slots.find((s) => s.time === time && s.available)
-    if (!slot) {
-      return res.status(404).json({ message: 'Time slot not available' })
-    }
-
-    // Mark the slot as booked
-    slot.available = false
-    await doctor.save()
+    // Check if doctor has availability (optional - can be enhanced later)
+    // For now, we'll allow direct booking
 
     const appointment = new Appointment({
-      doctorId,
-      patientName,
+      doctorMedicalId,
+      patientMedicalId,
+      doctorName: doctor.username,
+      patientName: patient.username,
       date,
       time,
       symptoms,
+      status: 'confirmed'
     })
 
     await appointment.save()
 
     // Send confirmation notification to patient
-    sendNotification(
-      notificationType,
-      contactInfo,
-      'Appointment Confirmation',
-      `Your appointment with Dr. ${doctor.name} on ${date} at ${time} has been confirmed.`,
-    )
+    if (contactInfo && notificationType) {
+      sendNotification(
+        notificationType,
+        contactInfo,
+        'Appointment Confirmation',
+        `Your appointment with Dr. ${doctor.username} on ${date} at ${time} has been confirmed.`,
+      )
+    }
 
     res
       .status(201)
       .json({ message: 'Appointment booked successfully', appointment })
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error', error })
+    console.error('Error booking appointment:', error)
+    res.status(500).json({ message: 'Internal server error', error: error.message })
   }
 }
 
@@ -156,24 +158,20 @@ exports.cancelAppointment = async (req, res) => {
 
 // Controller to get appointment history
 exports.getAppointmentHistory = async (req, res) => {
-  const { userId } = req.query
+  const { userMedicalId } = req.query
 
   try {
-    const user = await User.findById(userId)
+    const user = await User.findOne({ medicalId: userMedicalId })
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' })
+      return res.status(404).json({ message: 'User not found with this medical ID' })
     }
 
     let appointments
     if (user.role === 'doctor') {
-      appointments = await Appointment.find({ doctorId: userId })
-        .populate('doctorId')
-        .populate('patientId')
+      appointments = await Appointment.find({ doctorMedicalId: userMedicalId })
     } else {
-      appointments = await Appointment.find({ patientId: userId })
-        .populate('doctorId')
-        .populate('patientId')
+      appointments = await Appointment.find({ patientMedicalId: userMedicalId })
     }
 
     res.status(200).json({ appointments })
@@ -181,5 +179,31 @@ exports.getAppointmentHistory = async (req, res) => {
     res
       .status(500)
       .json({ message: 'Internal server error', error: error.message })
+  }
+}
+
+// Get all doctors with their medical IDs
+exports.getAllDoctors = async (req, res) => {
+  try {
+    const doctors = await User.find({ role: 'doctor' })
+      .select('medicalId username email specialty location')
+
+    res.status(200).json({ doctors })
+  } catch (error) {
+    console.error('Error fetching doctors:', error)
+    res.status(500).json({ message: 'Internal server error', error: error.message })
+  }
+}
+
+// Get all patients with their medical IDs  
+exports.getAllPatients = async (req, res) => {
+  try {
+    const patients = await User.find({ role: 'patient' })
+      .select('medicalId username email phoneNumber')
+
+    res.status(200).json({ patients })
+  } catch (error) {
+    console.error('Error fetching patients:', error)
+    res.status(500).json({ message: 'Internal server error', error: error.message })
   }
 }

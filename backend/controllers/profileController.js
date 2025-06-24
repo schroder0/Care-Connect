@@ -47,7 +47,7 @@ exports.uploadProfilePicture = [
 
 // Controller to update user profile
 exports.updateProfile = async (req, res) => {
-  const { userId, username, email, phoneNumber, medicalId } = req.body
+  const { userId, username, email, phoneNumber, medicalId, specialty, location } = req.body
 
   try {
     const user = await User.findById(userId)
@@ -60,6 +60,12 @@ exports.updateProfile = async (req, res) => {
     user.email = email || user.email
     user.phoneNumber = phoneNumber || user.phoneNumber
     user.medicalId = medicalId || user.medicalId
+
+    // Update doctor-specific fields if user is a doctor
+    if (user.role === 'doctor') {
+      user.specialty = specialty || user.specialty
+      user.location = location || user.location
+    }
 
     await user.save()
 

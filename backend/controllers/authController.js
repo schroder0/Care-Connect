@@ -17,8 +17,7 @@ exports.signup = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' },
-    ) // Extended to 24 hours for better user experience
+      { expiresIn: '24h' },    ) // Extended to 24 hours for better user experience
     res.status(201).json({
       token,
       user: {
@@ -26,6 +25,7 @@ exports.signup = async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        medicalId: user.medicalId,
       },
     })
   } catch (err) {
@@ -44,14 +44,15 @@ exports.login = async (req, res) => {
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '24h' },
-    ) // Extended to 24 hours for better user experience
-    res.status(200).json({
+    ) // Extended to 24 hours for better user experience   
+     res.status(200).json({
       token,
       user: {
         id: user._id,
         username: user.username,
         email: user.email,
         role: user.role,
+        medicalId: user.medicalId,
       },
     })
   } catch (err) {
@@ -82,8 +83,7 @@ exports.refreshToken = async (req, res) => {
     // Generate new token
     const newToken = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      process.env.JWT_SECRET,      { expiresIn: '24h' }
     )
 
     res.status(200).json({
@@ -93,6 +93,7 @@ exports.refreshToken = async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        medicalId: user.medicalId,
       },
     })
   } catch (err) {

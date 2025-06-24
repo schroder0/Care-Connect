@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
-import { bookAppointment } from '../../services/api'
+import { bookAppointment, getAllDoctors, getProfile } from '../../services/api'
 import {
   Container,
   TextField,
@@ -10,20 +10,68 @@ import {
   Select,
   FormControl,
   InputLabel,
+  FormHelperText,
   Paper,
   Box,
 } from '@mui/material'
 
 const BookAppointment = () => {
-  const { userData } = useAuth() // Get userData from AuthContext
+  const { userData, setUserData } = useAuth() // Get userData from AuthContext
   const [formData, setFormData] = useState({
-    doctorId: '',
+    doctorMedicalId: '',
+    patientMedicalId: userData?.medicalId || '',
     date: '',
     time: '',
     symptoms: '',
     contactInfo: '',
     notificationType: 'email',
   })
+  const [doctors, setDoctors] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [userProfileLoading, setUserProfileLoading] = useState(false)
+
+  // Fetch all doctors when component mounts
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await getAllDoctors()
+        setDoctors(response.data.doctors || [])
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching doctors:', error)
+        setLoading(false)
+      }
+    }
+    fetchDoctors()
+  }, [])
+
+  // Auto-populate patient medical ID if user is logged in
+  useEffect(() => {
+    if (userData?.medicalId) {
+      setFormData((prevData) => ({
+        ...prevData,
+        patientMedicalId: userData.medicalId,
+      }))
+    } else if (userData?.id && !userProfileLoading) {
+      // If userData exists but medicalId is missing, fetch full profile
+      setUserProfileLoading(true)
+      getProfile(userData.id)
+        .then((response) => {
+          const fullUserData = response.data.user
+          // Update the AuthContext with the full user data
+          setUserData(fullUserData)
+          setFormData((prevData) => ({
+            ...prevData,
+            patientMedicalId: fullUserData.medicalId || '',
+          }))
+          setUserProfileLoading(false)
+        })
+        .catch((error) => {
+          console.error('Error fetching user profile:', error)
+          setUserProfileLoading(false)
+        })
+    }
+  }, [userData, setUserData, userProfileLoading])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -32,15 +80,32 @@ const BookAppointment = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const data = { ...formData, userData } // Add patientId to formData with null check
+    
+    // Validate that user has a medical ID
+    if (!userData?.medicalId) {
+      alert('Please update your profile with a medical ID before booking an appointment.')
+      return
+    }
+    
+    const data = { ...formData } // Send formData directly with medical IDs
     bookAppointment(data)
       .then((response) => {
         console.log(response.data) // eslint-disable-line no-console
         alert('Appointment booked successfully')
+        // Reset form but keep patient medical ID
+        setFormData({
+          doctorMedicalId: '',
+          patientMedicalId: userData?.medicalId || '',
+          date: '',
+          time: '',
+          symptoms: '',
+          contactInfo: '',
+          notificationType: 'email',
+        })
       })
       .catch((error) => {
         console.error(error) // eslint-disable-line no-console
-        alert('Failed to book appointment')
+        alert(`Failed to book appointment: ${error.response?.data?.message || error.message}`)
       })
   }
 
@@ -51,14 +116,58 @@ const BookAppointment = () => {
           Book Appointment
         </Typography>
         <form onSubmit={handleSubmit}>
+          <FormControl fullWidth margin="normal" variant="outlined">
+            <InputLabel>Select Doctor *</InputLabel>
+            <Select
+              name="doctorMedicalId"
+              value={formData.doctorMedicalId}
+              onChange={handleChange}
+              label="Select Doctor *"
+              disabled={loading}
+            >
+              {loading ? (
+                <MenuItem disabled>Loading doctors...</MenuItem>
+              ) : doctors.length === 0 ? (
+                <MenuItem disabled>No doctors available</MenuItem>
+              ) : (
+                doctors.map((doctor) => {
+                  const displayText = `${doctor.username}${
+                    doctor.specialty ? ` - ${doctor.specialty}` : ''
+                  }${doctor.location ? ` (${doctor.location})` : ''} [ID: ${doctor.medicalId}]`
+                  
+                  return (
+                    <MenuItem key={doctor._id} value={doctor.medicalId}>
+                      {displayText}
+                    </MenuItem>
+                  )
+                })
+              )}
+            </Select>
+            <FormHelperText>
+              Select a doctor from the list. The medical ID will be automatically filled.
+            </FormHelperText>
+          </FormControl>
           <TextField
-            label="Doctor ID"
-            name="doctorId"
-            value={formData.doctorId}
+            label="Patient Medical ID"
+            name="patientMedicalId"
+            value={
+              userProfileLoading 
+                ? 'Loading your medical ID...' 
+                : formData.patientMedicalId || 'No medical ID found'
+            }
             onChange={handleChange}
             fullWidth
             margin="normal"
             variant="outlined"
+            disabled={true}
+            helperText={
+              userProfileLoading
+                ? "Fetching your medical ID from profile..."
+                : userData?.medicalId 
+                ? "Automatically filled from your profile" 
+                : "Please update your profile with a medical ID"
+            }
+            error={!userProfileLoading && !userData?.medicalId}
           />
           <TextField
             type="date"
@@ -118,8 +227,9 @@ const BookAppointment = () => {
               variant="contained"
               color="primary"
               size="large"
+              disabled={!userData?.medicalId || userProfileLoading}
             >
-              Book Appointment
+              {userProfileLoading ? 'Loading...' : 'Book Appointment'}
             </Button>
           </Box>
         </form>

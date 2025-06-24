@@ -3,6 +3,8 @@ const {
   getDoctorAvailability,
   cancelAppointment,
   getAppointmentHistory,
+  getAllDoctors,
+  getAllPatients,
 } = require('../controllers/appointmentController')
 
 const appointmentRoutes = (app) => {
@@ -10,6 +12,8 @@ const appointmentRoutes = (app) => {
   app.get('/api/availability', getDoctorAvailability)
   app.post('/api/cancel', cancelAppointment)
   app.get('/api/history', getAppointmentHistory)
+  app.get('/api/doctors', getAllDoctors)
+  app.get('/api/patients', getAllPatients)
 }
 
 module.exports = appointmentRoutes

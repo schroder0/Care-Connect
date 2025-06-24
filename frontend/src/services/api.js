@@ -72,11 +72,13 @@ export const getActivityLogs = () => api.get('/activityLogs')
 
 //Appointments
 export const bookAppointment = (data) => api.post('/book', data)
-export const getDoctorAvailability = (doctorId, date) =>
-  api.get('/availability', { params: { doctorId, date } })
+export const getDoctorAvailability = (doctorMedicalId, date) =>
+  api.get('/availability', { params: { doctorMedicalId, date } })
 export const cancelAppointment = (data) => api.post('/cancel', data)
-export const getAppointmentHistory = (userId) =>
-  api.get('/history', { params: { userId } })
+export const getAppointmentHistory = (userMedicalId) =>
+  api.get('/history', { params: { userMedicalId } })
+export const getAllDoctors = () => api.get('/doctors')
+export const getAllPatients = () => api.get('/patients')
 
 //profile
 export const getProfile = (userId) => api.get(`/profile/${userId}`)
