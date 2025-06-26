@@ -1,3 +1,4 @@
+
 const { broadcastAvailabilityUpdate } = require('../websocket')
 const Doctor = require('../models/doctorModel')
 const Appointment = require('../models/appointmentModel')
