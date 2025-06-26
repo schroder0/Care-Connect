@@ -56,64 +56,138 @@ export default function Highlights() {
     <Box
       id="highlights"
       sx={{
-        pt: { xs: 4, sm: 12 },
-        pb: { xs: 8, sm: 16 },
-        color: 'white',
-        bgcolor: '#06090a',
+        width: '100%',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, rgba(67,206,162,0.95) 0%, rgba(24,90,157,0.95) 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        padding: 0,
+        margin: 0,
+        boxSizing: 'border-box',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'url("data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z" fill="%23ffffff" fill-opacity="0.05" fill-rule="evenodd"/%3E%3C/svg%3E")',
+          opacity: 0.1,
+          zIndex: 0,
+        },
       }}
     >
       <Container
+        maxWidth="lg"
         sx={{
           position: 'relative',
+          zIndex: 1,
+          py: { xs: 8, sm: 10 },
+          minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          gap: { xs: 3, sm: 6 },
+          justifyContent: 'center',
         }}
       >
-        <Box
-          sx={{
-            width: { sm: '100%', md: '60%' },
-            textAlign: { sm: 'left', md: 'center' },
-          }}
-        >
-          <Typography component="h2" variant="h4">
-            Highlights
+        <Stack spacing={3} useFlexGap sx={{ width: '100%', alignItems: 'center', mb: 8 }}>
+          <Typography
+            component="h2"
+            variant="h2"
+            sx={{
+              fontFamily: 'Montserrat, Roboto, Arial, sans-serif',
+              fontWeight: 800,
+              textAlign: 'center',
+              fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' },
+              background: 'linear-gradient(90deg, #ffffff 0%, #e0e0e0 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              mb: 2,
+              animation: 'fadeInDown 1s ease-out',
+            }}
+          >
+            Why Choose Us
           </Typography>
-          <Typography variant="body1" sx={{ color: 'grey.400' }}>
-            Discover the key features of our health chatbot: comprehensive care,
-            secure and private interactions, actionable insights, 24/7 support,
-            easy appointment management, and quality assurance.
+          <Typography
+            textAlign="center"
+            sx={{
+              color: '#ffffff',
+              fontSize: { xs: '1.1rem', sm: '1.3rem' },
+              maxWidth: '800px',
+              opacity: 0.9,
+              animation: 'fadeIn 1s ease-out 0.5s both',
+              px: { xs: 2, sm: 0 },
+            }}
+          >
+            Discover the features that make us the leading healthcare platform
           </Typography>
-        </Box>
-        <Grid container spacing={2.5}>
+        </Stack>
+
+        <Grid container spacing={4} sx={{ width: '100%', mx: 'auto' }}>
           {items.map((item, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <Stack
-                direction="column"
-                color="inherit"
-                component={Card}
-                spacing={1}
-                useFlexGap
+              <Card
                 sx={{
-                  p: 3,
                   height: '100%',
-                  border: '1px solid',
-                  borderColor: 'grey.800',
-                  background: 'transparent',
-                  backgroundColor: 'grey.900',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                  p: { xs: 3, sm: 4 },
+                  borderRadius: '20px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.3s ease',
+                  animation: `fadeInUp 1s ease-out ${index * 0.2}s both`,
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.15)',
+                  },
                 }}
               >
-                <Box sx={{ opacity: '50%' }}>{item.icon}</Box>
-                <div>
-                  <Typography fontWeight="medium" gutterBottom>
-                    {item.title}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'grey.400' }}>
-                    {item.description}
-                  </Typography>
-                </div>
-              </Stack>
+                <Box
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+                    mb: 2,
+                    '& svg': {
+                      fontSize: 32,
+                      color: '#ffffff',
+                    },
+                  }}
+                >
+                  {item.icon}
+                </Box>
+                <Typography
+                  variant="h6"
+                  component="h3"
+                  sx={{
+                    fontWeight: 600,
+                    color: '#ffffff',
+                    mb: 2,
+                  }}
+                >
+                  {item.title}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: 'rgba(255,255,255,0.8)',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {item.description}
+                </Typography>
+              </Card>
             </Grid>
           ))}
         </Grid>

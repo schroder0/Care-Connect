@@ -12,6 +12,8 @@ import {
   Grid,
   CircularProgress,
 } from '@mui/material'
+import PageTemplate from '../../components/PageTemplate'
+import { History as HistoryIcon } from '@mui/icons-material'
 
 const AppointmentHistory = () => {
   const { userData, isLoading: authLoading } = useAuth()
@@ -19,24 +21,18 @@ const AppointmentHistory = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Don't fetch while authentication is still loading
     if (authLoading) return
     
     if (userData?.medicalId) {
-      console.log('Fetching appointment history for medical ID:', userData.medicalId)
       fetchHistory()
     } else {
-      console.log('No medical ID found in userData')
       setLoading(false)
     }
   }, [userData, authLoading])
 
   const fetchHistory = async () => {
     try {
-      console.log('Making API call to fetch appointment history for:', userData.medicalId)
       const response = await getAppointmentHistory(userData.medicalId)
-      console.log('Appointment history API response:', response.data)
-      
       setAppointments(response.data.appointments || [])
       setLoading(false)
     } catch (error) {
@@ -65,122 +61,194 @@ const AppointmentHistory = () => {
 
   if (authLoading || loading) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
-          <CircularProgress />
-        </Box>
-      </Container>
+      <PageTemplate>
+        <Container maxWidth="lg" sx={{ mt: 4 }}>
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+            <CircularProgress />
+          </Box>
+        </Container>
+      </PageTemplate>
     )
   }
 
   if (!userData) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h6" color="error">
-            Please log in to view appointment history.
-          </Typography>
-        </Paper>
-      </Container>
+      <PageTemplate>
+        <Container maxWidth="lg" sx={{ mt: 4 }}>
+          <Paper elevation={3} sx={{ p: 4 }}>
+            <Typography variant="h6" color="error">
+              Please log in to view appointment history.
+            </Typography>
+          </Paper>
+        </Container>
+      </PageTemplate>
     )
   }
 
   if (!userData.medicalId) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h6" color="warning.main">
-            Please update your profile with a medical ID to view appointment history.
-          </Typography>
-        </Paper>
-      </Container>
+      <PageTemplate>
+        <Container maxWidth="lg" sx={{ mt: 4 }}>
+          <Paper elevation={3} sx={{ p: 4 }}>
+            <Typography variant="h6" color="warning.main">
+              Please update your profile with a medical ID to view appointment history.
+            </Typography>
+          </Paper>
+        </Container>
+      </PageTemplate>
     )
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Appointment History
-      </Typography>
-
-      {appointments.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="textSecondary">
-            No appointment history found
+    <PageTemplate>
+      <Container maxWidth="lg" sx={{ my: 4 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            mb: 4,
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: 'grey.800',
+              borderRadius: '50%',
+              p: 2,
+              mb: 2,
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <HistoryIcon sx={{ fontSize: 40 }} />
+          </Box>
+          <Typography
+            variant="h3"
+            component="h1"
+            sx={{
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textAlign: 'center',
+              mb: 2,
+            }}
+          >
+            Appointment History
           </Typography>
-        </Paper>
-      ) : (
-        <Grid container spacing={3}>
-          {appointments.map((appointment) => (
-            <Grid item xs={12} md={6} key={appointment._id}>
-              <Card sx={{ height: '100%' }}>
-                <CardContent>
-                  <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
-                    <Typography variant="h6">
-                      {userData.role === 'doctor' 
-                        ? `Patient: ${appointment.patientName || 'Unknown Patient'}`
-                        : `Doctor: ${appointment.doctorName || 'Unknown Doctor'}`
-                      }
-                    </Typography>
-                    <Chip 
-                      label={appointment.status?.toUpperCase() || 'UNKNOWN'} 
-                      color={getStatusColor(appointment.status)}
-                      size="small"
-                    />
-                  </Box>
-                  
-                  <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                    <strong>Medical ID:</strong> {
-                      userData.role === 'doctor' 
-                        ? appointment.patientMedicalId || 'N/A'
-                        : appointment.doctorMedicalId || 'N/A'
-                    }
-                  </Typography>
-                  
-                  <Typography variant="body2" sx={{ mb: 1 }}>
-                    <strong>Symptoms:</strong> {appointment.symptoms || 'Not specified'}
-                  </Typography>
+          <Typography
+            variant="h6"
+            color="textSecondary"
+            sx={{ textAlign: 'center', mb: 4, maxWidth: 600 }}
+          >
+            View your past appointments and medical records
+          </Typography>
+        </Box>
 
-                  <Typography variant="body2" sx={{ mb: 1 }}>
-                    <strong>Contact:</strong> {appointment.contactInfo || 'Not provided'}
-                  </Typography>
-
-                  {appointment.scheduledDate && appointment.scheduledTime && (
-                    <Box sx={{ mb: 2, p: 1, bgcolor: 'info.light', borderRadius: 1 }}>
-                      <Typography variant="body2" sx={{ color: 'info.contrastText' }}>
-                        <strong>Scheduled:</strong> {formatDate(appointment.scheduledDate)} at {appointment.scheduledTime}
-                      </Typography>
-                    </Box>
-                  )}
-
-                  {appointment.doctorResponse && (
-                    <Box sx={{ mb: 2, p: 1, bgcolor: 'success.light', borderRadius: 1 }}>
-                      <Typography variant="body2" sx={{ color: 'success.contrastText' }}>
-                        <strong>Doctor&apos;s Response:</strong> {
-                          typeof appointment.doctorResponse === 'string' 
-                            ? appointment.doctorResponse 
-                            : appointment.doctorResponse.message || 'No response provided'
+        {appointments.length === 0 ? (
+          <Card
+            sx={{
+              background: 'rgba(255, 255, 255, 0.9)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: 4,
+              boxShadow: '0 8px 32px rgba(24, 90, 157, 0.1)',
+              p: 4,
+              textAlign: 'center',
+            }}
+          >
+            <Typography variant="h6" color="textSecondary">
+              No appointment history found
+            </Typography>
+          </Card>
+        ) : (
+          <Grid container spacing={3}>
+            {appointments.map((appointment) => (
+              <Grid item xs={12} md={6} key={appointment._id}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: 4,
+                    boxShadow: '0 8px 32px rgba(24, 90, 157, 0.1)',
+                    transition: 'transform 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                    },
+                  }}
+                >
+                  <CardContent>
+                    <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
+                      <Typography variant="h6">
+                        {userData.role === 'doctor' 
+                          ? `Patient: ${appointment.patientName || 'Unknown Patient'}`
+                          : `Dr. ${appointment.doctorName || 'Unknown Doctor'}`
                         }
                       </Typography>
+                      <Chip 
+                        label={appointment.status?.toUpperCase() || 'UNKNOWN'} 
+                        color={getStatusColor(appointment.status)}
+                        size="small"
+                      />
                     </Box>
-                  )}
-
-                  <Typography variant="caption" color="textSecondary">
-                    <strong>Created:</strong> {new Date(appointment.createdAt).toLocaleString()}
-                  </Typography>
-
-                  {appointment.messages && appointment.messages.length > 0 && (
-                    <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 1 }}>
-                      <strong>Messages:</strong> {appointment.messages.length} message(s)
+                    
+                    <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                      <strong>Medical ID:</strong> {
+                        userData.role === 'doctor' 
+                          ? appointment.patientMedicalId || 'N/A'
+                          : appointment.doctorMedicalId || 'N/A'
+                      }
                     </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
-    </Container>
+                    
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Symptoms:</strong> {appointment.symptoms || 'Not specified'}
+                    </Typography>
+
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Contact:</strong> {appointment.contactInfo || 'Not provided'}
+                    </Typography>
+
+                    {appointment.scheduledDate && appointment.scheduledTime && (
+                      <Box sx={{ mb: 2, p: 2, bgcolor: 'info.light', borderRadius: 2 }}>
+                        <Typography variant="body2" sx={{ color: 'info.contrastText' }}>
+                          <strong>Scheduled:</strong> {formatDate(appointment.scheduledDate)} at {appointment.scheduledTime}
+                        </Typography>
+                      </Box>
+                    )}
+
+                    {appointment.doctorResponse && (
+                      <Box sx={{ mb: 2, p: 2, bgcolor: 'success.light', borderRadius: 2 }}>
+                        <Typography variant="body2" sx={{ color: 'success.contrastText' }}>
+                          <strong>Doctor's Response:</strong> {
+                            typeof appointment.doctorResponse === 'string' 
+                              ? appointment.doctorResponse 
+                              : appointment.doctorResponse.message || 'No response provided'
+                          }
+                        </Typography>
+                      </Box>
+                    )}
+
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+                      <Typography variant="caption" color="textSecondary">
+                        <strong>Created:</strong> {new Date(appointment.createdAt).toLocaleString()}
+                      </Typography>
+
+                      {appointment.messages && appointment.messages.length > 0 && (
+                        <Typography variant="caption" color="textSecondary">
+                          <strong>Messages:</strong> {appointment.messages.length}
+                        </Typography>
+                      )}
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Container>
+    </PageTemplate>
   )
 }
 

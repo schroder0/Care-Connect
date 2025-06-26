@@ -17,10 +17,14 @@ import {
   FormHelperText,
   Paper,
   Box,
+  Card,
+  CardContent,
 } from '@mui/material'
+import PageTemplate from '../../components/PageTemplate'
+import { EventAvailable as EventAvailableIcon } from '@mui/icons-material'
 
 const BookAppointment = () => {
-  const { userData, setUserData, isLoading: authLoading } = useAuth() // Get userData from AuthContext
+  const { userData, setUserData, isLoading: authLoading } = useAuth()
   const [formData, setFormData] = useState({
     doctorMedicalId: '',
     patientMedicalId: userData?.medicalId || '',
@@ -51,7 +55,6 @@ const BookAppointment = () => {
 
   // Auto-populate patient medical ID if user is logged in
   useEffect(() => {
-    // Don't process user data while authentication is still loading
     if (authLoading) return
 
     if (userData?.medicalId) {
@@ -60,12 +63,10 @@ const BookAppointment = () => {
         patientMedicalId: userData.medicalId,
       }))
     } else if (userData?.id && !userProfileLoading) {
-      // If userData exists but medicalId is missing, fetch full profile
       setUserProfileLoading(true)
       getProfile(userData.id)
         .then((response) => {
           const fullUserData = response.data.user
-          // Update the AuthContext with the full user data
           setUserData(fullUserData)
           setFormData((prevData) => ({
             ...prevData,
@@ -88,24 +89,16 @@ const BookAppointment = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    // Validate that user has a medical ID
     if (!userData?.medicalId) {
-      alert(
-        'Please update your profile with a medical ID before booking an appointment.'
-      )
+      alert('Please update your profile with a medical ID before booking an appointment.')
       return
     }
 
-    const data = { ...formData } // Send formData directly with medical IDs
-    console.log('Submitting appointment request with data:', data) // Debug log
-    console.log('Making POST request to /api/appointment-requests') // Debug log
+    const data = { ...formData }
     createAppointmentRequest(data)
       .then((response) => {
-        console.log(response.data) // eslint-disable-line no-console
-        alert(
-          'Appointment request submitted successfully! Please check your pending requests for updates.'
-        )
-        // Reset form but keep patient medical ID
+        console.log(response.data)
+        alert('Appointment request submitted successfully! Please check your pending requests for updates.')
         setFormData({
           doctorMedicalId: '',
           patientMedicalId: userData?.medicalId || '',
@@ -117,140 +110,199 @@ const BookAppointment = () => {
         })
       })
       .catch((error) => {
-        console.error(error) // eslint-disable-line no-console
-        alert(
-          `Failed to submit appointment request: ${error.response?.data?.message || error.message}`
-        )
+        console.error(error)
+        alert(`Failed to submit appointment request: ${error.response?.data?.message || error.message}`)
       })
   }
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom align="center">
-          Request Appointment
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <FormControl fullWidth margin="normal" variant="outlined">
-            <InputLabel>Select Doctor *</InputLabel>
-            <Select
-              name="doctorMedicalId"
-              value={formData.doctorMedicalId}
-              onChange={handleChange}
-              label="Select Doctor *"
-              disabled={loading}
-            >
-              {loading ? (
-                <MenuItem disabled>Loading doctors...</MenuItem>
-              ) : doctors.length === 0 ? (
-                <MenuItem disabled>No doctors available</MenuItem>
-              ) : (
-                doctors.map((doctor) => {
-                  const displayText = `${doctor.username}${
-                    doctor.specialty ? ` - ${doctor.specialty}` : ''
-                  }${doctor.location ? ` (${doctor.location})` : ''} [ID: ${doctor.medicalId}]`
-
-                  return (
-                    <MenuItem key={doctor._id} value={doctor.medicalId}>
-                      {displayText}
-                    </MenuItem>
-                  )
-                })
-              )}
-            </Select>
-            <FormHelperText>
-              Select a doctor from the list. The medical ID will be
-              automatically filled.
-            </FormHelperText>
-          </FormControl>
-          <TextField
-            label="Patient Medical ID"
-            name="patientMedicalId"
-            value={
-              userProfileLoading
-                ? 'Loading your medical ID...'
-                : formData.patientMedicalId || 'No medical ID found'
-            }
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-            disabled={true}
-            helperText={
-              userProfileLoading
-                ? 'Fetching your medical ID from profile...'
-                : userData?.medicalId
-                  ? 'Automatically filled from your profile'
-                  : 'Please update your profile with a medical ID'
-            }
-            error={!userProfileLoading && !userData?.medicalId}
-          />
-          <TextField
-            type="date"
-            label="Preferred Date"
-            name="preferredDate"
-            value={formData.preferredDate}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            InputLabelProps={{ shrink: true }}
-            variant="outlined"
-          />
-          <TextField
-            type="time"
-            label="Preferred Time"
-            name="preferredTime"
-            value={formData.preferredTime}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            InputLabelProps={{ shrink: true }}
-            variant="outlined"
-          />
-          <TextField
-            label="Symptoms"
-            name="symptoms"
-            value={formData.symptoms}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-          />
-          <TextField
-            label="Contact Info"
-            name="contactInfo"
-            value={formData.contactInfo}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-          />
-          <FormControl fullWidth margin="normal" variant="outlined">
-            <InputLabel>Notification Type</InputLabel>
-            <Select
-              name="notificationType"
-              value={formData.notificationType}
-              onChange={handleChange}
-              label="Notification Type"
-            >
-              <MenuItem value="email">Email</MenuItem>
-              <MenuItem value="sms">SMS</MenuItem>
-            </Select>
-          </FormControl>
-          <Box mt={2} display="flex" justifyContent="center">
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="large"
-              disabled={!userData?.medicalId || userProfileLoading}
-            >
-              {userProfileLoading ? 'Loading...' : 'Book Appointment'}
-            </Button>
+    <PageTemplate>
+      <Container maxWidth="md" sx={{ my: 4 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            mb: 4,
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: 'primary.main',
+              borderRadius: '50%',
+              p: 2,
+              mb: 2,
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <EventAvailableIcon sx={{ fontSize: 40 }} />
           </Box>
-        </form>
-      </Paper>
-    </Container>
+          <Typography
+            variant="h3"
+            component="h1"
+            sx={{
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textAlign: 'center',
+              mb: 2,
+            }}
+          >
+            Book Appointment
+          </Typography>
+          <Typography
+            variant="h6"
+            color="textSecondary"
+            sx={{ textAlign: 'center', mb: 4, maxWidth: 600 }}
+          >
+            Schedule a consultation with one of our healthcare professionals
+          </Typography>
+        </Box>
+
+        <Card
+          sx={{
+            background: 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: 4,
+            boxShadow: '0 8px 32px rgba(24, 90, 157, 0.1)',
+          }}
+        >
+          <CardContent sx={{ p: 4 }}>
+            <form onSubmit={handleSubmit}>
+              <FormControl fullWidth margin="normal" variant="outlined">
+                <InputLabel>Select Doctor</InputLabel>
+                <Select
+                  name="doctorMedicalId"
+                  value={formData.doctorMedicalId}
+                  onChange={handleChange}
+                  label="Select Doctor"
+                  required
+                >
+                  {doctors.map((doctor) => (
+                    <MenuItem key={doctor.medicalId} value={doctor.medicalId}>
+                      Dr. {doctor.username} - {doctor.specialization}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <TextField
+                label="Your Medical ID"
+                name="patientMedicalId"
+                value={
+                  userProfileLoading
+                    ? 'Loading your medical ID...'
+                    : formData.patientMedicalId || 'No medical ID found'
+                }
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                disabled={true}
+                helperText={
+                  userProfileLoading
+                    ? 'Fetching your medical ID from profile...'
+                    : userData?.medicalId
+                      ? 'Automatically filled from your profile'
+                      : 'Please update your profile with a medical ID'
+                }
+                error={!userProfileLoading && !userData?.medicalId}
+              />
+
+              <TextField
+                type="date"
+                label="Preferred Date"
+                name="preferredDate"
+                value={formData.preferredDate}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+                variant="outlined"
+                required
+              />
+
+              <TextField
+                type="time"
+                label="Preferred Time"
+                name="preferredTime"
+                value={formData.preferredTime}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+                variant="outlined"
+                required
+              />
+
+              <TextField
+                label="Symptoms"
+                name="symptoms"
+                value={formData.symptoms}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                multiline
+                rows={4}
+                required
+                placeholder="Please describe your symptoms in detail..."
+              />
+
+              <TextField
+                label="Contact Info"
+                name="contactInfo"
+                value={formData.contactInfo}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                required
+                placeholder="Enter your preferred contact information"
+              />
+
+              <FormControl fullWidth margin="normal" variant="outlined">
+                <InputLabel>Notification Preference</InputLabel>
+                <Select
+                  name="notificationType"
+                  value={formData.notificationType}
+                  onChange={handleChange}
+                  label="Notification Preference"
+                  required
+                >
+                  <MenuItem value="email">Email</MenuItem>
+                  <MenuItem value="sms">SMS</MenuItem>
+                </Select>
+              </FormControl>
+
+              <Box mt={4} display="flex" justifyContent="center">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  sx={{
+                    minWidth: 200,
+                    py: 1.5,
+                    background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #1a4f8c 0%, #3db892 100%)',
+                    },
+                  }}
+                  disabled={!userData?.medicalId || userProfileLoading}
+                >
+                  {userProfileLoading ? 'Loading...' : 'Book Appointment'}
+                </Button>
+              </Box>
+            </form>
+          </CardContent>
+        </Card>
+      </Container>
+    </PageTemplate>
   )
 }
 

@@ -1,6 +1,8 @@
 import React, { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { CssBaseline, CircularProgress, Grid } from '@mui/material'
+import './styles/branding.css'
+import './styles/animations.css';
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import PrivateRoute from './components/PrivateRoute'
@@ -43,6 +45,8 @@ const SymptomChecker = lazy(() => import('./components/Symptom/SymptomChecker'))
 const Home = lazy(() => import('./pages/Home'))
 const About = lazy(() => import('./pages/About'))
 
+const AppointmentsHub = lazy(() => import('./pages/AppointmentsHub'));
+
 const App = () => {
   return (
     <AuthProvider>
@@ -63,8 +67,7 @@ const App = () => {
                   path="/"
                   element={
                     <PrivateRoute>
-                      {' '}
-                      <MainLayout />{' '}
+                      <MainLayout />
                     </PrivateRoute>
                   }
                 >
@@ -83,42 +86,25 @@ const App = () => {
                   </Route>
 
                   <Route path="/" element={<DoctorLayout />}>
-                    <Route
-                      path="appointment-history"
-                      element={<AppointmentHistory />}
-                    />
-                    <Route
-                      path="doctor-feedback"
-                      element={<DoctorFeedback />}
-                    />
+                    <Route path="appointment-history" element={<AppointmentHistory />} />
+                    <Route path="doctor-feedback" element={<DoctorFeedback />} />
                   </Route>
 
                   <Route path="/" element={<PatientLayout />}>
-                    <Route
-                      path="book-appointment"
-                      element={<BookAppointment />}
-                    />
-                    <Route
-                      path="appointment-history"
-                      element={<AppointmentHistory />}
-                    />
-                    <Route
-                      path="symptom-checker"
-                      element={<SymptomChecker />}
-                    />
+                    {/* AppointmentsHub is the main entry, but BookAppointment route is needed for navigation */}
+                    <Route path="appointments-hub" element={<AppointmentsHub />} />
+                    <Route path="book-appointment" element={<BookAppointment />} />
+                    <Route path="appointment-history" element={<AppointmentHistory />} />
+                    <Route path="symptom-checker" element={<SymptomChecker />} />
                     <Route path="search-doctors" element={<SearchDoctors />} />
                     <Route path="feedback" element={<FeedbackForm />} />
                   </Route>
+                  {/* Remove BookAppointment, PendingRequests, UpcomingAppointments from patient nav */}
 
                   {/* Shared routes for all authenticated users */}
-                  <Route
-                    path="pending-requests"
-                    element={<RolePendingRequests />}
-                  />
-                  <Route
-                    path="upcoming-appointments"
-                    element={<RoleUpcomingAppointments />}
-                  />
+                  {/* If you want to keep these for other roles, you can leave them here */}
+                  <Route path="pending-requests" element={<RolePendingRequests />} />
+                  <Route path="upcoming-appointments" element={<RoleUpcomingAppointments />} />
                 </Route>
               </Routes>
             </Suspense>

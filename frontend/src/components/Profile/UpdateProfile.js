@@ -3,19 +3,26 @@ import { fetchProfile } from './profileUtils'
 import { useAuth } from '../../contexts/AuthContext'
 import { updateProfile } from '../../services/api'
 import {
-  Container,
+  Grid,
   TextField,
   Button,
   Typography,
-  Paper,
+  Card,
+  CardContent,
   Box,
+  CircularProgress,
+  Alert,
+  Snackbar,
+  Divider,
 } from '@mui/material'
+import SaveIcon from '@mui/icons-material/Save'
 
 const API_URL = 'http://localhost:5001/api'
 
 const UpdateProfile = () => {
   const { userData, isLoading: authLoading } = useAuth()
   const userId = userData?.id
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
   const [formData, setFormData] = useState({
     userId,
     username: '',
@@ -38,12 +45,10 @@ const UpdateProfile = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Don't fetch profile while authentication is still loading
     if (authLoading) return
-
     fetchProfile(userData, setLoading, setProfile, API_URL)
   }, [userData, authLoading])
-  // Update formData when profile is loaded
+
   useEffect(() => {
     if (profile.username) {
       setFormData({
@@ -62,13 +67,16 @@ const UpdateProfile = () => {
     const { name, value } = e.target
     setFormData((prevData) => ({ ...prevData, [name]: value }))
   }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     updateProfile(formData)
       .then((response) => {
-        console.log(response.data) // eslint-disable-line no-console
-        alert('Profile updated successfully')
-        // Update the profile state to reflect the changes
+        setSnackbar({
+          open: true,
+          message: 'Profile updated successfully',
+          severity: 'success'
+        })
         setProfile({
           ...profile,
           username: formData.username,
@@ -80,93 +88,222 @@ const UpdateProfile = () => {
         })
       })
       .catch((error) => {
-        console.error(error) // eslint-disable-line no-console
-        alert('Failed to update profile')
+        console.error(error)
+        setSnackbar({
+          open: true,
+          message: 'Failed to update profile',
+          severity: 'error'
+        })
       })
   }
 
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '400px',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    )
+  }
+
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom align="center">
-          Update Profile
-        </Typography>
+    <Card
+      sx={{
+        background: 'rgba(255,255,255,0.9)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '20px',
+        boxShadow: '0 8px 32px rgba(24,90,157,0.1)',
+      }}
+    >
+      <CardContent sx={{ p: 4 }}>
         <form onSubmit={handleSubmit}>
-          {' '}
-          <TextField
-            label="Username"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-          />
-          <TextField
-            label="Email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-          />
-          <TextField
-            label="Phone Number"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-          />{' '}
-          <TextField
-            label="Medical ID"
-            name="medicalId"
-            value={formData.medicalId}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-          />
-          {/* Doctor-specific fields */}
+          <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 4 }}>
+            Personal Information
+          </Typography>
+          
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover fieldset': {
+                      borderColor: '#185a9d',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#43cea2',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover fieldset': {
+                      borderColor: '#185a9d',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#43cea2',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Phone Number"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover fieldset': {
+                      borderColor: '#185a9d',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#43cea2',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Medical ID"
+                name="medicalId"
+                value={formData.medicalId}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover fieldset': {
+                      borderColor: '#185a9d',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#43cea2',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
+
           {profile.role === 'doctor' && (
             <>
-              <TextField
-                label="Specialty"
-                name="specialty"
-                value={formData.specialty}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                placeholder="e.g., Cardiology, Dermatology, Internal Medicine"
-              />
-              <TextField
-                label="Location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                placeholder="e.g., City Hospital, Downtown Clinic"
-              />
+              <Divider sx={{ my: 4 }} />
+              <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 4 }}>
+                Professional Information
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    label="Specialty"
+                    name="specialty"
+                    value={formData.specialty}
+                    onChange={handleChange}
+                    fullWidth
+                    variant="outlined"
+                    placeholder="e.g., Cardiology, Dermatology"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '&:hover fieldset': {
+                          borderColor: '#185a9d',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#43cea2',
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    label="Location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    fullWidth
+                    variant="outlined"
+                    placeholder="e.g., City Hospital, Downtown Clinic"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '&:hover fieldset': {
+                          borderColor: '#185a9d',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#43cea2',
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+              </Grid>
             </>
           )}
-          <Box mt={2} display="flex" justifyContent="center">
+
+          <Box sx={{ mt: 4, textAlign: 'center' }}>
             <Button
               type="submit"
               variant="contained"
-              color="primary"
               size="large"
+              startIcon={<SaveIcon />}
+              sx={{
+                background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                borderRadius: '30px',
+                padding: '12px 48px',
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  boxShadow: '0 8px 20px rgba(24,90,157,0.3)',
+                },
+              }}
             >
-              Update Profile
+              Save Changes
             </Button>
           </Box>
         </form>
-      </Paper>
-    </Container>
+      </CardContent>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Card>
   )
 }
 

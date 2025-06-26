@@ -28,58 +28,32 @@ const Navbar = () => {
     setAnchorEl(null)
   }
 
-  const renderMenuItems = () => {
-    const commonItems = [
-      { label: 'Feedback', link: '/feedback' },
-    ]
+  const commonItems = [
+    { label: 'Feedback', link: '/feedback' },
+  ]
 
-    const adminItems = [
-      { label: 'Users', link: '/users' },
-      { label: 'Doctors', link: '/doctors' },
-      { label: 'Appointments', link: '/appointments' },
-      { label: 'Analytics', link: '/analytics' },
-      { label: 'Activity Logs', link: '/activity-logs' },
-    ]
+  const adminItems = [
+    { label: 'Users', link: '/users' },
+    { label: 'Doctors', link: '/doctors' },
+    { label: 'Appointments', link: '/appointments' },
+    { label: 'Analytics', link: '/analytics' },
+    { label: 'Activity Logs', link: '/activity-logs' },
+  ]
 
-    const doctorItems = [
-      { label: 'Profile', link: '/profile' },
-      { label: 'Pending Requests', link: '/pending-requests' },
-      { label: 'Upcoming Appointments', link: '/upcoming-appointments' },
-      { label: 'Appointment History', link: '/appointment-history' },
-      { label: 'Doctor Feedback', link: '/doctor-feedback' },
-    ]
+  const doctorItems = [
+    { label: 'Profile', link: '/profile' },
+    { label: 'Pending Requests', link: '/pending-requests' },
+    { label: 'Upcoming Appointments', link: '/upcoming-appointments' },
+    { label: 'Appointment History', link: '/appointment-history' },
+    { label: 'Doctor Feedback', link: '/doctor-feedback' },
+  ]
 
-    const patientItems = [
-      { label: 'Profile', link: '/profile' },
-      { label: 'Symptom Checker', link: '/symptom-checker' },
-      { label: 'Search Doctors', link: '/search-doctors' },
-      { label: 'Book Appointment', link: '/book-appointment' },
-      { label: 'Pending Requests', link: '/pending-requests' },
-      { label: 'Upcoming Appointments', link: '/upcoming-appointments' },
-      { label: 'Appointment History', link: '/appointment-history' },
-    ]
-
-    let items = []
-
-    if (userRole === 'admin') {
-      items = [...adminItems, ...commonItems]
-    } else if (userRole === 'doctor') {
-      items = [...doctorItems, ...commonItems]
-    } else if (userRole === 'patient') {
-      items = [...patientItems, ...commonItems]
-    }
-
-    return items.map((item) => (
-      <MenuItem
-        component={Link}
-        to={item.link}
-        onClick={handleMenuClose}
-        key={item.link}
-      >
-        {item.label}
-      </MenuItem>
-    ))
-  }
+  const patientItems = [
+    { label: 'Profile', link: '/profile' },
+    { label: 'Symptom Checker', link: '/symptom-checker' },
+    { label: 'Search Doctors', link: '/search-doctors' },
+    { label: 'Appointments', link: '/appointments-hub' },
+  ]
 
   return (
     <AppBar position="static">
@@ -102,32 +76,44 @@ const Navbar = () => {
         </Box>
         {isAuthenticated ? (
           <>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              onClick={handleMenuOpen}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-            >
-              {renderMenuItems()}
-            </Menu>
-            <Button color="inherit" onClick={logout}>
+            {/* Show all nav options as buttons instead of dropdown */}
+            {userRole === 'admin' &&
+              adminItems.concat(commonItems).map((item) => (
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to={item.link}
+                  key={item.link}
+                  sx={{ ml: 1 }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            {userRole === 'doctor' &&
+              doctorItems.concat(commonItems).map((item) => (
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to={item.link}
+                  key={item.link}
+                  sx={{ ml: 1 }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            {userRole === 'patient' &&
+              patientItems.concat(commonItems).map((item) => (
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to={item.link}
+                  key={item.link}
+                  sx={{ ml: 1 }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            <Button color="inherit" onClick={logout} sx={{ ml: 1 }}>
               Logout
             </Button>
           </>

@@ -1,7 +1,7 @@
 import React from 'react'
-import { alpha, Box, Container, Stack, Typography } from '@mui/material'
+import { Box, Container, Stack, Typography, Button } from '@mui/material'
 import { Carousel } from 'react-responsive-carousel'
-import 'react-responsive-carousel/lib/styles/carousel.min.css' // Import carousel styles
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
 import './HeroSection.module.css'
 
 const photos = [
@@ -23,96 +23,166 @@ export default function Hero() {
   return (
     <Box
       id="hero"
-      sx={(theme) => ({
+      sx={{
         width: '100%',
-        backgroundImage:
-          theme.palette.mode === 'light'
-            ? 'linear-gradient(180deg, #CEE5FD, #FFF)'
-            : `linear-gradient(#02294F, ${alpha('#090E10', 0.0)})`,
-        backgroundSize: '100% 20%',
-        backgroundRepeat: 'no-repeat',
-      })}
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, rgba(24,90,157,0.95) 0%, rgba(67,206,162,0.95) 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        padding: 0,
+        margin: 0,
+        boxSizing: 'border-box',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'url("data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23ffffff" fill-opacity="0.05" fill-rule="evenodd"/%3E%3C/svg%3E")',
+          zIndex: 0,
+        },
+      }}
     >
       <Container
+        maxWidth="lg"
         sx={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          pt: { xs: 14, sm: 20 },
-          pb: { xs: 8, sm: 12 },
+          justifyContent: 'center',
+          minHeight: '100vh',
+          py: { xs: 8, sm: 10 },
+          position: 'relative',
+          zIndex: 1,
         }}
       >
-        <Stack spacing={2} useFlexGap sx={{ width: { xs: '100%', sm: '70%' } }}>
+        <Stack 
+          spacing={3} 
+          useFlexGap 
+          sx={{ 
+            width: '100%',
+            maxWidth: '1200px',
+            margin: '0 auto',
+            px: { xs: 2, sm: 4 },
+          }}
+        >
           <Typography
             variant="h1"
             sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              alignSelf: 'center',
+              fontFamily: 'Montserrat, Roboto, Arial, sans-serif',
+              fontWeight: 800,
               textAlign: 'center',
-              fontSize: 'clamp(3.5rem, 10vw, 4rem)',
+              fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4.5rem' },
+              background: 'linear-gradient(90deg, #ffffff 0%, #e0e0e0 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              mb: 2,
+              textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              animation: 'fadeInDown 1s ease-out',
             }}
           >
-            Welcome to&nbsp;
-            <Typography
-              component="span"
-              variant="h1"
-              sx={{
-                fontSize: 'clamp(3rem, 10vw, 4rem)',
-                color: (theme) =>
-                  theme.palette.mode === 'light'
-                    ? 'primary.main'
-                    : 'primary.light',
-              }}
-            >
-              Health Chatbot
-            </Typography>
+            Welcome to Care Connect
           </Typography>
           <Typography
             textAlign="center"
-            color="text.secondary"
-            sx={{ alignSelf: 'center', width: { sm: '100%', md: '80%' } }}
+            sx={{
+              color: '#ffffff',
+              fontSize: { xs: '1.2rem', sm: '1.4rem' },
+              fontFamily: 'Roboto, Arial, sans-serif',
+              mb: 3,
+              lineHeight: 1.6,
+              maxWidth: '800px',
+              margin: '0 auto',
+              animation: 'fadeIn 1s ease-out 0.5s both',
+            }}
           >
-            Your personal health assistant, providing comprehensive care and
-            support anytime, anywhere. Explore our features and see how we can
-            make healthcare more accessible and efficient for you.
+            Your personal health assistant, providing comprehensive care and support anytime, anywhere. Experience healthcare reimagined for the modern age.
           </Typography>
-        </Stack>
-        <Box
-          id="carousel"
-          sx={(theme) => ({
-            mt: { xs: 8, sm: 10 },
-            alignSelf: 'center',
-            width: '100%',
-            maxWidth: '800px',
-            borderRadius: '10px',
-            overflow: 'hidden',
-            outline: '1px solid',
-            outlineColor:
-              theme.palette.mode === 'light'
-                ? alpha('#BFCCD9', 0.5)
-                : alpha('#9CCCFC', 0.1),
-            boxShadow:
-              theme.palette.mode === 'light'
-                ? `0 0 12px 8px ${alpha('#9CCCFC', 0.2)}`
-                : `0 0 24px 12px ${alpha('#033363', 0.2)}`,
-          })}
-        >
-          <Carousel
-            showArrows={true}
-            autoPlay={true}
-            infiniteLoop={true}
-            showThumbs={false}
-            showStatus={false}
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              justifyContent: 'center',
+              mt: 4,
+              animation: 'fadeInUp 1s ease-out 1s both',
+            }}
           >
-            {photos.map((photo, index) => (
-              <div key={index}>
-                <img src={photo.src} alt={photo.alt} />
-                <p className="legend">{photo.alt}</p>
-              </div>
-            ))}
-          </Carousel>
-        </Box>
+            <Button
+              variant="contained"
+              size="large"
+              sx={{
+                background: 'linear-gradient(90deg, #43cea2 0%, #185a9d 100%)',
+                color: '#fff',
+                fontWeight: 600,
+                fontSize: '1.1rem',
+                px: 4,
+                py: 1.5,
+                borderRadius: '30px',
+                boxShadow: '0 4px 24px 0 rgba(67,206,162,0.25)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 28px 0 rgba(67,206,162,0.3)',
+                  background: 'linear-gradient(90deg, #185a9d 0%, #43cea2 100%)',
+                },
+              }}
+              href="#features"
+            >
+              Explore Features
+            </Button>
+          </Box>
+          
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '1000px',
+              margin: '0 auto',
+              mt: { xs: 6, sm: 8 },
+              animation: 'fadeIn 1s ease-out 1.5s both',
+            }}
+          >
+            <Carousel
+              showArrows={true}
+              showStatus={false}
+              showThumbs={false}
+              infiniteLoop={true}
+              autoPlay={true}
+              interval={5000}
+              transitionTime={500}
+              stopOnHover={true}
+              swipeable={true}
+              emulateTouch={true}
+              dynamicHeight={false}
+              sx={{
+                '& .carousel .slide img': {
+                  maxHeight: '500px',
+                  objectFit: 'cover',
+                  borderRadius: '20px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+                },
+              }}
+            >
+              {photos.map((photo, index) => (
+                <div key={index}>
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      borderRadius: '20px',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+                    }}
+                  />
+                </div>
+              ))}
+            </Carousel>
+          </Box>
+        </Stack>
       </Container>
     </Box>
   )
