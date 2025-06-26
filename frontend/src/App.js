@@ -13,7 +13,6 @@ import ProfileLayout from './layouts/ProfileLayout'
 
 const Signup = lazy(() => import('./components/Auth/Signup'))
 const Login = lazy(() => import('./components/Auth/Login'))
-const Chat = lazy(() => import('./components/Chat/Chat'))
 const Users = lazy(() => import('./components/Admin/Users'))
 const Doctors = lazy(() => import('./components/Admin/Doctors'))
 const Appointments = lazy(() => import('./components/Admin/Appointments'))
@@ -22,11 +21,11 @@ const ActivityLogs = lazy(() => import('./components/Admin/ActivityLogs'))
 const BookAppointment = lazy(
   () => import('./components/Appoints/BookAppointment')
 )
-const DoctorAvailability = lazy(
-  () => import('./components/Appoints/DoctorAvailability')
+const RolePendingRequests = lazy(
+  () => import('./components/Appoints/RolePendingRequests')
 )
-const CancelAppointment = lazy(
-  () => import('./components/Appoints/CancelAppointment')
+const RoleUpcomingAppointments = lazy(
+  () => import('./components/Appoints/RoleUpcomingAppointments')
 )
 const AppointmentHistory = lazy(
   () => import('./components/Appoints/AppointmentHistory')
@@ -38,11 +37,7 @@ const UploadProfilePicture = lazy(
 )
 const FeedbackForm = lazy(() => import('./components/Feed/FeedbackForm'))
 const DoctorFeedback = lazy(() => import('./components/Feed/DoctorFeedback'))
-const SendReminder = lazy(() => import('./components/Notifi/SendReminder'))
 const SearchDoctors = lazy(() => import('./components/Doct/SearchDoctors'))
-const UpdateAvailability = lazy(
-  () => import('./components/Doct/UpdateAvailability')
-)
 const SymptomChecker = lazy(() => import('./components/Symptom/SymptomChecker'))
 
 const Home = lazy(() => import('./pages/Home'))
@@ -73,9 +68,6 @@ const App = () => {
                     </PrivateRoute>
                   }
                 >
-                  <Route path="/" element={<MainLayout />}>
-                    <Route path="chat" element={<Chat />} />
-                  </Route>
                   <Route path="profile" element={<ProfileLayout />}>
                     <Route path="" element={<UserProfile />} />
                     <Route path="update" element={<UpdateProfile />} />
@@ -92,20 +84,12 @@ const App = () => {
 
                   <Route path="/" element={<DoctorLayout />}>
                     <Route
-                      path="availability"
-                      element={<DoctorAvailability />}
-                    />
-                    <Route
                       path="appointment-history"
                       element={<AppointmentHistory />}
                     />
                     <Route
                       path="doctor-feedback"
                       element={<DoctorFeedback />}
-                    />
-                    <Route
-                      path="update-availability"
-                      element={<UpdateAvailability />}
                     />
                   </Route>
 
@@ -115,10 +99,6 @@ const App = () => {
                       element={<BookAppointment />}
                     />
                     <Route
-                      path="cancel-appointment"
-                      element={<CancelAppointment />}
-                    />
-                    <Route
                       path="appointment-history"
                       element={<AppointmentHistory />}
                     />
@@ -126,10 +106,19 @@ const App = () => {
                       path="symptom-checker"
                       element={<SymptomChecker />}
                     />
-                    <Route path="send-reminder" element={<SendReminder />} />
                     <Route path="search-doctors" element={<SearchDoctors />} />
                     <Route path="feedback" element={<FeedbackForm />} />
                   </Route>
+
+                  {/* Shared routes for all authenticated users */}
+                  <Route
+                    path="pending-requests"
+                    element={<RolePendingRequests />}
+                  />
+                  <Route
+                    path="upcoming-appointments"
+                    element={<RoleUpcomingAppointments />}
+                  />
                 </Route>
               </Routes>
             </Suspense>

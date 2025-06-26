@@ -22,6 +22,7 @@ const AuthContext = createContext({
   userRole: null,
   userData: null,
   token: null,
+  isLoading: true,
   login: () => {},
   logout: () => {},
   setUserData: () => {},
@@ -34,6 +35,7 @@ export const AuthProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(null)
   const [userData, setUserData] = useState(null)
   const [token, setToken] = useState(null)
+  const [isLoading, setIsLoading] = useState(true) // Add loading state
 
   // Check for existing token on app load
   useEffect(() => {
@@ -55,6 +57,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true)
       }
     }
+    setIsLoading(false) // Set loading to false after checking
   }, [])
 
   // Periodic token validation
@@ -75,6 +78,7 @@ export const AuthProvider = ({ children }) => {
     setUserRole(role)
     setUserData(user)
     setToken(authToken)
+    setIsLoading(false) // Ensure loading is false after login
 
     // Store in localStorage for persistence
     localStorage.setItem('token', authToken)
@@ -87,6 +91,7 @@ export const AuthProvider = ({ children }) => {
     setUserRole(null)
     setUserData(null)
     setToken(null)
+    setIsLoading(false) // Ensure loading is false after logout
 
     // Clear localStorage
     localStorage.removeItem('token')
@@ -101,6 +106,7 @@ export const AuthProvider = ({ children }) => {
         userRole,
         userData,
         token,
+        isLoading,
         login,
         logout,
         setUserData,

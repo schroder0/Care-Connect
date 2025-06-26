@@ -72,9 +72,6 @@ export const getActivityLogs = () => api.get('/activityLogs')
 
 //Appointments
 export const bookAppointment = (data) => api.post('/book', data)
-export const getDoctorAvailability = (doctorMedicalId, date) =>
-  api.get('/availability', { params: { doctorMedicalId, date } })
-export const cancelAppointment = (data) => api.post('/cancel', data)
 export const getAppointmentHistory = (userMedicalId) =>
   api.get('/history', { params: { userMedicalId } })
 export const getAllDoctors = () => api.get('/doctors')
@@ -109,8 +106,22 @@ export const sendReminder = (data) =>
 
 // Doctor
 export const searchDoctors = (params) => api.get('/doctors/search', { params })
-export const updateAvailability = (data) =>
-  api.post('/doctors/update-availability', data)
 
 // Symptoms
 export const checkSymptoms = (data) => api.post('/symptoms/check', data)
+
+// Appointment Requests
+export const createAppointmentRequest = (data) =>
+  api.post('/appointment-requests', data)
+export const getDoctorAppointmentRequests = (doctorMedicalId) =>
+  api.get(`/appointment-requests/doctor/${doctorMedicalId}`)
+export const getPatientAppointmentRequests = (patientMedicalId) => {
+  console.log('Fetching appointment requests for patient:', patientMedicalId)
+  return api.get(`/appointment-requests/patient/${patientMedicalId}`)
+}
+export const updateAppointmentRequestStatus = (requestId, data) =>
+  api.put(`/appointment-requests/${requestId}/status`, data)
+export const addMessageToRequest = (requestId, data) =>
+  api.post(`/appointment-requests/${requestId}/messages`, data)
+export const getAppointmentRequestById = (requestId) =>
+  api.get(`/appointment-requests/${requestId}`)

@@ -30,7 +30,6 @@ const Navbar = () => {
 
   const renderMenuItems = () => {
     const commonItems = [
-      { label: 'Chat', link: '/chat' },
       { label: 'Feedback', link: '/feedback' },
     ]
 
@@ -44,7 +43,8 @@ const Navbar = () => {
 
     const doctorItems = [
       { label: 'Profile', link: '/profile' },
-      { label: 'Update Availability', link: '/update-availability' },
+      { label: 'Pending Requests', link: '/pending-requests' },
+      { label: 'Upcoming Appointments', link: '/upcoming-appointments' },
       { label: 'Appointment History', link: '/appointment-history' },
       { label: 'Doctor Feedback', link: '/doctor-feedback' },
     ]
@@ -53,10 +53,9 @@ const Navbar = () => {
       { label: 'Profile', link: '/profile' },
       { label: 'Symptom Checker', link: '/symptom-checker' },
       { label: 'Search Doctors', link: '/search-doctors' },
-      { label: 'Availability', link: '/availability' },
       { label: 'Book Appointment', link: '/book-appointment' },
-      { label: 'Cancel Appointment', link: '/cancel-appointment' },
-      { label: 'Send Reminder', link: '/send-reminder' },
+      { label: 'Pending Requests', link: '/pending-requests' },
+      { label: 'Upcoming Appointments', link: '/upcoming-appointments' },
       { label: 'Appointment History', link: '/appointment-history' },
     ]
 

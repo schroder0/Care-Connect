@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
-import { bookAppointment, getAllDoctors, getProfile } from '../../services/api'
+import {
+  createAppointmentRequest,
+  getAllDoctors,
+  getProfile,
+} from '../../services/api'
 import {
   Container,
   TextField,
@@ -16,12 +20,12 @@ import {
 } from '@mui/material'
 
 const BookAppointment = () => {
-  const { userData, setUserData } = useAuth() // Get userData from AuthContext
+  const { userData, setUserData, isLoading: authLoading } = useAuth() // Get userData from AuthContext
   const [formData, setFormData] = useState({
     doctorMedicalId: '',
     patientMedicalId: userData?.medicalId || '',
-    date: '',
-    time: '',
+    preferredDate: '',
+    preferredTime: '',
     symptoms: '',
     contactInfo: '',
     notificationType: 'email',
@@ -47,6 +51,9 @@ const BookAppointment = () => {
 
   // Auto-populate patient medical ID if user is logged in
   useEffect(() => {
+    // Don't process user data while authentication is still loading
+    if (authLoading) return
+
     if (userData?.medicalId) {
       setFormData((prevData) => ({
         ...prevData,
@@ -71,7 +78,7 @@ const BookAppointment = () => {
           setUserProfileLoading(false)
         })
     }
-  }, [userData, setUserData, userProfileLoading])
+  }, [userData, setUserData, userProfileLoading, authLoading])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -80,24 +87,30 @@ const BookAppointment = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
     // Validate that user has a medical ID
     if (!userData?.medicalId) {
-      alert('Please update your profile with a medical ID before booking an appointment.')
+      alert(
+        'Please update your profile with a medical ID before booking an appointment.'
+      )
       return
     }
-    
+
     const data = { ...formData } // Send formData directly with medical IDs
-    bookAppointment(data)
+    console.log('Submitting appointment request with data:', data) // Debug log
+    console.log('Making POST request to /api/appointment-requests') // Debug log
+    createAppointmentRequest(data)
       .then((response) => {
         console.log(response.data) // eslint-disable-line no-console
-        alert('Appointment booked successfully')
+        alert(
+          'Appointment request submitted successfully! Please check your pending requests for updates.'
+        )
         // Reset form but keep patient medical ID
         setFormData({
           doctorMedicalId: '',
           patientMedicalId: userData?.medicalId || '',
-          date: '',
-          time: '',
+          preferredDate: '',
+          preferredTime: '',
           symptoms: '',
           contactInfo: '',
           notificationType: 'email',
@@ -105,7 +118,9 @@ const BookAppointment = () => {
       })
       .catch((error) => {
         console.error(error) // eslint-disable-line no-console
-        alert(`Failed to book appointment: ${error.response?.data?.message || error.message}`)
+        alert(
+          `Failed to submit appointment request: ${error.response?.data?.message || error.message}`
+        )
       })
   }
 
@@ -113,7 +128,7 @@ const BookAppointment = () => {
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" gutterBottom align="center">
-          Book Appointment
+          Request Appointment
         </Typography>
         <form onSubmit={handleSubmit}>
           <FormControl fullWidth margin="normal" variant="outlined">
@@ -134,7 +149,7 @@ const BookAppointment = () => {
                   const displayText = `${doctor.username}${
                     doctor.specialty ? ` - ${doctor.specialty}` : ''
                   }${doctor.location ? ` (${doctor.location})` : ''} [ID: ${doctor.medicalId}]`
-                  
+
                   return (
                     <MenuItem key={doctor._id} value={doctor.medicalId}>
                       {displayText}
@@ -144,15 +159,16 @@ const BookAppointment = () => {
               )}
             </Select>
             <FormHelperText>
-              Select a doctor from the list. The medical ID will be automatically filled.
+              Select a doctor from the list. The medical ID will be
+              automatically filled.
             </FormHelperText>
           </FormControl>
           <TextField
             label="Patient Medical ID"
             name="patientMedicalId"
             value={
-              userProfileLoading 
-                ? 'Loading your medical ID...' 
+              userProfileLoading
+                ? 'Loading your medical ID...'
                 : formData.patientMedicalId || 'No medical ID found'
             }
             onChange={handleChange}
@@ -162,18 +178,18 @@ const BookAppointment = () => {
             disabled={true}
             helperText={
               userProfileLoading
-                ? "Fetching your medical ID from profile..."
-                : userData?.medicalId 
-                ? "Automatically filled from your profile" 
-                : "Please update your profile with a medical ID"
+                ? 'Fetching your medical ID from profile...'
+                : userData?.medicalId
+                  ? 'Automatically filled from your profile'
+                  : 'Please update your profile with a medical ID'
             }
             error={!userProfileLoading && !userData?.medicalId}
           />
           <TextField
             type="date"
-            label="Date"
-            name="date"
-            value={formData.date}
+            label="Preferred Date"
+            name="preferredDate"
+            value={formData.preferredDate}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -182,9 +198,9 @@ const BookAppointment = () => {
           />
           <TextField
             type="time"
-            label="Time"
-            name="time"
-            value={formData.time}
+            label="Preferred Time"
+            name="preferredTime"
+            value={formData.preferredTime}
             onChange={handleChange}
             fullWidth
             margin="normal"

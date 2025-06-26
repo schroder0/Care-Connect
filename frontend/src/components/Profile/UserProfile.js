@@ -5,7 +5,8 @@ import { Container, Typography, Avatar, CircularProgress } from '@mui/material'
 
 const API_URL = 'http://localhost:5001/api'
 
-const UserProfile = () => {  const [profile, setProfile] = useState({
+const UserProfile = () => {
+  const [profile, setProfile] = useState({
     username: '',
     email: '',
     phoneNumber: '',
@@ -17,11 +18,14 @@ const UserProfile = () => {  const [profile, setProfile] = useState({
   })
   const [loading, setLoading] = useState(true)
 
-  const { userRole, userData } = useAuth()
+  const { userRole, userData, isLoading: authLoading } = useAuth()
 
   useEffect(() => {
+    // Don't fetch profile while authentication is still loading
+    if (authLoading) return
+
     fetchProfile(userData, setLoading, setProfile, API_URL)
-  }, [userData, userRole])
+  }, [userData, userRole, authLoading])
 
   if (loading) {
     return <CircularProgress />
@@ -40,12 +44,12 @@ const UserProfile = () => {  const [profile, setProfile] = useState({
         src={profile.profilePicture}
         alt={profile.username}
         style={{ width: 100, height: 100 }}
-      />      <Typography variant="h6">Username: {profile.username}</Typography>
+      />{' '}
+      <Typography variant="h6">Username: {profile.username}</Typography>
       <Typography variant="h6">Email: {profile.email}</Typography>
       <Typography variant="h6">Phone Number: {profile.phoneNumber}</Typography>
       <Typography variant="h6">Medical ID: {profile.medicalId}</Typography>
       <Typography variant="h6">Role: {profile.role}</Typography>
-      
       {/* Show doctor-specific fields */}
       {profile.role === 'doctor' && (
         <>

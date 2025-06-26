@@ -14,7 +14,7 @@ import {
 const API_URL = 'http://localhost:5001/api'
 
 const UpdateProfile = () => {
-  const { userData } = useAuth()
+  const { userData, isLoading: authLoading } = useAuth()
   const userId = userData?.id
   const [formData, setFormData] = useState({
     userId,
@@ -26,7 +26,8 @@ const UpdateProfile = () => {
     location: '',
   })
   const [profile, setProfile] = useState({
-    username: '',    email: '',
+    username: '',
+    email: '',
     phoneNumber: '',
     medicalId: '',
     profilePicture: '',
@@ -37,8 +38,11 @@ const UpdateProfile = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Don't fetch profile while authentication is still loading
+    if (authLoading) return
+
     fetchProfile(userData, setLoading, setProfile, API_URL)
-  }, [userData])
+  }, [userData, authLoading])
   // Update formData when profile is loaded
   useEffect(() => {
     if (profile.username) {
@@ -87,7 +91,9 @@ const UpdateProfile = () => {
         <Typography variant="h4" gutterBottom align="center">
           Update Profile
         </Typography>
-        <form onSubmit={handleSubmit}>          <TextField
+        <form onSubmit={handleSubmit}>
+          {' '}
+          <TextField
             label="Username"
             name="username"
             value={formData.username}
@@ -113,7 +119,8 @@ const UpdateProfile = () => {
             fullWidth
             margin="normal"
             variant="outlined"
-          />          <TextField
+          />{' '}
+          <TextField
             label="Medical ID"
             name="medicalId"
             value={formData.medicalId}
@@ -122,7 +129,6 @@ const UpdateProfile = () => {
             margin="normal"
             variant="outlined"
           />
-          
           {/* Doctor-specific fields */}
           {profile.role === 'doctor' && (
             <>
@@ -148,7 +154,6 @@ const UpdateProfile = () => {
               />
             </>
           )}
-          
           <Box mt={2} display="flex" justifyContent="center">
             <Button
               type="submit"

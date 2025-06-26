@@ -16,13 +16,16 @@ import {
 } from '@mui/material'
 
 const DoctorFeedback = () => {
-  const { userData } = useAuth()
+  const { userData, isLoading: authLoading } = useAuth()
   const [feedbacks, setFeedbacks] = useState([
     { _id: '', rating: 0, comment: '', patientId: { username: '' } },
   ])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Don't make API calls while authentication is still loading
+    if (authLoading || !userData?._id) return
+    
     getFeedbackForDoctor(userData._id)
       .then((response) => {
         setFeedbacks(response.data)
@@ -32,7 +35,7 @@ const DoctorFeedback = () => {
         console.error(error) // eslint-disable-line no-console
         setLoading(false)
       })
-  }, [userData._id])
+  }, [userData._id, authLoading])
 
   if (loading) {
     return (

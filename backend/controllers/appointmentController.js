@@ -2,6 +2,7 @@
 const { broadcastAvailabilityUpdate } = require('../websocket')
 const Doctor = require('../models/doctorModel')
 const Appointment = require('../models/appointmentModel')
+const AppointmentRequest = require('../models/appointmentRequestModel') // For appointment requests
 const User = require('../models/userModel') // Add this line
 const { sendNotification } = require('../services/notificationService')
 
@@ -115,48 +116,6 @@ exports.getDoctorAvailability = async (req, res) => {
   }
 }
 
-exports.cancelAppointment = async (req, res) => {
-  const { appointmentId, contactInfo, notificationType } = req.body
-
-  try {
-    const appointment = await Appointment.findByIdAndDelete(appointmentId)
-
-    if (!appointment) {
-      return res.status(404).json({ message: 'Appointment not found' })
-    }
-
-    const doctor = await Doctor.findById(appointment.doctorId)
-    if (doctor) {
-      const availability = doctor.availability.find(
-        (a) =>
-          a.date.toISOString().split('T')[0] ===
-          appointment.date.toISOString().split('T')[0],
-      )
-      if (availability) {
-        const slot = availability.slots.find((s) => s.time === appointment.time)
-        if (slot) {
-          slot.available = true
-          await doctor.save()
-        }
-      }
-    } else {
-      return res.status(404).json({ message: 'Doctor not found' })
-    }
-
-    // Send cancellation notification to patient
-    sendNotification(
-      notificationType,
-      contactInfo,
-      'Appointment Cancellation',
-      `Your appointment with Dr. ${doctor.name} on ${appointment.date} at ${appointment.time} has been cancelled.`,
-    )
-
-    res.status(200).json({ message: 'Appointment cancelled successfully' })
-  } catch (error) {
-    res.status(500).json({ message: 'Internal server error', error })
-  }
-}
-
 // Controller to get appointment history
 exports.getAppointmentHistory = async (req, res) => {
   const { userMedicalId } = req.query
@@ -170,9 +129,11 @@ exports.getAppointmentHistory = async (req, res) => {
 
     let appointments
     if (user.role === 'doctor') {
-      appointments = await Appointment.find({ doctorMedicalId: userMedicalId })
+      appointments = await AppointmentRequest.find({ doctorMedicalId: userMedicalId })
+        .sort({ createdAt: -1 }) // Sort by newest first
     } else {
-      appointments = await Appointment.find({ patientMedicalId: userMedicalId })
+      appointments = await AppointmentRequest.find({ patientMedicalId: userMedicalId })
+        .sort({ createdAt: -1 }) // Sort by newest first
     }
 
     res.status(200).json({ appointments })
