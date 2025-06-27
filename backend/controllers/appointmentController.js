@@ -1,4 +1,4 @@
-
+const mongoose = require('mongoose')
 const { broadcastAvailabilityUpdate } = require('../websocket')
 const Doctor = require('../models/doctorModel')
 const Appointment = require('../models/appointmentModel')
@@ -166,6 +166,72 @@ exports.getAllPatients = async (req, res) => {
     res.status(200).json({ patients })
   } catch (error) {
     console.error('Error fetching patients:', error)
+    res.status(500).json({ message: 'Internal server error', error: error.message })
+  }
+}
+
+// Get pending appointments for a user
+exports.getPendingAppointments = async (req, res) => {
+  const { userId } = req.params
+
+  try {
+    const user = await User.findOne({ medicalId: userId })
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found with this medical ID' })
+    }
+
+    let appointments
+    if (user.role === 'doctor') {
+      appointments = await AppointmentRequest.find({ 
+        doctorMedicalId: userId,
+        status: 'pending'
+      }).sort({ date: 1 })
+    } else {
+      appointments = await AppointmentRequest.find({ 
+        patientMedicalId: userId,
+        status: 'pending'
+      }).sort({ date: 1 })
+    }
+
+    res.status(200).json({ appointments })
+  } catch (error) {
+    console.error('Error fetching pending appointments:', error)
+    res.status(500).json({ message: 'Internal server error', error: error.message })
+  }
+}
+
+// Get upcoming appointments for a user
+exports.getUpcomingAppointments = async (req, res) => {
+  const { userId } = req.params
+
+  try {
+    const user = await User.findOne({ medicalId: userId })
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found with this medical ID' })
+    }
+
+    const currentDate = new Date()
+    let appointments
+
+    if (user.role === 'doctor') {
+      appointments = await Appointment.find({
+        doctorMedicalId: userId,
+        date: { $gte: currentDate },
+        status: 'confirmed'
+      }).sort({ date: 1, time: 1 })
+    } else {
+      appointments = await Appointment.find({
+        patientMedicalId: userId,
+        date: { $gte: currentDate },
+        status: 'confirmed'
+      }).sort({ date: 1, time: 1 })
+    }
+
+    res.status(200).json({ appointments })
+  } catch (error) {
+    console.error('Error fetching upcoming appointments:', error)
     res.status(500).json({ message: 'Internal server error', error: error.message })
   }
 }

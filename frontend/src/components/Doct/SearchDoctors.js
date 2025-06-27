@@ -53,30 +53,41 @@ const SearchDoctors = () => {
 
   const handleSearch = () => {
     setLoading(true);
+    setDoctors([]); // Clear previous results
+    
+    // Don't search if all fields are empty
+    if (!name && !specialty && !location) {
+      setSnackbar({
+        open: true,
+        message: 'Please enter at least one search criteria',
+        severity: 'info'
+      });
+      setLoading(false);
+      return;
+    }
+
     const params = { name, specialty, location };
+    
     searchDoctors(params)
       .then((response) => {
-        const filteredDoctors = response.data.filter(doctor => {
-          const matchesName = !name || doctor.username.toLowerCase().includes(name.toLowerCase());
-          const matchesSpecialty = !specialty || doctor.specialty.toLowerCase().includes(specialty.toLowerCase());
-          const matchesLocation = !location || doctor.location.toLowerCase().includes(location.toLowerCase());
-          return matchesName && matchesSpecialty && matchesLocation;
-        });
-        setDoctors(filteredDoctors);
+        console.log('Search response:', response); // Debug log
+        const doctorsList = response.data || [];
+        setDoctors(doctorsList);
         setLoading(false);
-        if (filteredDoctors.length === 0) {
+        
+        if (doctorsList.length === 0) {
           setSnackbar({
             open: true,
-            message: 'No doctors found matching your criteria',
+            message: `No doctors found matching "${name}"${specialty ? ` in ${specialty}` : ''}${location ? ` at ${location}` : ''}`,
             severity: 'info'
           });
         }
       })
       .catch((error) => {
-        console.error(error);
+        console.error('Error searching doctors:', error);
         setSnackbar({
           open: true,
-          message: 'Failed to search doctors',
+          message: error.response?.data?.message || 'Failed to search doctors. Please try again.',
           severity: 'error'
         });
         setLoading(false);

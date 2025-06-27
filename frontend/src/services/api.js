@@ -95,8 +95,16 @@ export const sendMessage = (data) => api.post('/chat/send', data)
 export const getMessages = (userId1, userId2) =>
   api.get(`/chat/messages/${userId1}/${userId2}`)
 
-//Feedback
-export const createFeedback = (data) => api.post('/feedback', data)
+// Feedback APIs
+export const createFeedback = async (data) => {
+  try {
+    const response = await api.post('/feedback', data)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
 export const getFeedbackForDoctor = (doctorId) =>
   api.get(`/feedback/${doctorId}`)
 
@@ -125,3 +133,13 @@ export const addMessageToRequest = (requestId, data) =>
   api.post(`/appointment-requests/${requestId}/messages`, data)
 export const getAppointmentRequestById = (requestId) =>
   api.get(`/appointment-requests/${requestId}`)
+
+// Appointment Management
+export const getPendingRequests = (medicalId) => api.get(`/appointments/pending/${medicalId}`)
+export const getUpcomingAppointments = (medicalId) => getPatientAppointmentRequests(medicalId)
+export const acceptAppointment = (requestId) => 
+  api.put(`/appointment-requests/${requestId}/status`, { status: 'approved' })
+export const rejectAppointment = (requestId) => 
+  api.put(`/appointment-requests/${requestId}/status`, { status: 'rejected' })
+export const cancelAppointment = (requestId) => 
+  api.put(`/appointment-requests/${requestId}/status`, { status: 'cancelled' })

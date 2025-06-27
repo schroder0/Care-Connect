@@ -1,404 +1,244 @@
-import React, { useState, useEffect } from 'react'
-import { useAuth } from '../../contexts/AuthContext'
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   getPatientAppointmentRequests,
   addMessageToRequest,
-} from '../../services/api'
+  cancelAppointment,
+} from '../../services/api';
 import {
   Container,
-  Paper,
   Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Chip,
+  Paper,
   Box,
-  TextField,
   Button,
+  Grid,
+  CircularProgress,
+  Chip,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Divider,
-  Card,
-  CardContent,
-  Grid,
-} from '@mui/material'
-import PageTemplate from '../../components/PageTemplate'
-import { PendingActions as PendingActionsIcon } from '@mui/icons-material'
+  TextField,
+} from '@mui/material';
+import { format } from 'date-fns';
 
 const PendingRequests = () => {
-  const { userData, isLoading: authLoading } = useAuth()
-  const [requests, setRequests] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [selectedRequest, setSelectedRequest] = useState(null)
-  const [newMessage, setNewMessage] = useState('')
-  const [chatDialogOpen, setChatDialogOpen] = useState(false)
-
-  useEffect(() => {
-    if (authLoading) return
-
-    if (userData?.medicalId) {
-      fetchRequests()
-    } else {
-      setLoading(false)
-    }
-  }, [userData, authLoading])
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [chatMessages, setChatMessages] = useState([]);
+  const { userData } = useAuth();
 
   const fetchRequests = async () => {
     try {
-      const response = await getPatientAppointmentRequests(userData.medicalId)
-      if (response && response.data) {
-        const pendingRequests = (response.data.requests || []).filter(req => req.status === 'pending')
-        setRequests(pendingRequests)
-      } else {
-        setRequests([])
-      }
-      setLoading(false)
-    } catch (error) {
-      console.error('Error fetching requests:', error)
-      setRequests([])
-      setLoading(false)
+      setLoading(true);
+      const response = await getPatientAppointmentRequests(userData.medicalId);
+      // Filter only pending requests
+      const pending = (response.data.requests || []).filter(req => req.status === 'pending');
+      setPendingRequests(pending);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching pending requests:', err);
+      setError('Failed to load pending appointment requests');
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
+  useEffect(() => {
+    if (userData?.medicalId) {
+      fetchRequests();
+    }
+  }, [userData]);
+
+  const handleCancel = async (requestId) => {
+    try {
+      await cancelAppointment(requestId);
+      fetchRequests();
+    } catch (error) {
+      console.error('Error cancelling request:', error);
+    }
+  };
+
+  const handleChat = async (request) => {
+    setSelectedRequest(request);
+    setChatMessages(request.messages || []);
+    setChatOpen(true);
+  };
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedRequest) return
+    if (!message.trim() || !selectedRequest) return;
 
     try {
       await addMessageToRequest(selectedRequest._id, {
-        message: newMessage,
+        message: message.trim(),
         senderMedicalId: userData.medicalId,
         senderName: userData.username,
-      })
-      setNewMessage('')
-      fetchRequests()
-      const updatedResponse = await getPatientAppointmentRequests(userData.medicalId)
-      const updatedRequest = updatedResponse.data.requests.find(
-        (r) => r._id === selectedRequest._id
-      )
-      setSelectedRequest(updatedRequest)
+      });
+      setMessage('');
+      fetchRequests();
+      // Update chat messages
+      const updatedRequest = pendingRequests.find(r => r._id === selectedRequest._id);
+      if (updatedRequest) {
+        setChatMessages(updatedRequest.messages || []);
+      }
     } catch (error) {
-      console.error('Error sending message:', error)
-      alert('Failed to send message')
+      console.error('Error sending message:', error);
     }
-  }
-
-  const openChat = (request) => {
-    setSelectedRequest(request)
-    setChatDialogOpen(true)
-  }
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'warning'
-      case 'approved':
-        return 'success'
-      case 'rejected':
-        return 'error'
-      case 'cancelled':
-        return 'default'
-      default:
-        return 'default'
-    }
-  }
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString()
-  }
-
-  const formatTime = (timeString) => {
-    return timeString
-  }
+  };
 
   if (loading) {
     return (
-      <PageTemplate>
-        <Container maxWidth="lg" sx={{ mt: 4 }}>
-          <Typography>Loading pending requests...</Typography>
-        </Container>
-      </PageTemplate>
-    )
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+      </Box>
+    );
   }
 
-  if (!userData) {
+  if (error) {
     return (
-      <PageTemplate>
-        <Container maxWidth="lg" sx={{ mt: 4 }}>
-          <Paper elevation={3} sx={{ p: 4 }}>
-            <Typography variant="h6" color="error">
-              Please log in to view your pending appointment requests.
-            </Typography>
-          </Paper>
-        </Container>
-      </PageTemplate>
-    )
-  }
-
-  if (!userData.medicalId) {
-    return (
-      <PageTemplate>
-        <Container maxWidth="lg" sx={{ mt: 4 }}>
-          <Paper elevation={3} sx={{ p: 4 }}>
-            <Typography variant="h6" color="warning.main">
-              Please update your profile with a medical ID to view appointment requests.
-            </Typography>
-          </Paper>
-        </Container>
-      </PageTemplate>
-    )
+      <Container>
+        <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+          <Typography color="error" variant="h6">
+            {error}
+          </Typography>
+        </Paper>
+      </Container>
+    );
   }
 
   return (
-    <PageTemplate>
-      <Container maxWidth="lg" sx={{ my: 4 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            mb: 4,
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: 'warning.main',
-              borderRadius: '50%',
-              p: 2,
-              mb: 2,
-              color: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <PendingActionsIcon sx={{ fontSize: 40 }} />
-          </Box>
-          <Typography
-            variant="h3"
-            component="h1"
-            sx={{
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textAlign: 'center',
-              mb: 2,
-            }}
-          >
-            Pending Requests
-          </Typography>
-          <Typography
-            variant="h6"
-            color="textSecondary"
-            sx={{ textAlign: 'center', mb: 4, maxWidth: 600 }}
-          >
-            Track the status of your appointment requests
-          </Typography>
-        </Box>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
+        Pending Appointment Requests
+      </Typography>
 
-        {requests.length === 0 ? (
-          <Card
-            sx={{
-              background: 'rgba(255, 255, 255, 0.9)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: 4,
-              boxShadow: '0 8px 32px rgba(24, 90, 157, 0.1)',
-              p: 4,
-              textAlign: 'center',
-            }}
-          >
-            <Typography variant="h6" color="textSecondary">
-              No pending appointment requests found
-            </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-              Your approved or rejected requests will appear in upcoming appointments or appointment history.
-            </Typography>
-          </Card>
-        ) : (
-          <Grid container spacing={3}>
-            {requests.map((request) => (
-              <Grid item xs={12} md={6} key={request._id}>
-                <Card
-                  sx={{
-                    height: '100%',
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    backdropFilter: 'blur(10px)',
-                    borderRadius: 4,
-                    boxShadow: '0 8px 32px rgba(24, 90, 157, 0.1)',
-                    transition: 'transform 0.2s ease-in-out',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                    },
-                  }}
-                >
-                  <CardContent sx={{ p: 3 }}>
-                    <Box
-                      display="flex"
-                      justifyContent="space-between"
-                      alignItems="start"
-                      mb={2}
-                    >
-                      <Typography variant="h6">Dr. {request.doctorName}</Typography>
-                      <Chip
-                        label={request.status.toUpperCase()}
-                        color={getStatusColor(request.status)}
-                        size="small"
-                      />
-                    </Box>
-
-                    <Typography variant="body2" color="textSecondary">
-                      Preferred Date: {formatDate(request.preferredDate)}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Preferred Time: {formatTime(request.preferredTime)}
-                    </Typography>
-                    <Typography variant="body2" sx={{ mt: 1 }}>
-                      Symptoms: {request.symptoms}
-                    </Typography>
-
-                    {request.status === 'approved' && request.scheduledDate && (
-                      <Box
-                        sx={{
-                          mt: 2,
-                          p: 2,
-                          bgcolor: 'success.light',
-                          borderRadius: 2,
-                        }}
-                      >
-                        <Typography
-                          variant="body2"
-                          sx={{ color: 'success.contrastText' }}
-                        >
-                          <strong>Scheduled:</strong>{' '}
-                          {formatDate(request.scheduledDate)} at{' '}
-                          {request.scheduledTime}
-                        </Typography>
-                      </Box>
-                    )}
-
-                    {request.doctorResponse && (
-                      <Box
-                        sx={{
-                          mt: 2,
-                          p: 2,
-                          bgcolor: 'info.light',
-                          borderRadius: 2,
-                        }}
-                      >
-                        <Typography
-                          variant="body2"
-                          sx={{ color: 'info.contrastText' }}
-                        >
-                          <strong>Doctor's Response:</strong>{' '}
-                          {request.doctorResponse.message}
-                        </Typography>
-                      </Box>
-                    )}
-
-                    <Box display="flex" justifyContent="flex-end" mt={2}>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => openChat(request)}
-                        sx={{
-                          borderRadius: 2,
-                          textTransform: 'none',
-                        }}
-                      >
-                        Chat ({request.messages?.length || 0})
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+      <Grid container spacing={3}>
+        {pendingRequests.length === 0 ? (
+          <Grid item xs={12}>
+            <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
+              <Typography variant="h6">
+                No pending appointment requests
+              </Typography>
+            </Paper>
           </Grid>
-        )}
+        ) : (
+          pendingRequests.map((request) => (
+            <Grid item xs={12} key={request._id}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 3,
+                  '&:hover': {
+                    boxShadow: 6,
+                  },
+                }}
+              >
+                <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                  <Box>
+                    <Typography variant="h5" gutterBottom>
+                      Dr. {request.doctorName}
+                    </Typography>
+                    <Chip
+                      label="PENDING"
+                      color="warning"
+                      size="small"
+                      sx={{ mb: 2 }}
+                    />
+                    <Typography variant="body1">
+                      <strong>Date:</strong>{' '}
+                      {format(new Date(request.preferredDate), 'dd/MM/yyyy')}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>Time:</strong> {request.preferredTime}
+                    </Typography>
+                    {request.symptoms && (
+                      <Typography variant="body1">
+                        <strong>Symptoms:</strong> {request.symptoms}
+                      </Typography>
+                    )}
+                    <Typography variant="body1">
+                      <strong>Contact:</strong> {request.contactInfo}
+                    </Typography>
+                  </Box>
 
-        <Dialog
-          open={chatDialogOpen}
-          onClose={() => setChatDialogOpen(false)}
-          maxWidth="sm"
-          fullWidth
-          PaperProps={{
-            sx: {
-              borderRadius: 4,
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(10px)',
-            },
-          }}
-        >
-          <DialogTitle>Chat with Dr. {selectedRequest?.doctorName}</DialogTitle>
-          <DialogContent>
-            <Box sx={{ maxHeight: 300, overflowY: 'auto', mb: 2 }}>
-              {selectedRequest?.messages?.map((message, index) => (
-                <Card
-                  key={index}
-                  sx={{
-                    mb: 1,
-                    borderRadius: 2,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  }}
-                >
-                  <CardContent sx={{ py: 1 }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        color: 'primary.main',
-                        fontWeight: 600,
-                      }}
+                  <Box display="flex" gap={1}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => handleChat(request)}
                     >
-                      {message.senderName}
-                    </Typography>
-                    <Typography variant="body2">{message.message}</Typography>
-                    <Typography variant="caption" color="textSecondary">
-                      {new Date(message.timestamp).toLocaleString()}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-            <Divider sx={{ my: 2 }} />
-            <TextField
-              fullWidth
-              multiline
-              rows={3}
-              placeholder="Type your message..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              variant="outlined"
-              sx={{ mb: 2 }}
-            />
-          </DialogContent>
-          <DialogActions sx={{ p: 2 }}>
-            <Button
-              onClick={() => setChatDialogOpen(false)}
-              variant="outlined"
-              sx={{ borderRadius: 2 }}
-            >
-              Close
-            </Button>
-            <Button
-              onClick={handleSendMessage}
-              variant="contained"
-              disabled={!newMessage.trim()}
-              sx={{
-                borderRadius: 2,
-                background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #1a4f8c 0%, #3db892 100%)',
-                },
-              }}
-            >
-              Send Message
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Container>
-    </PageTemplate>
-  )
-}
+                      CHAT ({request.messages?.length || 0})
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleCancel(request._id)}
+                    >
+                      CANCEL
+                    </Button>
+                  </Box>
+                </Box>
+              </Paper>
+            </Grid>
+          ))
+        )}
+      </Grid>
 
-export default PendingRequests
+      {/* Chat Dialog */}
+      <Dialog
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Chat with Dr. {selectedRequest?.doctorName}
+        </DialogTitle>
+        <DialogContent dividers>
+          <Box sx={{ mb: 2, maxHeight: '300px', overflowY: 'auto' }}>
+            {chatMessages.map((msg, index) => (
+              <Paper
+                key={index}
+                sx={{
+                  p: 1,
+                  mb: 1,
+                  bgcolor: msg.sender === userData.medicalId ? 'primary.light' : 'background.default',
+                  color: msg.sender === userData.medicalId ? 'primary.contrastText' : 'text.primary',
+                }}
+              >
+                <Typography variant="caption" display="block">
+                  {msg.senderName} - {format(new Date(msg.timestamp), 'MMM d, HH:mm')}
+                </Typography>
+                <Typography variant="body2">{msg.message}</Typography>
+              </Paper>
+            ))}
+          </Box>
+          <TextField
+            fullWidth
+            multiline
+            rows={2}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Type your message here..."
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setChatOpen(false)}>Close</Button>
+          <Button
+            onClick={handleSendMessage}
+            variant="contained"
+            disabled={!message.trim()}
+          >
+            Send
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Container>
+  );
+};
+
+export default PendingRequests;

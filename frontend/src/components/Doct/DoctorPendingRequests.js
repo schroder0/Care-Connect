@@ -1,414 +1,250 @@
-import React, { useState, useEffect } from 'react'
-import { useAuth } from '../../contexts/AuthContext'
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   getDoctorAppointmentRequests,
   updateAppointmentRequestStatus,
   addMessageToRequest,
-} from '../../services/api'
+} from '../../services/api';
 import {
   Container,
   Paper,
   Typography,
-  List,
-  Chip,
-  Box,
-  TextField,
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Divider,
-  Card,
-  CardContent,
+  TextField,
+  Box,
   Grid,
-} from '@mui/material'
+  Chip,
+  CircularProgress,
+} from '@mui/material';
+import { format } from 'date-fns';
 
 const DoctorPendingRequests = () => {
-  const { userData, isLoading: authLoading } = useAuth()
-  const [requests, setRequests] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [selectedRequest, setSelectedRequest] = useState(null)
-  const [newMessage, setNewMessage] = useState('')
-  const [chatDialogOpen, setChatDialogOpen] = useState(false)
-  const [actionDialogOpen, setActionDialogOpen] = useState(false)
-  const [doctorResponse, setDoctorResponse] = useState('')
-  const [scheduledDate, setScheduledDate] = useState('')
-  const [scheduledTime, setScheduledTime] = useState('')
-  const [actionType, setActionType] = useState('') // 'approve' or 'reject'
+  const { userData } = useAuth();
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [chatMessages, setChatMessages] = useState([]);
 
   useEffect(() => {
-    // Don't make API calls while authentication is still loading
-    if (authLoading) return
-
-    console.log('DoctorPendingRequests - userData:', userData) // Debug log
     if (userData?.medicalId) {
-      console.log(
-        'Fetching doctor requests for medical ID:',
-        userData.medicalId
-      ) // Debug log
-      fetchRequests()
-    } else {
-      console.log('No medical ID found in userData') // Debug log
-      setLoading(false)
+      fetchRequests();
     }
-  }, [userData, authLoading])
+  }, [userData]);
 
   const fetchRequests = async () => {
     try {
-      console.log(
-        'Making API call to fetch doctor requests for:',
-        userData.medicalId
-      ) // Debug log
-      const response = await getDoctorAppointmentRequests(userData.medicalId)
-      console.log('Doctor API response:', response.data) // Debug log
-      
+      const response = await getDoctorAppointmentRequests(userData.medicalId);
       // Filter only pending requests
-      const pendingRequests = (response.data.requests || []).filter(req => req.status === 'pending')
-      setRequests(pendingRequests)
-      setLoading(false)
+      const pendingRequests = (response.data.requests || []).filter(req => req.status === 'pending');
+      setRequests(pendingRequests);
     } catch (error) {
-      console.error('Error fetching requests:', error)
-      setLoading(false)
+      console.error('Error fetching requests:', error);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
+  const handleApprove = async (requestId) => {
+    try {
+      await updateAppointmentRequestStatus(requestId, {
+        status: 'approved',
+        doctorResponse: 'Appointment approved'
+      });
+      fetchRequests();
+    } catch (error) {
+      console.error('Error approving request:', error);
+    }
+  };
+
+  const handleReject = async (requestId) => {
+    try {
+      await updateAppointmentRequestStatus(requestId, {
+        status: 'rejected',
+        doctorResponse: 'Appointment rejected'
+      });
+      fetchRequests();
+    } catch (error) {
+      console.error('Error rejecting request:', error);
+    }
+  };
+
+  const handleChat = async (request) => {
+    setSelectedRequest(request);
+    setChatMessages(request.messages || []);
+    setChatOpen(true);
+  };
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedRequest) return
+    if (!message.trim() || !selectedRequest) return;
 
     try {
       await addMessageToRequest(selectedRequest._id, {
-        message: newMessage,
+        message: message.trim(),
         senderMedicalId: userData.medicalId,
         senderName: userData.username,
-      })
-      setNewMessage('')
-      fetchRequests()
-      // Update the selected request
-      const updatedResponse = await getDoctorAppointmentRequests(
-        userData.medicalId
-      )
-      const updatedRequest = updatedResponse.data.requests.find(
-        (r) => r._id === selectedRequest._id
-      )
-      setSelectedRequest(updatedRequest)
+      });
+      setMessage('');
+      fetchRequests();
     } catch (error) {
-      console.error('Error sending message:', error)
-      alert('Failed to send message')
+      console.error('Error sending message:', error);
     }
-  }
-
-  const handleApproveReject = async () => {
-    if (!selectedRequest) return
-
-    const updateData = {
-      status: actionType,
-      doctorResponse: doctorResponse,
-    }
-
-    if (actionType === 'approved') {
-      if (!scheduledDate || !scheduledTime) {
-        alert('Please provide scheduled date and time for approval')
-        return
-      }
-      updateData.scheduledDate = scheduledDate
-      updateData.scheduledTime = scheduledTime
-    }
-
-    try {
-      await updateAppointmentRequestStatus(selectedRequest._id, updateData)
-      alert(`Appointment request ${actionType} successfully`)
-      setActionDialogOpen(false)
-      setDoctorResponse('')
-      setScheduledDate('')
-      setScheduledTime('')
-      fetchRequests()
-    } catch (error) {
-      console.error('Error updating request:', error)
-      alert('Failed to update request')
-    }
-  }
-
-  const openChat = (request) => {
-    setSelectedRequest(request)
-    setChatDialogOpen(true)
-  }
-
-  const openActionDialog = (request, action) => {
-    setSelectedRequest(request)
-    setActionType(action)
-    setActionDialogOpen(true)
-  }
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'warning'
-      case 'approved':
-        return 'success'
-      case 'rejected':
-        return 'error'
-      case 'cancelled':
-        return 'default'
-      default:
-        return 'default'
-    }
-  }
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString()
-  }
+  };
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Typography>Loading appointment requests...</Typography>
-      </Container>
-    )
-  }
-
-  if (!userData) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h6" color="error">
-            Please log in to view appointment requests.
-          </Typography>
-        </Paper>
-      </Container>
-    )
-  }
-
-  if (!userData.medicalId) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h6" color="warning.main">
-            Please update your profile with a medical ID to view appointment
-            requests.
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            Current user data: {JSON.stringify(userData, null, 2)}
-          </Typography>
-        </Paper>
-      </Container>
-    )
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
         Appointment Requests
       </Typography>
 
-      {requests.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="textSecondary">
-            No pending appointment requests found
-          </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-            All requests have been processed. Check upcoming appointments for approved requests.
-          </Typography>
-        </Paper>
-      ) : (
-        <Grid container spacing={3}>
-          {requests.map((request) => (
-            <Grid item xs={12} md={6} key={request._id}>
-              <Paper sx={{ p: 3, height: '100%' }}>
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="start"
-                  mb={2}
-                >
-                  <Typography variant="h6">{request.patientName}</Typography>
+      <Grid container spacing={3}>
+        {requests.map((request) => (
+          <Grid item xs={12} key={request._id}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 3,
+                '&:hover': {
+                  boxShadow: 6,
+                },
+              }}
+            >
+              <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                <Box>
+                  <Typography variant="h5" gutterBottom>
+                    {request.patientName}
+                  </Typography>
                   <Chip
-                    label={request.status.toUpperCase()}
-                    color={getStatusColor(request.status)}
+                    label="PENDING"
+                    color="warning"
                     size="small"
+                    sx={{ mb: 2 }}
                   />
+                  <Typography variant="body1" sx={{ mt: 1 }}>
+                    <strong>Medical ID:</strong> {request.patientMedicalId}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Preferred Date:</strong>{' '}
+                    {format(new Date(request.preferredDate), 'dd/MM/yyyy')}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Preferred Time:</strong> {request.preferredTime}
+                  </Typography>
+                  {request.symptoms && (
+                    <Typography variant="body1">
+                      <strong>Symptoms:</strong> {request.symptoms}
+                    </Typography>
+                  )}
+                  <Typography variant="body1">
+                    <strong>Contact:</strong> {request.contactInfo}
+                  </Typography>
                 </Box>
 
-                <Typography variant="body2" color="textSecondary">
-                  <strong>Medical ID:</strong> {request.patientMedicalId}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  <strong>Preferred Date:</strong>{' '}
-                  {formatDate(request.preferredDate)}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" mb={1}>
-                  <strong>Preferred Time:</strong> {request.preferredTime}
-                </Typography>
-
-                <Typography variant="body2" sx={{ mb: 2 }}>
-                  <strong>Symptoms:</strong> {request.symptoms}
-                </Typography>
-
-                <Typography variant="body2" sx={{ mb: 2 }}>
-                  <strong>Contact:</strong> {request.contactInfo}
-                </Typography>
-
-                {request.status === 'approved' && request.scheduledDate && (
-                  <Box
-                    sx={{
-                      mb: 2,
-                      p: 1,
-                      bgcolor: 'success.light',
-                      borderRadius: 1,
-                    }}
-                  >
-                    <Typography
-                      variant="body2"
-                      sx={{ color: 'success.contrastText' }}
-                    >
-                      <strong>Scheduled:</strong>{' '}
-                      {formatDate(request.scheduledDate)} at{' '}
-                      {request.scheduledTime}
-                    </Typography>
-                  </Box>
-                )}
-
-                <Box display="flex" gap={1} flexWrap="wrap">
+                <Box display="flex" gap={1}>
                   <Button
                     variant="outlined"
-                    size="small"
-                    onClick={() => openChat(request)}
+                    color="primary"
+                    onClick={() => handleChat(request)}
                   >
-                    Chat ({request.messages?.length || 0})
+                    CHAT ({request.messages?.length || 0})
                   </Button>
-
-                  {request.status === 'pending' && (
-                    <>
-                      <Button
-                        variant="contained"
-                        color="success"
-                        size="small"
-                        onClick={() => openActionDialog(request, 'approved')}
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        size="small"
-                        onClick={() => openActionDialog(request, 'rejected')}
-                      >
-                        Reject
-                      </Button>
-                    </>
-                  )}
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => handleApprove(request._id)}
+                    sx={{ ml: 1 }}
+                  >
+                    APPROVE
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleReject(request._id)}
+                    sx={{ ml: 1 }}
+                  >
+                    REJECT
+                  </Button>
                 </Box>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+              </Box>
+            </Paper>
+          </Grid>
+        ))}
+
+        {requests.length === 0 && (
+          <Grid item xs={12}>
+            <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
+              <Typography variant="h6">
+                No pending appointment requests
+              </Typography>
+            </Paper>
+          </Grid>
+        )}
+      </Grid>
 
       {/* Chat Dialog */}
       <Dialog
-        open={chatDialogOpen}
-        onClose={() => setChatDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Chat with {selectedRequest?.patientName}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ maxHeight: 300, overflowY: 'auto', mb: 2 }}>
-            {selectedRequest?.messages?.map((message, index) => (
-              <Card key={index} sx={{ mb: 1 }}>
-                <CardContent sx={{ py: 1 }}>
-                  <Typography variant="subtitle2" color="primary">
-                    {message.senderName}
-                  </Typography>
-                  <Typography variant="body2">{message.message}</Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {new Date(message.timestamp).toLocaleString()}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
-          <Divider sx={{ my: 2 }} />
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            placeholder="Type your message..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            variant="outlined"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setChatDialogOpen(false)}>Close</Button>
-          <Button
-            variant="contained"
-            onClick={handleSendMessage}
-            disabled={!newMessage.trim()}
-          >
-            Send Message
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Action Dialog (Approve/Reject) */}
-      <Dialog
-        open={actionDialogOpen}
-        onClose={() => setActionDialogOpen(false)}
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
         maxWidth="sm"
         fullWidth
       >
         <DialogTitle>
-          {actionType === 'approved' ? 'Approve' : 'Reject'} Appointment Request
+          Chat with {selectedRequest?.patientName}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent dividers>
+          <Box sx={{ mb: 2, maxHeight: '300px', overflowY: 'auto' }}>
+            {chatMessages.map((msg, index) => (
+              <Paper
+                key={index}
+                sx={{
+                  p: 1,
+                  mb: 1,
+                  bgcolor: msg.sender === userData.medicalId ? 'primary.light' : 'background.default',
+                  color: msg.sender === userData.medicalId ? 'primary.contrastText' : 'text.primary',
+                }}
+              >
+                <Typography variant="caption" display="block">
+                  {msg.senderName} - {format(new Date(msg.timestamp), 'MMM d, HH:mm')}
+                </Typography>
+                <Typography variant="body2">{msg.message}</Typography>
+              </Paper>
+            ))}
+          </Box>
           <TextField
             fullWidth
             multiline
-            rows={3}
-            label="Response Message"
-            value={doctorResponse}
-            onChange={(e) => setDoctorResponse(e.target.value)}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            placeholder={`Enter your ${actionType === 'approved' ? 'approval' : 'rejection'} message...`}
+            rows={2}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Type your message here..."
           />
-
-          {actionType === 'approved' && (
-            <>
-              <TextField
-                fullWidth
-                type="date"
-                label="Scheduled Date"
-                value={scheduledDate}
-                onChange={(e) => setScheduledDate(e.target.value)}
-                InputLabelProps={{ shrink: true }}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                fullWidth
-                type="time"
-                label="Scheduled Time"
-                value={scheduledTime}
-                onChange={(e) => setScheduledTime(e.target.value)}
-                InputLabelProps={{ shrink: true }}
-              />
-            </>
-          )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setActionDialogOpen(false)}>Cancel</Button>
+          <Button onClick={() => setChatOpen(false)}>Close</Button>
           <Button
+            onClick={handleSendMessage}
             variant="contained"
-            color={actionType === 'approved' ? 'success' : 'error'}
-            onClick={handleApproveReject}
+            disabled={!message.trim()}
           >
-            {actionType === 'approved' ? 'Approve' : 'Reject'}
+            Send
           </Button>
         </DialogActions>
       </Dialog>
     </Container>
-  )
-}
+  );
+};
 
-export default DoctorPendingRequests
+export default DoctorPendingRequests;

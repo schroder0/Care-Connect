@@ -24,7 +24,7 @@ export default function Hero() {
     <Box
       id="hero"
       sx={{
-        width: '100%',
+        width: '100vw',
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
@@ -34,7 +34,12 @@ export default function Hero() {
         overflow: 'hidden',
         padding: 0,
         margin: 0,
+        marginLeft: 'calc(-50vw + 50%)',
+        marginRight: 'calc(-50vw + 50%)',
         boxSizing: 'border-box',
+        position: 'relative',
+        left: 0,
+        right: 0,
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -48,7 +53,7 @@ export default function Hero() {
       }}
     >
       <Container
-        maxWidth="lg"
+        maxWidth={false}
         sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -58,6 +63,9 @@ export default function Hero() {
           py: { xs: 8, sm: 10 },
           position: 'relative',
           zIndex: 1,
+          maxWidth: '1440px',
+          width: '100%',
+          mx: 'auto',
         }}
       >
         <Stack 

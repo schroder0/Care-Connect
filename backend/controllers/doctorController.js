@@ -31,21 +31,37 @@ exports.updateAvailability = async (req, res) => {
 }
 
 exports.searchDoctors = async (req, res) => {
-  const { specialty, location } = req.query
+  const { name, specialty, location } = req.query
 
   try {
     let query = { role: 'doctor' }
 
-    if (specialty) query.specialty = specialty
-    if (location) query.location = location
+    // Case-insensitive name search across username, firstName, and lastName
+    if (name) {
+      query.$or = [
+        { username: { $regex: name, $options: 'i' } },
+        { firstName: { $regex: name, $options: 'i' } },
+        { lastName: { $regex: name, $options: 'i' } }
+      ];
+    }
+
+    // Case-insensitive specialty search
+    if (specialty) {
+      query.specialty = { $regex: specialty, $options: 'i' };
+    }
+
+    // Case-insensitive location search
+    if (location) {
+      query.location = { $regex: location, $options: 'i' };
+    }
 
     const doctors = await User.find(query)
-
-    // Optionally filter by availability here
-    // For example, using a predefined availability field or method
+      .select('username firstName lastName email specialty location medicalId profilePicture') // Include all necessary fields
+      .sort({ firstName: 1, lastName: 1 }); // Sort by name
 
     res.status(200).json(doctors)
   } catch (error) {
+    console.error('Error searching doctors:', error);
     res.status(500).json({ message: 'Internal server error', error })
   }
 }

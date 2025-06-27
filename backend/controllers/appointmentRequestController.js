@@ -78,13 +78,22 @@ exports.getDoctorAppointmentRequests = async (req, res) => {
 exports.getPatientAppointmentRequests = async (req, res) => {
   try {
     const { patientMedicalId } = req.params
-    console.log("Hello" + patientMedicalId);
-    const requests = await AppointmentRequest.find({ 
-      patientMedicalId 
-    }).sort({ createdAt: -1 })
+    console.log("Fetching appointments for patient:", patientMedicalId);
 
+    // Get current date at start of day
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    const requests = await AppointmentRequest.find({ 
+      patientMedicalId,
+      status: { $in: ['pending', 'approved'] },
+      preferredDate: { $gte: currentDate }
+    }).sort({ preferredDate: 1 })
+
+    console.log(`Found ${requests.length} appointments for patient`);
     res.status(200).json({ requests })
   } catch (error) {
+    console.error('Error in getPatientAppointmentRequests:', error);
     res.status(500).json({
       message: 'Error fetching appointment requests',
       error: error.message

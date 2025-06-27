@@ -4,7 +4,6 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const path = require('path')
 const http = require('http')
-// const { wss } = require('./websocket') // Commented out to avoid conflicts with Socket.IO
 const { initSocket } = require('./socket')
 require('dotenv').config()
 
@@ -48,16 +47,16 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, 'public'))) //eslint-disable-line
 
 // Routes
-authRoutes(app); //authRoutes(app)
-profileRoutes(app); //profileRoutes(app)
-symptomRoutes(app); //symptomRoutes(app)
-appointmentRoutes(app); //appointmentRoutes(app)
-appointmentRequestRoutes(app); //appointmentRequestRoutes(app)
-doctorRoutes(app); //doctorRoutes(app)
-adminRoutes(app); //adminRoutes(app
-activityLogRoutes(app); //activityLogRoutes(app)
-analyticsRoutes(app); //analyticsRoutes(app)
-feedbackRoutes(app) ;//feedbackRoutes(app)
+authRoutes(app)
+profileRoutes(app)
+symptomRoutes(app)
+app.use('/api', appointmentRoutes) // Updated to use router
+appointmentRequestRoutes(app)
+doctorRoutes(app)
+adminRoutes(app)
+activityLogRoutes(app)
+analyticsRoutes(app)
+feedbackRoutes(app)
 
 // Static file serving
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))) //eslint-disable-line

@@ -49,69 +49,73 @@ const AppointmentsHub = lazy(() => import('./pages/AppointmentsHub'));
 
 const App = () => {
   return (
-    <AuthProvider>
+    <Router>
       <ThemeProvider>
-        <Router>
+        <AuthProvider>
           <CssBaseline />
           <Navbar />
-          <Grid container spacing={2} sx={{ p: 2 }}>
-            <Grid item xs={12}></Grid>
-            <Suspense fallback={<CircularProgress />}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/login" element={<Login />} />
+          <Suspense
+            fallback={
+              <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                style={{ minHeight: '100vh' }}
+              >
+                <CircularProgress />
+              </Grid>
+            }
+          >
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<Home />} />
+                <Route path="about" element={<About />} />
+                <Route path="login" element={<Login />} />
+                <Route path="signup" element={<Signup />} />
+              </Route>
 
-                <Route
-                  path="/"
-                  element={
-                    <PrivateRoute>
-                      <MainLayout />
-                    </PrivateRoute>
-                  }
-                >
-                  <Route path="profile" element={<ProfileLayout />}>
-                    <Route path="" element={<UserProfile />} />
-                    <Route path="update" element={<UpdateProfile />} />
-                    <Route path="upload" element={<UploadProfilePicture />} />
-                  </Route>
+              {/* Patient routes */}
+              <Route path="/patient" element={<PatientLayout />}>
+                <Route path="appointments-hub" element={<AppointmentsHub />} />
+                <Route path="book-appointment" element={<BookAppointment />} />
+                <Route path="pending-requests" element={<RolePendingRequests />} />
+                <Route path="upcoming-appointments" element={<RoleUpcomingAppointments />} />
+                <Route path="appointment-history" element={<AppointmentHistory />} />
+                <Route path="symptom-checker" element={<SymptomChecker />} />
+                <Route path="search-doctors" element={<SearchDoctors />} />
+                <Route path="feedback" element={<FeedbackForm />} />
+              </Route>
 
-                  <Route path="/" element={<AdminLayout />}>
-                    <Route path="users" element={<Users />} />
-                    <Route path="doctors" element={<Doctors />} />
-                    <Route path="appointments" element={<Appointments />} />
-                    <Route path="analytics" element={<Analytics />} />
-                    <Route path="activity-logs" element={<ActivityLogs />} />
-                  </Route>
+              {/* Doctor routes */}
+              <Route path="/doctor" element={<DoctorLayout />}>
+                <Route path="appointments-hub" element={<AppointmentsHub />} />
+                <Route path="pending-requests" element={<RolePendingRequests />} />
+                <Route path="upcoming-appointments" element={<RoleUpcomingAppointments />} />
+                <Route path="appointment-history" element={<AppointmentHistory />} />
+                <Route path="feedback" element={<DoctorFeedback />} />
+              </Route>
 
-                  <Route path="/" element={<DoctorLayout />}>
-                    <Route path="appointment-history" element={<AppointmentHistory />} />
-                    <Route path="doctor-feedback" element={<DoctorFeedback />} />
-                  </Route>
+              {/* Profile routes */}
+              <Route path="/profile" element={<ProfileLayout />}>
+                <Route index element={<UserProfile />} />
+                <Route path="update" element={<UpdateProfile />} />
+                <Route path="picture" element={<UploadProfilePicture />} />
+              </Route>
 
-                  <Route path="/" element={<PatientLayout />}>
-                    {/* AppointmentsHub is the main entry, but BookAppointment route is needed for navigation */}
-                    <Route path="appointments-hub" element={<AppointmentsHub />} />
-                    <Route path="book-appointment" element={<BookAppointment />} />
-                    <Route path="appointment-history" element={<AppointmentHistory />} />
-                    <Route path="symptom-checker" element={<SymptomChecker />} />
-                    <Route path="search-doctors" element={<SearchDoctors />} />
-                    <Route path="feedback" element={<FeedbackForm />} />
-                  </Route>
-                  {/* Remove BookAppointment, PendingRequests, UpcomingAppointments from patient nav */}
-
-                  {/* Shared routes for all authenticated users */}
-                  {/* If you want to keep these for other roles, you can leave them here */}
-                  <Route path="pending-requests" element={<RolePendingRequests />} />
-                  <Route path="upcoming-appointments" element={<RoleUpcomingAppointments />} />
-                </Route>
-              </Routes>
-            </Suspense>
-          </Grid>
-        </Router>
+              {/* Admin routes */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route path="users" element={<Users />} />
+                <Route path="doctors" element={<Doctors />} />
+                <Route path="appointments" element={<Appointments />} />
+                <Route path="analytics" element={<Analytics />} />
+                <Route path="activity-logs" element={<ActivityLogs />} />
+              </Route>
+            </Routes>
+          </Suspense>
+        </AuthProvider>
       </ThemeProvider>
-    </AuthProvider>
+    </Router>
   )
 }
 

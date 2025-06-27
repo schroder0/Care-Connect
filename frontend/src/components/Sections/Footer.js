@@ -51,12 +51,15 @@ export default function Footer() {
     <Box
       component="footer"
       sx={{
-        width: '100%',
+        width: '100vw',
         position: 'relative',
         background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
         color: '#fff',
         py: { xs: 6, sm: 10 },
         overflow: 'hidden',
+        marginLeft: 'calc(-50vw + 50%)',
+        marginRight: 'calc(-50vw + 50%)',
+        boxSizing: 'border-box',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -71,10 +74,12 @@ export default function Footer() {
       }}
     >
       <Container 
-        maxWidth="lg" 
+        maxWidth={false}
         sx={{ 
           position: 'relative',
           zIndex: 1,
+          maxWidth: '1440px',
+          mx: 'auto',
           px: { xs: 3, sm: 4 },
         }}
       >
