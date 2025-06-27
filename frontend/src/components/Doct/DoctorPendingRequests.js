@@ -30,6 +30,16 @@ const DoctorPendingRequests = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
+  
+  // Add state for approval dialog
+  const [approvalDialogOpen, setApprovalDialogOpen] = useState(false);
+  const [rejectionDialogOpen, setRejectionDialogOpen] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState('');
+  const [scheduledTime, setScheduledTime] = useState('');
+  const [doctorResponse, setDoctorResponse] = useState('');
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [approvalRequestId, setApprovalRequestId] = useState(null);
+  const [rejectionRequestId, setRejectionRequestId] = useState(null);
 
   useEffect(() => {
     if (userData?.medicalId) {
@@ -50,27 +60,59 @@ const DoctorPendingRequests = () => {
     }
   };
 
-  const handleApprove = async (requestId) => {
+  const handleApprove = (requestId) => {
+    console.log('Approve clicked for request:', requestId); // Debug log
+    setApprovalRequestId(requestId);
+    setScheduledDate('');
+    setScheduledTime('');
+    setDoctorResponse('');
+    setApprovalDialogOpen(true);
+    console.log('Approval dialog should be open now'); // Debug log
+  };
+
+  const confirmApproval = async () => {
+    if (!scheduledDate || !scheduledTime) {
+      alert('Please select both date and time for the appointment.');
+      return;
+    }
+
     try {
-      await updateAppointmentRequestStatus(requestId, {
+      await updateAppointmentRequestStatus(approvalRequestId, {
         status: 'approved',
-        doctorResponse: 'Appointment approved'
+        doctorResponse: doctorResponse || 'Appointment approved',
+        scheduledDate,
+        scheduledTime
       });
+      setApprovalDialogOpen(false);
       fetchRequests();
     } catch (error) {
       console.error('Error approving request:', error);
+      alert('Failed to approve appointment. Please try again.');
     }
   };
 
-  const handleReject = async (requestId) => {
+  const handleReject = (requestId) => {
+    setRejectionRequestId(requestId);
+    setRejectionReason('');
+    setRejectionDialogOpen(true);
+  };
+
+  const confirmRejection = async () => {
+    if (!rejectionReason.trim()) {
+      alert('Please provide a reason for rejection.');
+      return;
+    }
+
     try {
-      await updateAppointmentRequestStatus(requestId, {
+      await updateAppointmentRequestStatus(rejectionRequestId, {
         status: 'rejected',
-        doctorResponse: 'Appointment rejected'
+        doctorResponse: rejectionReason
       });
+      setRejectionDialogOpen(false);
       fetchRequests();
     } catch (error) {
       console.error('Error rejecting request:', error);
+      alert('Failed to reject appointment. Please try again.');
     }
   };
 
@@ -193,6 +235,102 @@ const DoctorPendingRequests = () => {
           </Grid>
         )}
       </Grid>
+
+      {/* Approval Dialog */}
+      <Dialog
+        open={approvalDialogOpen}
+        onClose={() => setApprovalDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Approve Appointment
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2 }}>
+            <TextField
+              fullWidth
+              label="Scheduled Date"
+              type="date"
+              value={scheduledDate}
+              onChange={(e) => setScheduledDate(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{ mb: 2 }}
+              required
+            />
+            <TextField
+              fullWidth
+              label="Scheduled Time"
+              type="time"
+              value={scheduledTime}
+              onChange={(e) => setScheduledTime(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{ mb: 2 }}
+              required
+            />
+            <TextField
+              fullWidth
+              label="Doctor's Response (Optional)"
+              multiline
+              rows={3}
+              value={doctorResponse}
+              onChange={(e) => setDoctorResponse(e.target.value)}
+              placeholder="Add any additional notes for the patient..."
+              sx={{ mb: 2 }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setApprovalDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={confirmApproval}
+            variant="contained"
+            color="success"
+          >
+            Confirm Approval
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Rejection Dialog */}
+      <Dialog
+        open={rejectionDialogOpen}
+        onClose={() => setRejectionDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Reject Appointment
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2 }}>
+            <TextField
+              fullWidth
+              label="Reason for Rejection"
+              multiline
+              rows={4}
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              placeholder="Please provide a reason for rejecting this appointment request..."
+              required
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRejectionDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={confirmRejection}
+            variant="contained"
+            color="error"
+          >
+            Confirm Rejection
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Chat Dialog */}
       <Dialog
