@@ -105,8 +105,34 @@ export const createFeedback = async (data) => {
   }
 }
 
-export const getFeedbackForDoctor = (doctorId) =>
-  api.get(`/feedback/${doctorId}`)
+export const getDoctorFeedback = async (doctorMedicalId) => {
+  try {
+    const response = await api.get(`/feedback/doctor/${doctorMedicalId}`)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export const getPatientFeedback = async (patientMedicalId) => {
+  try {
+    const response = await api.get(`/feedback/patient/${patientMedicalId}`)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export const deleteFeedback = async (feedbackId, patientMedicalId) => {
+  try {
+    const response = await api.delete(`/feedback/${feedbackId}`, {
+      data: { patientMedicalId }
+    })
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
 
 // Notifications
 export const sendReminder = (data) =>

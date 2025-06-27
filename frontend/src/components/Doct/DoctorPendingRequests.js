@@ -193,6 +193,9 @@ const DoctorPendingRequests = () => {
                   <Typography variant="body1">
                     <strong>Contact:</strong> {request.contactInfo}
                   </Typography>
+                  <Typography variant="body1">
+                    <strong>Meeting Type:</strong> {request.meetingType === 'online' ? '📹 Online Video Call' : '📍 In-Person Meeting'}
+                  </Typography>
                 </Box>
 
                 <Box display="flex" gap={1}>

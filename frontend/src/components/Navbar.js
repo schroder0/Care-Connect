@@ -58,7 +58,7 @@ const Navbar = () => {
     { label: 'Symptom Checker', link: '/patient/symptom-checker' },
     { label: 'Search Doctors', link: '/patient/search-doctors' },
     { label: 'Appointments', link: '/patient/appointments-hub' },
-    { label: 'Give Feedback', link: '/patient/feedback' },
+    { label: 'Feedback', link: '/patient/feedback-hub' },
   ]
 
   const isActiveRoute = (path) => location.pathname === path

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { createFeedback, getAllDoctors } from '../../services/api'
-import { useLocation } from 'react-router-dom'
 import {
   Container,
   Paper,
@@ -23,39 +22,22 @@ import { Star, Send } from '@mui/icons-material'
 
 const FeedbackForm = () => {
   const { userData } = useAuth()
-  const location = useLocation()
   const [doctors, setDoctors] = useState([])
   const [loading, setLoading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   
-  // Get preselected data from navigation state
-  const preselectedDoctor = location.state?.preselectedDoctor
-  const appointmentId = location.state?.appointmentId
-  
   const [formData, setFormData] = useState({
-    doctorMedicalId: preselectedDoctor || '',
+    doctorMedicalId: '',
     rating: 0,
     comment: '',
     isAnonymous: false,
-    appointmentId: appointmentId || null,
   })
 
   useEffect(() => {
     fetchDoctors()
   }, [])
-
-  useEffect(() => {
-    // Update form data if preselected doctor changes
-    if (preselectedDoctor) {
-      setFormData(prev => ({
-        ...prev,
-        doctorMedicalId: preselectedDoctor,
-        appointmentId: appointmentId || null
-      }))
-    }
-  }, [preselectedDoctor, appointmentId])
 
   const fetchDoctors = async () => {
     try {
@@ -108,16 +90,14 @@ const FeedbackForm = () => {
         rating: formData.rating,
         comment: formData.comment.trim(),
         isAnonymous: formData.isAnonymous,
-        appointmentId: formData.appointmentId,
       })
 
       setSuccess(true)
       setFormData({
-        doctorMedicalId: preselectedDoctor || '',
+        doctorMedicalId: '',
         rating: 0,
         comment: '',
         isAnonymous: false,
-        appointmentId: appointmentId || null,
       })
 
       // Hide success message after 3 seconds
@@ -161,10 +141,7 @@ const FeedbackForm = () => {
           Share Your Feedback
         </Typography>
         <Typography variant="body1" color="textSecondary" sx={{ mb: 4 }}>
-          {preselectedDoctor 
-            ? 'Share your experience with this appointment' 
-            : 'Help other patients by sharing your experience with our doctors'
-          }
+          Help other patients by sharing your experience with our doctors
         </Typography>
 
         {success && (
@@ -187,7 +164,6 @@ const FeedbackForm = () => {
               value={formData.doctorMedicalId}
               onChange={handleChange}
               required
-              disabled={!!preselectedDoctor} // Disable if doctor is preselected
             >
               {doctors.map((doctor) => (
                 <MenuItem key={doctor.medicalId} value={doctor.medicalId}>
@@ -195,11 +171,6 @@ const FeedbackForm = () => {
                 </MenuItem>
               ))}
             </Select>
-            {preselectedDoctor && (
-              <Typography variant="caption" color="textSecondary" sx={{ mt: 1 }}>
-                Doctor preselected from appointment
-              </Typography>
-            )}
           </FormControl>
 
           <Box sx={{ mb: 3 }}>
@@ -266,11 +237,10 @@ const FeedbackForm = () => {
               variant="outlined"
               onClick={() => {
                 setFormData({
-                  doctorMedicalId: preselectedDoctor || '',
+                  doctorMedicalId: '',
                   rating: 0,
                   comment: '',
                   isAnonymous: false,
-                  appointmentId: appointmentId || null,
                 })
                 setError('')
               }}

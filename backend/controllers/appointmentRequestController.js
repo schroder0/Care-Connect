@@ -6,6 +6,15 @@ const {
   sendAppointmentRejectionEmail 
 } = require('../services/emailService')
 
+// Generate Jitsi video call link
+const generateJitsiLink = (patientName, doctorName, appointmentDate, appointmentTime) => {
+  // Create a unique room name using patient name, doctor name, and appointment details
+  const roomName = `CareConnect-${patientName.replace(/\s+/g, '')}-${doctorName.replace(/\s+/g, '')}-${new Date(appointmentDate).toISOString().split('T')[0]}-${appointmentTime.replace(':', '')}`
+  // Remove special characters and make it URL safe
+  const sanitizedRoomName = roomName.replace(/[^a-zA-Z0-9-]/g, '')
+  return `https://meet.jit.si/${sanitizedRoomName}`
+}
+
 // Create a new appointment request
 exports.createAppointmentRequest = async (req, res) => {
   try {
@@ -16,7 +25,8 @@ exports.createAppointmentRequest = async (req, res) => {
       preferredTime, 
       symptoms, 
       contactInfo, 
-      notificationType 
+      notificationType,
+      meetingType 
     } = req.body
 
     // Get doctor and patient details
@@ -43,6 +53,7 @@ exports.createAppointmentRequest = async (req, res) => {
       symptoms,
       contactInfo,
       notificationType,
+      meetingType: meetingType || 'offline', // Default to offline if not provided
       status: 'pending'
     })
 
@@ -128,6 +139,16 @@ exports.updateAppointmentRequestStatus = async (req, res) => {
     if (status === 'approved' && scheduledDate && scheduledTime) {
       request.scheduledDate = new Date(scheduledDate)
       request.scheduledTime = scheduledTime
+      
+      // Generate video call link for online meetings
+      if (request.meetingType === 'online') {
+        request.videoCallLink = generateJitsiLink(
+          request.patientName,
+          request.doctorName,
+          scheduledDate,
+          scheduledTime
+        )
+      }
     }
 
     await request.save()
@@ -159,7 +180,8 @@ exports.updateAppointmentRequestStatus = async (req, res) => {
             request.doctorName,
             request.scheduledDate,
             request.scheduledTime,
-            doctorResponse
+            doctorResponse,
+            request.meetingType
           )
           console.log('Approval email sent to patient:', patientEmail)
         }
@@ -172,7 +194,8 @@ exports.updateAppointmentRequestStatus = async (req, res) => {
             request.doctorName,
             request.patientName,
             request.scheduledDate,
-            request.scheduledTime
+            request.scheduledTime,
+            request.meetingType
           )
           console.log('Confirmation email sent to doctor:', doctor.email)
         }

@@ -18,6 +18,8 @@ import {
   Paper,
   Box,
   CircularProgress,
+  Switch,
+  FormControlLabel,
 } from '@mui/material'
 
 const BookAppointment = () => {
@@ -30,6 +32,7 @@ const BookAppointment = () => {
     symptoms: '',
     contactInfo: '',
     notificationType: 'email',
+    meetingType: 'offline', // Default to offline meeting
   })
   const [doctors, setDoctors] = useState([])
   const [loading, setLoading] = useState(true)
@@ -172,6 +175,35 @@ const BookAppointment = () => {
             required
             sx={{ mb: 2 }}
           />
+
+          <Box sx={{ mb: 3 }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={formData.meetingType === 'online'}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    meetingType: e.target.checked ? 'online' : 'offline'
+                  })}
+                  color="primary"
+                />
+              }
+              label={
+                <Box>
+                  <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                    {formData.meetingType === 'online' ? 'Online Video Call' : 'In-Person Meeting'}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {formData.meetingType === 'online' 
+                      ? 'This appointment will be conducted via video call' 
+                      : 'This appointment will be conducted in-person at the clinic'
+                    }
+                  </Typography>
+                </Box>
+              }
+              sx={{ alignItems: 'flex-start' }}
+            />
+          </Box>
 
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel>Notification Preference</InputLabel>

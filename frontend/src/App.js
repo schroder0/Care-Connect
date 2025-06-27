@@ -39,11 +39,13 @@ const UploadProfilePicture = lazy(
 )
 const FeedbackForm = lazy(() => import('./components/Feed/FeedbackForm'))
 const DoctorFeedback = lazy(() => import('./components/Feed/DoctorFeedback'))
+const PatientFeedbackHistory = lazy(() => import('./components/Feed/PatientFeedbackHistory'))
 const SearchDoctors = lazy(() => import('./components/Doct/SearchDoctors'))
 const SymptomChecker = lazy(() => import('./components/Symptom/SymptomChecker'))
 
 const Home = lazy(() => import('./pages/Home'))
 const About = lazy(() => import('./pages/About'))
+const FeedbackHub = lazy(() => import('./pages/FeedbackHub'))
 
 const AppointmentsHub = lazy(() => import('./pages/AppointmentsHub'));
 
@@ -84,7 +86,9 @@ const App = () => {
                 <Route path="appointment-history" element={<AppointmentHistory />} />
                 <Route path="symptom-checker" element={<SymptomChecker />} />
                 <Route path="search-doctors" element={<SearchDoctors />} />
+                <Route path="feedback-hub" element={<FeedbackHub />} />
                 <Route path="feedback" element={<FeedbackForm />} />
+                <Route path="feedback-history" element={<PatientFeedbackHistory />} />
               </Route>
 
               {/* Doctor routes */}

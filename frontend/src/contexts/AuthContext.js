@@ -51,8 +51,9 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('userData')
         localStorage.removeItem('userRole')
       } else {
+        const parsedUser = JSON.parse(storedUser)
         setToken(storedToken)
-        setUserData(JSON.parse(storedUser))
+        setUserData(parsedUser)
         setUserRole(storedRole)
         setIsAuthenticated(true)
       }

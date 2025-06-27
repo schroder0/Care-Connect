@@ -16,29 +16,22 @@ import {
   LinearProgress,
   Avatar,
 } from '@mui/material'
-import { Star, Person, PersonOff } from '@mui/icons-material'
+import { Star, Person, Anonymous } from '@mui/icons-material'
 
-const DoctorFeedback = () => {
-  const { userData, userRole } = useAuth()
+const DoctorFeedbackView = () => {
+  const { userData } = useAuth()
   const [feedbackData, setFeedbackData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    // Use userRole as fallback if userData.role is undefined
-    const currentRole = userData?.role || userRole
-    
-    if (userData?.medicalId && currentRole === 'doctor') {
+    if (userData?.medicalId && userData?.role === 'doctor') {
       fetchFeedback()
-    } else if (currentRole && currentRole !== 'doctor') {
+    } else {
       setLoading(false)
-      setError(`Access denied. Current role: ${currentRole}. Only doctors can view their feedback.`)
-    } else if (!userData) {
-      setLoading(false)
-      setError('Please log in to view feedback.')
+      setError('Access denied. Only doctors can view their feedback.')
     }
-    // If userData is still loading, keep loading state
-  }, [userData, userRole])
+  }, [userData])
 
   const fetchFeedback = async () => {
     try {
@@ -195,7 +188,7 @@ const DoctorFeedback = () => {
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                     <Avatar sx={{ bgcolor: feedback.isAnonymous ? 'grey.400' : 'primary.main' }}>
-                      {feedback.isAnonymous ? <PersonOff /> : <Person />}
+                      {feedback.isAnonymous ? <Anonymous /> : <Person />}
                     </Avatar>
                     
                     <Box sx={{ flexGrow: 1 }}>
@@ -289,4 +282,4 @@ const DoctorFeedback = () => {
   )
 }
 
-export default DoctorFeedback
+export default DoctorFeedbackView

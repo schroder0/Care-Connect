@@ -10,12 +10,17 @@ import {
   CardContent,
   Grid,
   CircularProgress,
+  Button,
+  Chip,
 } from '@mui/material'
+import { VideoCall, LocationOn, Feedback } from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom'
 
 const AppointmentHistory = () => {
   const { userData, isLoading: authLoading } = useAuth()
   const [appointments, setAppointments] = useState([])
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (authLoading) return
@@ -113,14 +118,75 @@ const AppointmentHistory = () => {
                       }
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      <strong>Date:</strong> {formatDate(appointment.date)}
+                      <strong>Date:</strong> {formatDate(appointment.scheduledDate || appointment.preferredDate)}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      <strong>Time:</strong> {appointment.time}
+                      <strong>Time:</strong> {appointment.scheduledTime || appointment.preferredTime}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      <strong>Status:</strong> {appointment.status || 'Unknown'}
-                    </Typography>
+                    <Box sx={{ my: 1 }}>
+                      <Chip 
+                        label={appointment.status || 'Unknown'} 
+                        color={
+                          appointment.status === 'approved' ? 'success' : 
+                          appointment.status === 'rejected' ? 'error' : 
+                          appointment.status === 'pending' ? 'warning' : 'default'
+                        }
+                        size="small"
+                      />
+                      {appointment.meetingType && (
+                        <Chip 
+                          icon={appointment.meetingType === 'online' ? <VideoCall /> : <LocationOn />}
+                          label={appointment.meetingType === 'online' ? 'Video Call' : 'In-Person'} 
+                          color={appointment.meetingType === 'online' ? 'primary' : 'secondary'}
+                          size="small"
+                          sx={{ ml: 1 }}
+                        />
+                      )}
+                    </Box>
+                    {appointment.status === 'approved' && appointment.meetingType === 'online' && appointment.videoCallLink && (
+                      <Box sx={{ mt: 2 }}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          startIcon={<VideoCall />}
+                          href={appointment.videoCallLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          size="small"
+                        >
+                          Join Video Call
+                        </Button>
+                        <Typography variant="caption" display="block" sx={{ mt: 1, color: 'text.secondary' }}>
+                          Available 10 minutes before appointment time
+                        </Typography>
+                      </Box>
+                    )}
+                    {appointment.doctorResponse?.message && (
+                      <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+                        <Typography variant="body2" color="textSecondary">
+                          <strong>Doctor's Note:</strong> {appointment.doctorResponse.message}
+                        </Typography>
+                      </Box>
+                    )}
+                    {/* Give Feedback Button for Patients with Approved Appointments */}
+                    {userData?.role === 'patient' && appointment.status === 'approved' && (
+                      <Box sx={{ mt: 2 }}>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          startIcon={<Feedback />}
+                          size="small"
+                          onClick={() => navigate('/patient/feedback', { 
+                            state: { 
+                              preselectedDoctor: appointment.doctorMedicalId,
+                              appointmentId: appointment._id
+                            }
+                          })}
+                        >
+                          Give Feedback
+                        </Button>
+                      </Box>
+                    )}
                   </Box>
                 </CardContent>
               </Card>

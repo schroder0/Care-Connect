@@ -22,6 +22,16 @@ const appointmentRequestSchema = new mongoose.Schema({
     enum: ['email', 'sms'], 
     default: 'email' 
   },
+  meetingType: {
+    type: String,
+    enum: ['online', 'offline'],
+    required: true,
+    default: 'offline'
+  },
+  videoCallLink: {
+    type: String,
+    required: false // Only required for online meetings
+  },
   status: {
     type: String,
     enum: ['pending', 'approved', 'rejected', 'cancelled'],

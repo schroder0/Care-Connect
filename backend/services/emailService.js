@@ -68,9 +68,42 @@ const sendEmail = async (to, subject, htmlContent) => {
   }
 }
 
+// Generate Jitsi video call link
+const generateJitsiLink = (patientName, doctorName, appointmentDate, appointmentTime) => {
+  // Create a unique room name using patient name, doctor name, and appointment details
+  const roomName = `CareConnect-${patientName.replace(/\s+/g, '')}-${doctorName.replace(/\s+/g, '')}-${new Date(appointmentDate).toISOString().split('T')[0]}-${appointmentTime.replace(':', '')}`
+  // Remove special characters and make it URL safe
+  const sanitizedRoomName = roomName.replace(/[^a-zA-Z0-9-]/g, '')
+  return `https://meet.jit.si/${sanitizedRoomName}`
+}
+
 // Send appointment approval email to patient
-const sendAppointmentApprovalEmail = async (patientEmail, patientName, doctorName, scheduledDate, scheduledTime, doctorResponse) => {
+const sendAppointmentApprovalEmail = async (patientEmail, patientName, doctorName, scheduledDate, scheduledTime, doctorResponse, meetingType) => {
   const subject = 'Appointment Approved - CareConnect'
+  const meetingTypeText = meetingType === 'online' ? 'Online Video Call' : 'In-Person Meeting'
+  
+  let meetingInstructions = ''
+  let videoCallSection = ''
+  
+  if (meetingType === 'online') {
+    const jitsiLink = generateJitsiLink(patientName, doctorName, scheduledDate, scheduledTime)
+    meetingInstructions = 'Please use the video call link below to join your appointment. Ensure you have a stable internet connection and a working camera/microphone.'
+    videoCallSection = `
+      <div style="background-color: #e3f2fd; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #2196F3;">
+        <h3 style="color: #1976d2; margin-top: 0;">📹 Video Call Details</h3>
+        <p><strong>Join Video Call:</strong></p>
+        <a href="${jitsiLink}" style="display: inline-block; background-color: #2196F3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0;">Join Video Call</a>
+        <p style="font-size: 14px; color: #666; margin-top: 10px;">
+          <strong>Link:</strong> <a href="${jitsiLink}" style="color: #2196F3; word-break: break-all;">${jitsiLink}</a>
+        </p>
+        <p style="font-size: 12px; color: #888;">
+          💡 <strong>Tip:</strong> You can join the call up to 10 minutes before your scheduled time. No app installation required - works directly in your browser!
+        </p>
+      </div>`
+  } else {
+    meetingInstructions = 'Please arrive 10 minutes before your scheduled time at the clinic.'
+  }
+  
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2 style="color: #4CAF50;">Appointment Approved!</h2>
@@ -82,10 +115,13 @@ const sendAppointmentApprovalEmail = async (patientEmail, patientName, doctorNam
         <p><strong>Doctor:</strong> Dr. ${doctorName}</p>
         <p><strong>Date:</strong> ${new Date(scheduledDate).toLocaleDateString()}</p>
         <p><strong>Time:</strong> ${scheduledTime}</p>
+        <p><strong>Meeting Type:</strong> ${meetingTypeText}</p>
         ${doctorResponse ? `<p><strong>Doctor's Note:</strong> ${doctorResponse}</p>` : ''}
       </div>
       
-      <p>Please make sure to arrive 10 minutes before your scheduled time.</p>
+      ${videoCallSection}
+      
+      <p>${meetingInstructions}</p>
       <p>If you need to reschedule or have any questions, please contact us through the CareConnect platform.</p>
       
       <p>Best regards,<br>The CareConnect Team</p>
@@ -96,8 +132,27 @@ const sendAppointmentApprovalEmail = async (patientEmail, patientName, doctorNam
 }
 
 // Send appointment approval confirmation to doctor
-const sendDoctorConfirmationEmail = async (doctorEmail, doctorName, patientName, scheduledDate, scheduledTime) => {
+const sendDoctorConfirmationEmail = async (doctorEmail, doctorName, patientName, scheduledDate, scheduledTime, meetingType) => {
   const subject = 'Appointment Confirmation - CareConnect'
+  const meetingTypeText = meetingType === 'online' ? 'Online Video Call' : 'In-Person Meeting'
+  
+  let videoCallSection = ''
+  if (meetingType === 'online') {
+    const jitsiLink = generateJitsiLink(patientName, doctorName, scheduledDate, scheduledTime)
+    videoCallSection = `
+      <div style="background-color: #e3f2fd; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #2196F3;">
+        <h3 style="color: #1976d2; margin-top: 0;">📹 Video Call Details</h3>
+        <p><strong>Join Video Call:</strong></p>
+        <a href="${jitsiLink}" style="display: inline-block; background-color: #2196F3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0;">Join Video Call</a>
+        <p style="font-size: 14px; color: #666; margin-top: 10px;">
+          <strong>Link:</strong> <a href="${jitsiLink}" style="color: #2196F3; word-break: break-all;">${jitsiLink}</a>
+        </p>
+        <p style="font-size: 12px; color: #888;">
+          💡 The same link has been sent to your patient.
+        </p>
+      </div>`
+  }
+  
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2 style="color: #2196F3;">Appointment Confirmed</h2>
@@ -109,7 +164,10 @@ const sendDoctorConfirmationEmail = async (doctorEmail, doctorName, patientName,
         <p><strong>Patient:</strong> ${patientName}</p>
         <p><strong>Date:</strong> ${new Date(scheduledDate).toLocaleDateString()}</p>
         <p><strong>Time:</strong> ${scheduledTime}</p>
+        <p><strong>Meeting Type:</strong> ${meetingTypeText}</p>
       </div>
+      
+      ${videoCallSection}
       
       <p>The patient has been notified about the approval.</p>
       <p>You can manage your appointments through the CareConnect doctor portal.</p>
