@@ -1,9 +1,15 @@
+import care7 from '../../assets/care7.png'
+import care8 from '../../assets/care8.png'
+import care9 from '../../assets/care9.png'
+import care88 from '../../assets/care88.png'
 import * as React from 'react'
-import { Button, Chip, Link } from '@mui/material'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
+import Chip from '@mui/material/Chip'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
+import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
@@ -19,48 +25,40 @@ const items = [
     title: 'Comprehensive Care',
     description:
       'Access a full range of health services from experienced doctors, ensuring all your medical needs are met.',
-    imageLight:
-      'url("https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care8.png?raw=true")',
-    imageDark:
-      'url("https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care8.png?raw=true")',
+    imageLight: `url(${care8})`,
+    imageDark: `url(${care8})`,
   },
   {
     icon: <VerifiedUserRoundedIcon sx={{ fontSize: '2rem' }} />,
     title: 'Secure and Private',
     description:
       'Your health information is protected with top-level security, ensuring your privacy at all times.',
-    imageLight:
-      'url("https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care9.png?raw=true")',
-    imageDark:
-      'url("https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care9.png?raw=true")',
+    imageLight: `url(${care9})`,
+    imageDark: `url(${care9})`,
   },
   {
     icon: <InsightsRoundedIcon sx={{ fontSize: '2rem' }} />,
     title: 'Actionable Insights',
     description:
       'Receive detailed analytics and insights on your health, helping you make informed decisions.',
-    imageLight:
-      'url("https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care7.png?raw=true")',
-    imageDark:
-      'url("https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care7.png?raw=true")',
+    imageLight: `url(${care7})`,
+    imageDark: `url(${care7})`,
   },
   {
     icon: <SupportAgentRoundedIcon sx={{ fontSize: '2rem' }} />,
     title: '24/7 Support',
     description:
       'Our customer support team is available around the clock to assist you with any queries or issues.',
-    imageLight:
-      'url("https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care88.png?raw=true")',
-    imageDark:
-      'url("https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care88.png?raw=true")',
+    imageLight: `url(${care88})`,
+    imageDark: `url(${care88})`,
   },
   {
     icon: <EventAvailableRoundedIcon sx={{ fontSize: '2rem' }} />,
     title: 'Easy Appointments',
     description:
       'Schedule and manage appointments effortlessly with our user-friendly booking system.',
-    imageLight: 'url("/static/images/appointments-light.png")',
-    imageDark: 'url("/static/images/appointments-dark.png")',
+    imageLight: `url(${care7})`,
+    imageDark: `url(${care7})`,
   },
 ]
 
@@ -140,7 +138,7 @@ export default function Features() {
               animation: 'fadeIn 1s ease-out 0.3s both',
             }}
           >
-            Discover the key features of our health chatbot application,
+            Discover the key features of our CareConnect application,
             designed to provide comprehensive care, security, actionable
             insights, and more.
           </Typography>

@@ -23,7 +23,7 @@ import {
 import { Delete, Edit, Visibility } from '@mui/icons-material'
 
 const PatientFeedbackHistory = () => {
-  const { userData, userRole } = useAuth()
+  const { userData } = useAuth()
   const [feedbacks, setFeedbacks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -31,12 +31,9 @@ const PatientFeedbackHistory = () => {
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
-    // Use userRole as fallback if userData.role is undefined
-    const currentRole = userData?.role || userRole
-    
-    if (userData?.medicalId && currentRole === 'patient') {
+    if (userData?.medicalId && userData?.role === 'patient') {
       fetchFeedbacks()
-    } else if (currentRole && currentRole !== 'patient') {
+    } else if (userData?.role && userData?.role !== 'patient') {
       setLoading(false)
       setError('Access denied. Only patients can view their feedback history.')
     } else if (!userData) {
@@ -44,7 +41,7 @@ const PatientFeedbackHistory = () => {
       setError('Please log in to view your feedback history.')
     }
     // If userData is still loading, keep loading state
-  }, [userData, userRole])
+  }, [userData])
 
   const fetchFeedbacks = async () => {
     try {

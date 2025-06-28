@@ -213,8 +213,6 @@ const BookAppointment = () => {
               onChange={handleChange}
             >
               <MenuItem value="email">Email</MenuItem>
-              <MenuItem value="sms">SMS</MenuItem>
-              <MenuItem value="both">Both</MenuItem>
             </Select>
             <FormHelperText>
               How would you like to receive appointment notifications?

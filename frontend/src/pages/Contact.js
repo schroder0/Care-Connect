@@ -16,7 +16,7 @@ const ContactInfo = () => {
         </Box>
         <Box sx={{ textAlign: 'center', mb: 1 }}>
           <Typography variant="body1">
-            <strong>Email:</strong> support@healthchatbot.com
+            <strong>Email:</strong> careconnectap@gmail.com
           </Typography>
           <Typography variant="body1">
             <strong>Phone:</strong> (123) 456-7890

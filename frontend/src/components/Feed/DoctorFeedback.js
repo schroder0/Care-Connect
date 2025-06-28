@@ -19,26 +19,24 @@ import {
 import { Star, Person, PersonOff } from '@mui/icons-material'
 
 const DoctorFeedback = () => {
-  const { userData, userRole } = useAuth()
+  const { userData } = useAuth()
   const [feedbackData, setFeedbackData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    // Use userRole as fallback if userData.role is undefined
-    const currentRole = userData?.role || userRole
-    
-    if (userData?.medicalId && currentRole === 'doctor') {
+    console.log('DoctorFeedback - userData:', userData); // Debug log
+    if (userData?.medicalId && userData?.role === 'doctor') {
       fetchFeedback()
-    } else if (currentRole && currentRole !== 'doctor') {
+    } else if (userData?.role && userData?.role !== 'doctor') {
       setLoading(false)
-      setError(`Access denied. Current role: ${currentRole}. Only doctors can view their feedback.`)
+      setError(`Access denied. Current role: ${userData.role}. Only doctors can view their feedback.`)
     } else if (!userData) {
       setLoading(false)
       setError('Please log in to view feedback.')
     }
     // If userData is still loading, keep loading state
-  }, [userData, userRole])
+  }, [userData])
 
   const fetchFeedback = async () => {
     try {

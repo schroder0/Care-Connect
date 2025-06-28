@@ -1,7 +1,7 @@
 {
-  "name": "health-chatbot-backend",
+  "name": "careconnect-backend",
   "version": "1.0.0",
-  "description": "Backend for the Health Chatbot application",
+  "description": "Backend for the CareConnect application",
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
@@ -33,7 +33,6 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.10.1",
     "socket.io": "^4.7.5",
-    "twilio": "^5.1.1",
     "ws": "^8.17.0"
   },
   "devDependencies": {

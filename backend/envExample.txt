@@ -16,10 +16,5 @@ MONGODB_URI=mongodb://localhost:27017/healthcare
 # EMAIL_USER=your_email_here
 # EMAIL_PASS=your_email_password_here
 
-# Twilio Configuration (optional - for SMS notifications)
-# TWILIO_ACCOUNT_SID=your_twilio_account_sid_here
-# TWILIO_AUTH_TOKEN=your_twilio_auth_token_here
-# TWILIO_PHONE_NUMBER=your_twilio_phone_number_here
-
 # Other environment variables
 NODE_ENV=development

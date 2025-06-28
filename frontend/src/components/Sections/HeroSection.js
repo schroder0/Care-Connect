@@ -1,4 +1,7 @@
 import React from 'react'
+import care1 from '../../assets/care1.png'
+import care2 from '../../assets/care2.png'
+import care3 from '../../assets/care3.png'
 import { Box, Container, Stack, Typography, Button } from '@mui/material'
 import { Carousel } from 'react-responsive-carousel'
 import 'react-responsive-carousel/lib/styles/carousel.min.css'
@@ -6,15 +9,15 @@ import './HeroSection.module.css'
 
 const photos = [
   {
-    src: 'https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care1.png?raw=true',
+    src: care1,
     alt: 'Comprehensive health monitoring and advice',
   },
   {
-    src: 'https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care2.png?raw=true',
+    src: care2,
     alt: '24/7 access to healthcare professionals',
   },
   {
-    src: 'https://github.com/Nyakuji/health-chatbot/blob/main/frontend/src/assets/care3.png?raw=true',
+    src: care3,
     alt: 'User-friendly interface for easy navigation',
   },
 ]

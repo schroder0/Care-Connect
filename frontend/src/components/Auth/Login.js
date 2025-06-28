@@ -32,8 +32,9 @@ const Login = () => {
     try {
       const response = await loginService({ username, password })
       const { token, user } = response.data
+      const { role, ...userData } = user
 
-      login(user.role, user, token)
+      login(role, userData, token)
       navigate('/')
     } catch (error) {
       console.error('Login failed:', error)

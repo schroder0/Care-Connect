@@ -19,7 +19,7 @@ const appointmentRequestSchema = new mongoose.Schema({
   contactInfo: { type: String, required: true },
   notificationType: { 
     type: String, 
-    enum: ['email', 'sms'], 
+    enum: ['email'], 
     default: 'email' 
   },
   meetingType: {
