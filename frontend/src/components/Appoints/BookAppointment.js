@@ -3,7 +3,6 @@ import { useAuth } from '../../contexts/AuthContext'
 import {
   createAppointmentRequest,
   getAllDoctors,
-  getProfile,
 } from '../../services/api'
 import {
   Container,

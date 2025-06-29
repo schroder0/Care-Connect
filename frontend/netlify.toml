@@ -5,6 +5,7 @@
 [build.environment]
   REACT_APP_API_URL = "https://careconnect-backend-mw1u.onrender.com/api"
   REACT_APP_ENV = "production"
+  CI = "false"
 
 [[redirects]]
   from = "/*"
@@ -14,7 +15,9 @@
 [context.production.environment]
   REACT_APP_API_URL = "https://careconnect-backend-mw1u.onrender.com/api"
   REACT_APP_ENV = "production"
+  CI = "false"
 
 [context.deploy-preview.environment]
   REACT_APP_API_URL = "https://careconnect-backend-mw1u.onrender.com/api"
   REACT_APP_ENV = "staging"
+  CI = "false"

@@ -4,16 +4,12 @@ import {
   Toolbar,
   Typography,
   Button,
-  IconButton,
   Box,
-  Menu,
-  MenuItem,
   Stack,
 } from '@mui/material'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
-import MenuIcon from '@mui/icons-material/Menu'
 import ToggleColorMode from './ToggleColorMode'
 import HomeIcon from '@mui/icons-material/Home'
 import InfoIcon from '@mui/icons-material/Info'
@@ -24,16 +20,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 const Navbar = () => {
   const { isAuthenticated, userRole, logout } = useAuth()
   const { mode, toggleTheme } = useTheme()
-  const [anchorEl, setAnchorEl] = useState(null)
   const location = useLocation()
-
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleMenuClose = () => {
-    setAnchorEl(null)
-  }
 
   const commonItems = [{ label: 'Profile', link: '/profile' }]
 
