@@ -80,15 +80,20 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'))) //eslint-di
 
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGODB_URI ?? 'mongodb://localhost/mydatabase')
+  .connect(process.env.MONGODB_URI ?? 'mongodb://localhost/mydatabase', {
+    serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+    socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+  })
   .then(() => {
-    console.info('Connected to MongoDB')
+    console.info('✅ Connected to MongoDB successfully')
   })
   .catch((err) => {
-    console.error('Database  error:', err)
+    console.error('❌ Database connection error:', err.message)
+    // Don't exit process, let Render retry
   })
 
 const PORT = process.env.PORT || 5001
+const HOST = process.env.HOST || '0.0.0.0'
 
 const server = http.createServer(app)
 initSocket(server)
@@ -100,6 +105,24 @@ initSocket(server)
 //   })
 // })
 
-server.listen(PORT, () => {
-  console.info(`Server running on port ${PORT}`)
+server.listen(PORT, HOST, () => {
+  console.info(`Server running on ${HOST}:${PORT}`)
+})
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.info('SIGTERM received, shutting down gracefully')
+  server.close(() => {
+    console.info('Process terminated')
+  })
+})
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Promise Rejection:', err)
+})
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err)
 })
