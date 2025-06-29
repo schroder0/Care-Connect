@@ -92,7 +92,7 @@ mongoose
     // Don't exit process, let Render retry
   })
 
-const PORT = process.env.PORT || 5001
+const PORT = process.env.PORT || 10000
 const HOST = process.env.HOST || '0.0.0.0'
 
 const server = http.createServer(app)
