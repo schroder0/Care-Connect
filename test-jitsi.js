@@ -1,5 +1,5 @@
 // Test Jitsi link generation
-console.log('Testing Jitsi link generation...');
+console.log('Testing Jitsi link generation....');
 
 // Test data
 const testPatientName = 'John Doe';
