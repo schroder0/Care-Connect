@@ -46,6 +46,23 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, 'public'))) //eslint-disable-line
 
+// Health check route
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'CareConnect Backend API is running!', 
+    status: 'healthy',
+    timestamp: new Date().toISOString()
+  })
+})
+
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'healthy',
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    timestamp: new Date().toISOString()
+  })
+})
+
 // Routes
 authRoutes(app)
 profileRoutes(app)
