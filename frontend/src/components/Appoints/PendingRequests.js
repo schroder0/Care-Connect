@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useEffect, useState } from 'react'
+import { useAuth } from '../../contexts/AuthContext'
 import {
   getPatientAppointmentRequests,
   addMessageToRequest,
   cancelAppointment,
-} from '../../services/api';
+} from '../../services/api'
 import {
   Container,
   Typography,
@@ -19,83 +19,92 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-} from '@mui/material';
-import { format } from 'date-fns';
+} from '@mui/material'
+import { format } from 'date-fns'
 
 const PendingRequests = () => {
-  const [pendingRequests, setPendingRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [message, setMessage] = useState('');
-  const [chatMessages, setChatMessages] = useState([]);
-  const { userData } = useAuth();
+  const [pendingRequests, setPendingRequests] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [selectedRequest, setSelectedRequest] = useState(null)
+  const [chatOpen, setChatOpen] = useState(false)
+  const [message, setMessage] = useState('')
+  const [chatMessages, setChatMessages] = useState([])
+  const { userData } = useAuth()
 
   const fetchRequests = async () => {
     try {
-      setLoading(true);
-      const response = await getPatientAppointmentRequests(userData.medicalId);
+      setLoading(true)
+      const response = await getPatientAppointmentRequests(userData.medicalId)
       // Filter only pending requests
-      const pending = (response.data.requests || []).filter(req => req.status === 'pending');
-      setPendingRequests(pending);
-      setError(null);
+      const pending = (response.data.requests || []).filter(
+        (req) => req.status === 'pending'
+      )
+      setPendingRequests(pending)
+      setError(null)
     } catch (err) {
-      console.error('Error fetching pending requests:', err);
-      setError('Failed to load pending appointment requests');
+      console.error('Error fetching pending requests:', err)
+      setError('Failed to load pending appointment requests')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
     if (userData?.medicalId) {
-      fetchRequests();
+      fetchRequests()
     }
-  }, [userData]);
+  }, [userData])
 
   const handleCancel = async (requestId) => {
     try {
-      await cancelAppointment(requestId);
-      fetchRequests();
+      await cancelAppointment(requestId)
+      fetchRequests()
     } catch (error) {
-      console.error('Error cancelling request:', error);
+      console.error('Error cancelling request:', error)
     }
-  };
+  }
 
   const handleChat = async (request) => {
-    setSelectedRequest(request);
-    setChatMessages(request.messages || []);
-    setChatOpen(true);
-  };
+    setSelectedRequest(request)
+    setChatMessages(request.messages || [])
+    setChatOpen(true)
+  }
 
   const handleSendMessage = async () => {
-    if (!message.trim() || !selectedRequest) return;
+    if (!message.trim() || !selectedRequest) return
 
     try {
       await addMessageToRequest(selectedRequest._id, {
         message: message.trim(),
         senderMedicalId: userData.medicalId,
         senderName: userData.username,
-      });
-      setMessage('');
-      fetchRequests();
+      })
+      setMessage('')
+      fetchRequests()
       // Update chat messages
-      const updatedRequest = pendingRequests.find(r => r._id === selectedRequest._id);
+      const updatedRequest = pendingRequests.find(
+        (r) => r._id === selectedRequest._id
+      )
       if (updatedRequest) {
-        setChatMessages(updatedRequest.messages || []);
+        setChatMessages(updatedRequest.messages || [])
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error sending message:', error)
     }
-  };
+  }
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
-    );
+    )
   }
 
   if (error) {
@@ -107,7 +116,7 @@ const PendingRequests = () => {
           </Typography>
         </Paper>
       </Container>
-    );
+    )
   }
 
   return (
@@ -137,7 +146,11 @@ const PendingRequests = () => {
                   },
                 }}
               >
-                <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="flex-start"
+                >
                   <Box>
                     <Typography variant="h5" gutterBottom>
                       Dr. {request.doctorName}
@@ -195,9 +208,7 @@ const PendingRequests = () => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          Chat with Dr. {selectedRequest?.doctorName}
-        </DialogTitle>
+        <DialogTitle>Chat with Dr. {selectedRequest?.doctorName}</DialogTitle>
         <DialogContent dividers>
           <Box sx={{ mb: 2, maxHeight: '300px', overflowY: 'auto' }}>
             {chatMessages.map((msg, index) => (
@@ -206,12 +217,19 @@ const PendingRequests = () => {
                 sx={{
                   p: 1,
                   mb: 1,
-                  bgcolor: msg.sender === userData.medicalId ? 'primary.light' : 'background.default',
-                  color: msg.sender === userData.medicalId ? 'primary.contrastText' : 'text.primary',
+                  bgcolor:
+                    msg.sender === userData.medicalId
+                      ? 'primary.light'
+                      : 'background.default',
+                  color:
+                    msg.sender === userData.medicalId
+                      ? 'primary.contrastText'
+                      : 'text.primary',
                 }}
               >
                 <Typography variant="caption" display="block">
-                  {msg.senderName} - {format(new Date(msg.timestamp), 'MMM d, HH:mm')}
+                  {msg.senderName} -{' '}
+                  {format(new Date(msg.timestamp), 'MMM d, HH:mm')}
                 </Typography>
                 <Typography variant="body2">{msg.message}</Typography>
               </Paper>
@@ -238,7 +256,7 @@ const PendingRequests = () => {
         </DialogActions>
       </Dialog>
     </Container>
-  );
-};
+  )
+}
 
-export default PendingRequests;
+export default PendingRequests

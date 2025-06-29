@@ -29,11 +29,11 @@ const FeedbackForm = () => {
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
-  
+
   // Get preselected data from navigation state
   const preselectedDoctor = location.state?.preselectedDoctor
   const appointmentId = location.state?.appointmentId
-  
+
   const [formData, setFormData] = useState({
     doctorMedicalId: preselectedDoctor || '',
     rating: 0,
@@ -49,10 +49,10 @@ const FeedbackForm = () => {
   useEffect(() => {
     // Update form data if preselected doctor changes
     if (preselectedDoctor) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         doctorMedicalId: preselectedDoctor,
-        appointmentId: appointmentId || null
+        appointmentId: appointmentId || null,
       }))
     }
   }, [preselectedDoctor, appointmentId])
@@ -72,23 +72,27 @@ const FeedbackForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }))
   }
 
   const handleRatingChange = (event, newValue) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      rating: newValue
+      rating: newValue,
     }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
-    if (!formData.doctorMedicalId || !formData.rating || !formData.comment.trim()) {
+
+    if (
+      !formData.doctorMedicalId ||
+      !formData.rating ||
+      !formData.comment.trim()
+    ) {
       setError('Please fill in all required fields')
       return
     }
@@ -101,7 +105,7 @@ const FeedbackForm = () => {
     try {
       setSubmitting(true)
       setError('')
-      
+
       await createFeedback({
         doctorMedicalId: formData.doctorMedicalId,
         patientMedicalId: userData.medicalId,
@@ -124,7 +128,6 @@ const FeedbackForm = () => {
       setTimeout(() => {
         setSuccess(false)
       }, 3000)
-
     } catch (error) {
       console.error('Error submitting feedback:', error)
       setError(error.response?.data?.message || 'Failed to submit feedback')
@@ -139,7 +142,7 @@ const FeedbackForm = () => {
       2: 'Fair',
       3: 'Good',
       4: 'Very Good',
-      5: 'Excellent'
+      5: 'Excellent',
     }
     return labels[rating] || ''
   }
@@ -147,7 +150,12 @@ const FeedbackForm = () => {
   if (loading) {
     return (
       <Container maxWidth="md">
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="200px"
+        >
           <CircularProgress />
         </Box>
       </Container>
@@ -161,10 +169,9 @@ const FeedbackForm = () => {
           Share Your Feedback
         </Typography>
         <Typography variant="body1" color="textSecondary" sx={{ mb: 4 }}>
-          {preselectedDoctor 
-            ? 'Share your experience with this appointment' 
-            : 'Help other patients by sharing your experience with our doctors'
-          }
+          {preselectedDoctor
+            ? 'Share your experience with this appointment'
+            : 'Help other patients by sharing your experience with our doctors'}
         </Typography>
 
         {success && (
@@ -191,12 +198,17 @@ const FeedbackForm = () => {
             >
               {doctors.map((doctor) => (
                 <MenuItem key={doctor.medicalId} value={doctor.medicalId}>
-                  Dr. {doctor.username} - {doctor.specialty || 'General Practitioner'}
+                  Dr. {doctor.username} -{' '}
+                  {doctor.specialty || 'General Practitioner'}
                 </MenuItem>
               ))}
             </Select>
             {preselectedDoctor && (
-              <Typography variant="caption" color="textSecondary" sx={{ mt: 1 }}>
+              <Typography
+                variant="caption"
+                color="textSecondary"
+                sx={{ mt: 1 }}
+              >
                 Doctor preselected from appointment
               </Typography>
             )}
@@ -256,7 +268,12 @@ const FeedbackForm = () => {
               variant="contained"
               color="primary"
               startIcon={submitting ? <CircularProgress size={20} /> : <Send />}
-              disabled={submitting || !formData.doctorMedicalId || !formData.rating || !formData.comment.trim()}
+              disabled={
+                submitting ||
+                !formData.doctorMedicalId ||
+                !formData.rating ||
+                !formData.comment.trim()
+              }
               size="large"
             >
               {submitting ? 'Submitting...' : 'Submit Feedback'}

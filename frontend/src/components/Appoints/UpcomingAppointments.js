@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useEffect, useState } from 'react'
+import { useAuth } from '../../contexts/AuthContext'
 import {
   getUpcomingAppointments,
   addMessageToRequest,
   cancelAppointment,
-} from '../../services/api';
+} from '../../services/api'
 import {
   Container,
   Typography,
@@ -21,111 +21,118 @@ import {
   TextField,
   Tooltip,
   IconButton,
-} from '@mui/material';
+} from '@mui/material'
 import {
   Chat as ChatIcon,
   Cancel as CancelIcon,
   AccessTime as AccessTimeIcon,
-} from '@mui/icons-material';
-import { format, differenceInDays, differenceInHours } from 'date-fns';
+} from '@mui/icons-material'
+import { format, differenceInDays, differenceInHours } from 'date-fns'
 
 const UpcomingAppointments = () => {
-  const [appointments, setAppointments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [message, setMessage] = useState('');
-  const [chatMessages, setChatMessages] = useState([]);
-  const { userData } = useAuth();
+  const [appointments, setAppointments] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [selectedAppointment, setSelectedAppointment] = useState(null)
+  const [chatOpen, setChatOpen] = useState(false)
+  const [message, setMessage] = useState('')
+  const [chatMessages, setChatMessages] = useState([])
+  const { userData } = useAuth()
 
   const fetchAppointments = async () => {
     try {
-      setLoading(true);
-      const response = await getUpcomingAppointments(userData.medicalId);
-      console.log('Upcoming appointments response:', response.data); // Debug log
-      
+      setLoading(true)
+      const response = await getUpcomingAppointments(userData.medicalId)
+      console.log('Upcoming appointments response:', response.data) // Debug log
+
       // Get only approved appointments
       const upcomingAppts = (response.data.requests || [])
-        .filter(req => req.status === 'approved')
-        .sort((a, b) => new Date(a.preferredDate) - new Date(b.preferredDate));
-      
-      console.log('Filtered appointments:', upcomingAppts); // Debug log
-      setAppointments(upcomingAppts);
-      setError(null);
+        .filter((req) => req.status === 'approved')
+        .sort((a, b) => new Date(a.preferredDate) - new Date(b.preferredDate))
+
+      console.log('Filtered appointments:', upcomingAppts) // Debug log
+      setAppointments(upcomingAppts)
+      setError(null)
     } catch (err) {
-      console.error('Error fetching upcoming appointments:', err);
-      setError('Failed to load upcoming appointments');
+      console.error('Error fetching upcoming appointments:', err)
+      setError('Failed to load upcoming appointments')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
     if (userData?.medicalId) {
-      fetchAppointments();
+      fetchAppointments()
     }
-  }, [userData]);
+  }, [userData])
 
   const handleCancel = async (appointmentId) => {
     if (window.confirm('Are you sure you want to cancel this appointment?')) {
       try {
-        await cancelAppointment(appointmentId);
-        fetchAppointments();
+        await cancelAppointment(appointmentId)
+        fetchAppointments()
       } catch (error) {
-        console.error('Error cancelling appointment:', error);
+        console.error('Error cancelling appointment:', error)
       }
     }
-  };
+  }
 
   const handleChat = (appointment) => {
-    setSelectedAppointment(appointment);
-    setChatMessages(appointment.messages || []);
-    setChatOpen(true);
-  };
+    setSelectedAppointment(appointment)
+    setChatMessages(appointment.messages || [])
+    setChatOpen(true)
+  }
 
   const handleSendMessage = async () => {
-    if (!message.trim() || !selectedAppointment) return;
+    if (!message.trim() || !selectedAppointment) return
 
     try {
       await addMessageToRequest(selectedAppointment._id, {
         message: message.trim(),
         senderMedicalId: userData.medicalId,
         senderName: userData.username,
-      });
-      setMessage('');
-      fetchAppointments();
+      })
+      setMessage('')
+      fetchAppointments()
       // Update chat messages
-      const updatedAppointment = appointments.find(a => a._id === selectedAppointment._id);
+      const updatedAppointment = appointments.find(
+        (a) => a._id === selectedAppointment._id
+      )
       if (updatedAppointment) {
-        setChatMessages(updatedAppointment.messages || []);
+        setChatMessages(updatedAppointment.messages || [])
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error sending message:', error)
     }
-  };
+  }
 
   const getTimeUntilAppointment = (date) => {
-    const now = new Date();
-    const appointmentDate = new Date(date);
-    const days = differenceInDays(appointmentDate, now);
-    const hours = differenceInHours(appointmentDate, now) % 24;
-    
+    const now = new Date()
+    const appointmentDate = new Date(date)
+    const days = differenceInDays(appointmentDate, now)
+    const hours = differenceInHours(appointmentDate, now) % 24
+
     if (days > 0) {
-      return `${days} day${days > 1 ? 's' : ''} away`;
+      return `${days} day${days > 1 ? 's' : ''} away`
     } else if (hours > 0) {
-      return `${hours} hour${hours > 1 ? 's' : ''} away`;
+      return `${hours} hour${hours > 1 ? 's' : ''} away`
     } else {
-      return 'Less than an hour away';
+      return 'Less than an hour away'
     }
-  };
+  }
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
-    );
+    )
   }
 
   if (error) {
@@ -137,7 +144,7 @@ const UpcomingAppointments = () => {
           </Typography>
         </Paper>
       </Container>
-    );
+    )
   }
 
   return (
@@ -167,7 +174,11 @@ const UpcomingAppointments = () => {
                   },
                 }}
               >
-                <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="flex-start"
+                >
                   <Box>
                     <Typography variant="h5" gutterBottom>
                       Dr. {appointment.doctorName}
@@ -181,7 +192,9 @@ const UpcomingAppointments = () => {
                     <Tooltip title="Time until appointment">
                       <Chip
                         icon={<AccessTimeIcon />}
-                        label={getTimeUntilAppointment(appointment.preferredDate)}
+                        label={getTimeUntilAppointment(
+                          appointment.preferredDate
+                        )}
                         color="primary"
                         size="small"
                         sx={{ ml: 1, mb: 2 }}
@@ -189,7 +202,10 @@ const UpcomingAppointments = () => {
                     </Tooltip>
                     <Typography variant="body1">
                       <strong>Date:</strong>{' '}
-                      {format(new Date(appointment.preferredDate), 'dd/MM/yyyy')}
+                      {format(
+                        new Date(appointment.preferredDate),
+                        'dd/MM/yyyy'
+                      )}
                     </Typography>
                     <Typography variant="body1">
                       <strong>Time:</strong> {appointment.preferredTime}
@@ -205,16 +221,26 @@ const UpcomingAppointments = () => {
                     {appointment.doctorResponse && (
                       <Box sx={{ mt: 1 }}>
                         <Typography variant="body1" color="success.main">
-                          <strong>Doctor's Note:</strong>{' '}
-                          {typeof appointment.doctorResponse === 'string' 
-                            ? appointment.doctorResponse 
+                          <strong>Doctor&apos;s Note:</strong>{' '}
+                          {typeof appointment.doctorResponse === 'string'
+                            ? appointment.doctorResponse
                             : appointment.doctorResponse.message}
                         </Typography>
-                        {typeof appointment.doctorResponse !== 'string' && appointment.doctorResponse.respondedAt && (
-                          <Typography variant="caption" color="text.secondary">
-                            Responded at: {format(new Date(appointment.doctorResponse.respondedAt), 'dd/MM/yyyy HH:mm')}
-                          </Typography>
-                        )}
+                        {typeof appointment.doctorResponse !== 'string' &&
+                          appointment.doctorResponse.respondedAt && (
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                            >
+                              Responded at:{' '}
+                              {format(
+                                new Date(
+                                  appointment.doctorResponse.respondedAt
+                                ),
+                                'dd/MM/yyyy HH:mm'
+                              )}
+                            </Typography>
+                          )}
                       </Box>
                     )}
                   </Box>
@@ -265,12 +291,19 @@ const UpcomingAppointments = () => {
                 sx={{
                   p: 1,
                   mb: 1,
-                  bgcolor: msg.sender === userData.medicalId ? 'primary.light' : 'background.default',
-                  color: msg.sender === userData.medicalId ? 'primary.contrastText' : 'text.primary',
+                  bgcolor:
+                    msg.sender === userData.medicalId
+                      ? 'primary.light'
+                      : 'background.default',
+                  color:
+                    msg.sender === userData.medicalId
+                      ? 'primary.contrastText'
+                      : 'text.primary',
                 }}
               >
                 <Typography variant="caption" display="block">
-                  {msg.senderName} - {format(new Date(msg.timestamp), 'MMM d, HH:mm')}
+                  {msg.senderName} -{' '}
+                  {format(new Date(msg.timestamp), 'MMM d, HH:mm')}
                 </Typography>
                 <Typography variant="body2">{msg.message}</Typography>
               </Paper>
@@ -302,7 +335,7 @@ const UpcomingAppointments = () => {
         </DialogActions>
       </Dialog>
     </Container>
-  );
-};
+  )
+}
 
-export default UpcomingAppointments;
+export default UpcomingAppointments

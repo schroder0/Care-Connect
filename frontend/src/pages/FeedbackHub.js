@@ -12,12 +12,12 @@ import {
   Box,
   Divider,
 } from '@mui/material'
-import { 
-  Feedback, 
-  History, 
-  Star, 
+import {
+  Feedback,
+  History,
+  Star,
   RateReview,
-  TrendingUp 
+  TrendingUp,
 } from '@mui/icons-material'
 
 const FeedbackHub = () => {
@@ -26,7 +26,8 @@ const FeedbackHub = () => {
   const feedbackOptions = [
     {
       title: 'Give Feedback',
-      description: 'Share your experience with doctors and help other patients make informed decisions.',
+      description:
+        'Share your experience with doctors and help other patients make informed decisions.',
       icon: <Feedback sx={{ fontSize: 48, color: 'primary.main' }} />,
       buttonText: 'Write Review',
       buttonColor: 'primary',
@@ -35,12 +36,13 @@ const FeedbackHub = () => {
         'Rate your doctor experience',
         'Write detailed feedback',
         'Help other patients',
-        'Anonymous option available'
-      ]
+        'Anonymous option available',
+      ],
     },
     {
       title: 'Feedback History',
-      description: 'View and manage all the feedback you have submitted to doctors.',
+      description:
+        'View and manage all the feedback you have submitted to doctors.',
       icon: <History sx={{ fontSize: 48, color: 'secondary.main' }} />,
       buttonText: 'View History',
       buttonColor: 'secondary',
@@ -49,9 +51,9 @@ const FeedbackHub = () => {
         'View all your reviews',
         'Track your feedback',
         'Manage submissions',
-        'Personal statistics'
-      ]
-    }
+        'Personal statistics',
+      ],
+    },
   ]
 
   return (
@@ -67,9 +69,14 @@ const FeedbackHub = () => {
         <Typography variant="h6" color="textSecondary" sx={{ mb: 2 }}>
           Your voice matters in improving healthcare quality
         </Typography>
-        <Typography variant="body1" color="textSecondary" sx={{ maxWidth: 600, mx: 'auto' }}>
-          Share your experiences with doctors to help other patients make informed decisions, 
-          and view your feedback history to track your contributions to the community.
+        <Typography
+          variant="body1"
+          color="textSecondary"
+          sx={{ maxWidth: 600, mx: 'auto' }}
+        >
+          Share your experiences with doctors to help other patients make
+          informed decisions, and view your feedback history to track your
+          contributions to the community.
         </Typography>
       </Paper>
 
@@ -77,49 +84,59 @@ const FeedbackHub = () => {
       <Grid container spacing={4}>
         {feedbackOptions.map((option, index) => (
           <Grid item xs={12} md={6} key={index}>
-            <Card 
-              elevation={2} 
-              sx={{ 
-                height: '100%', 
-                display: 'flex', 
+            <Card
+              elevation={2}
+              sx={{
+                height: '100%',
+                display: 'flex',
                 flexDirection: 'column',
-                transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                transition:
+                  'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
                 '&:hover': {
                   transform: 'translateY(-4px)',
-                  boxShadow: 4
-                }
+                  boxShadow: 4,
+                },
               }}
             >
               <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: 4 }}>
-                <Box sx={{ mb: 3 }}>
-                  {option.icon}
-                </Box>
-                
+                <Box sx={{ mb: 3 }}>{option.icon}</Box>
+
                 <Typography variant="h4" gutterBottom>
                   {option.title}
                 </Typography>
-                
-                <Typography variant="body1" color="textSecondary" sx={{ mb: 3 }}>
+
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  sx={{ mb: 3 }}
+                >
                   {option.description}
                 </Typography>
 
                 <Divider sx={{ my: 3 }} />
 
                 <Box sx={{ textAlign: 'left' }}>
-                  <Typography variant="h6" gutterBottom sx={{ textAlign: 'center', mb: 2 }}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ textAlign: 'center', mb: 2 }}
+                  >
                     Features:
                   </Typography>
                   {option.features.map((feature, featureIndex) => (
-                    <Box key={featureIndex} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <Star sx={{ color: 'primary.main', mr: 1, fontSize: 16 }} />
-                      <Typography variant="body2">
-                        {feature}
-                      </Typography>
+                    <Box
+                      key={featureIndex}
+                      sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
+                    >
+                      <Star
+                        sx={{ color: 'primary.main', mr: 1, fontSize: 16 }}
+                      />
+                      <Typography variant="body2">{feature}</Typography>
                     </Box>
                   ))}
                 </Box>
               </CardContent>
-              
+
               <CardActions sx={{ p: 3, pt: 0 }}>
                 <Button
                   variant="contained"
@@ -145,7 +162,7 @@ const FeedbackHub = () => {
             Why Your Feedback Matters
           </Typography>
         </Box>
-        
+
         <Grid container spacing={3}>
           <Grid item xs={12} sm={4}>
             <Box sx={{ textAlign: 'center' }}>
@@ -156,11 +173,12 @@ const FeedbackHub = () => {
                 Improve Healthcare
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Your feedback helps doctors improve their services and patient care quality.
+                Your feedback helps doctors improve their services and patient
+                care quality.
               </Typography>
             </Box>
           </Grid>
-          
+
           <Grid item xs={12} sm={4}>
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="h4" color="primary.main" gutterBottom>
@@ -170,11 +188,12 @@ const FeedbackHub = () => {
                 Help Others
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Share your experience to help other patients choose the right doctor for their needs.
+                Share your experience to help other patients choose the right
+                doctor for their needs.
               </Typography>
             </Box>
           </Grid>
-          
+
           <Grid item xs={12} sm={4}>
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="h4" color="primary.main" gutterBottom>
@@ -184,7 +203,8 @@ const FeedbackHub = () => {
                 Build Trust
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Honest reviews build trust in the healthcare community and promote transparency.
+                Honest reviews build trust in the healthcare community and
+                promote transparency.
               </Typography>
             </Box>
           </Grid>

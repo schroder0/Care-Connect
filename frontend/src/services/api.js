@@ -126,7 +126,7 @@ export const getPatientFeedback = async (patientMedicalId) => {
 export const deleteFeedback = async (feedbackId, patientMedicalId) => {
   try {
     const response = await api.delete(`/feedback/${feedbackId}`, {
-      data: { patientMedicalId }
+      data: { patientMedicalId },
     })
     return response.data
   } catch (error) {
@@ -161,11 +161,13 @@ export const getAppointmentRequestById = (requestId) =>
   api.get(`/appointment-requests/${requestId}`)
 
 // Appointment Management
-export const getPendingRequests = (medicalId) => api.get(`/appointments/pending/${medicalId}`)
-export const getUpcomingAppointments = (medicalId) => getPatientAppointmentRequests(medicalId)
-export const acceptAppointment = (requestId) => 
+export const getPendingRequests = (medicalId) =>
+  api.get(`/appointments/pending/${medicalId}`)
+export const getUpcomingAppointments = (medicalId) =>
+  getPatientAppointmentRequests(medicalId)
+export const acceptAppointment = (requestId) =>
   api.put(`/appointment-requests/${requestId}/status`, { status: 'approved' })
-export const rejectAppointment = (requestId) => 
+export const rejectAppointment = (requestId) =>
   api.put(`/appointment-requests/${requestId}/status`, { status: 'rejected' })
-export const cancelAppointment = (requestId) => 
+export const cancelAppointment = (requestId) =>
   api.put(`/appointment-requests/${requestId}/status`, { status: 'cancelled' })

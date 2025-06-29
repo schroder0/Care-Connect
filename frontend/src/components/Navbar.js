@@ -35,9 +35,7 @@ const Navbar = () => {
     setAnchorEl(null)
   }
 
-  const commonItems = [
-    { label: 'Profile', link: '/profile' },
-  ]
+  const commonItems = [{ label: 'Profile', link: '/profile' }]
 
   const adminItems = [
     { label: 'Users', link: '/admin/users' },
@@ -64,8 +62,8 @@ const Navbar = () => {
   const isActiveRoute = (path) => location.pathname === path
 
   return (
-    <AppBar 
-      position="sticky" 
+    <AppBar
+      position="sticky"
       elevation={0}
       sx={{
         background: 'rgba(255, 255, 255, 0.9)',
@@ -240,14 +238,16 @@ const Navbar = () => {
                 startIcon={<LoginIcon />}
                 variant="contained"
                 sx={{
-                  background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                  background:
+                    'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                   textTransform: 'none',
                   fontSize: '1rem',
                   fontWeight: 500,
                   borderRadius: '8px',
                   px: 3,
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #1a4f8c 0%, #3db892 100%)',
+                    background:
+                      'linear-gradient(135deg, #1a4f8c 0%, #3db892 100%)',
                   },
                 }}
               >

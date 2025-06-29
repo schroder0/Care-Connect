@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { CssBaseline, CircularProgress, Grid } from '@mui/material'
 import './styles/branding.css'
-import './styles/animations.css';
+import './styles/animations.css'
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import PrivateRoute from './components/PrivateRoute'
@@ -39,7 +39,9 @@ const UploadProfilePicture = lazy(
 )
 const FeedbackForm = lazy(() => import('./components/Feed/FeedbackForm'))
 const DoctorFeedback = lazy(() => import('./components/Feed/DoctorFeedback'))
-const PatientFeedbackHistory = lazy(() => import('./components/Feed/PatientFeedbackHistory'))
+const PatientFeedbackHistory = lazy(
+  () => import('./components/Feed/PatientFeedbackHistory')
+)
 const SearchDoctors = lazy(() => import('./components/Doct/SearchDoctors'))
 const SymptomChecker = lazy(() => import('./components/Symptom/SymptomChecker'))
 
@@ -47,7 +49,7 @@ const Home = lazy(() => import('./pages/Home'))
 const About = lazy(() => import('./pages/About'))
 const FeedbackHub = lazy(() => import('./pages/FeedbackHub'))
 
-const AppointmentsHub = lazy(() => import('./pages/AppointmentsHub'));
+const AppointmentsHub = lazy(() => import('./pages/AppointmentsHub'))
 
 const App = () => {
   return (
@@ -81,22 +83,43 @@ const App = () => {
               <Route path="/patient" element={<PatientLayout />}>
                 <Route path="appointments-hub" element={<AppointmentsHub />} />
                 <Route path="book-appointment" element={<BookAppointment />} />
-                <Route path="pending-requests" element={<RolePendingRequests />} />
-                <Route path="upcoming-appointments" element={<RoleUpcomingAppointments />} />
-                <Route path="appointment-history" element={<AppointmentHistory />} />
+                <Route
+                  path="pending-requests"
+                  element={<RolePendingRequests />}
+                />
+                <Route
+                  path="upcoming-appointments"
+                  element={<RoleUpcomingAppointments />}
+                />
+                <Route
+                  path="appointment-history"
+                  element={<AppointmentHistory />}
+                />
                 <Route path="symptom-checker" element={<SymptomChecker />} />
                 <Route path="search-doctors" element={<SearchDoctors />} />
                 <Route path="feedback-hub" element={<FeedbackHub />} />
                 <Route path="feedback" element={<FeedbackForm />} />
-                <Route path="feedback-history" element={<PatientFeedbackHistory />} />
+                <Route
+                  path="feedback-history"
+                  element={<PatientFeedbackHistory />}
+                />
               </Route>
 
               {/* Doctor routes */}
               <Route path="/doctor" element={<DoctorLayout />}>
                 <Route path="appointments-hub" element={<AppointmentsHub />} />
-                <Route path="pending-requests" element={<RolePendingRequests />} />
-                <Route path="upcoming-appointments" element={<RoleUpcomingAppointments />} />
-                <Route path="appointment-history" element={<AppointmentHistory />} />
+                <Route
+                  path="pending-requests"
+                  element={<RolePendingRequests />}
+                />
+                <Route
+                  path="upcoming-appointments"
+                  element={<RoleUpcomingAppointments />}
+                />
+                <Route
+                  path="appointment-history"
+                  element={<AppointmentHistory />}
+                />
                 <Route path="feedback" element={<DoctorFeedback />} />
               </Route>
 

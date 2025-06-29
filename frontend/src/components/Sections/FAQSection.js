@@ -61,9 +61,9 @@ const FAQSection = () => {
         boxSizing: 'border-box',
       }}
     >
-      <Container 
-        maxWidth="lg" 
-        sx={{ 
+      <Container
+        maxWidth="lg"
+        sx={{
           position: 'relative',
           zIndex: 1,
           py: { xs: 8, sm: 12 },
@@ -105,9 +105,9 @@ const FAQSection = () => {
           >
             Find answers to common questions about our services and platform
           </Typography>
-          <Box 
-            sx={{ 
-              maxWidth: '900px', 
+          <Box
+            sx={{
+              maxWidth: '900px',
               margin: '0 auto',
               width: '100%',
             }}
@@ -122,9 +122,10 @@ const FAQSection = () => {
                   backdropFilter: 'blur(10px)',
                   borderRadius: '12px !important',
                   mb: 2,
-                  boxShadow: expanded === `panel${index}` 
-                    ? '0 8px 32px rgba(24,90,157,0.15)'
-                    : '0 4px 16px rgba(24,90,157,0.08)',
+                  boxShadow:
+                    expanded === `panel${index}`
+                      ? '0 8px 32px rgba(24,90,157,0.15)'
+                      : '0 4px 16px rgba(24,90,157,0.08)',
                   border: '1px solid rgba(67,206,162,0.2)',
                   transition: 'all 0.3s ease',
                   animation: `fadeInUp 1s ease-out ${index * 0.2}s both`,
@@ -143,9 +144,13 @@ const FAQSection = () => {
                   expandIcon={
                     <ExpandMoreIcon
                       sx={{
-                        color: expanded === `panel${index}` ? '#185a9d' : '#43cea2',
+                        color:
+                          expanded === `panel${index}` ? '#185a9d' : '#43cea2',
                         transition: 'all 0.3s ease',
-                        transform: expanded === `panel${index}` ? 'rotate(180deg)' : 'none',
+                        transform:
+                          expanded === `panel${index}`
+                            ? 'rotate(180deg)'
+                            : 'none',
                       }}
                     />
                   }

@@ -39,8 +39,7 @@ const Login = () => {
     } catch (error) {
       console.error('Login failed:', error)
       setError(
-        error.response?.data?.message ||
-          'Failed to login. Please try again.'
+        error.response?.data?.message || 'Failed to login. Please try again.'
       )
     } finally {
       setLoading(false)
@@ -131,7 +130,7 @@ const Login = () => {
 
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="body2" color="textSecondary">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link component={RouterLink} to="/signup" color="primary">
                   Sign up
                 </Link>

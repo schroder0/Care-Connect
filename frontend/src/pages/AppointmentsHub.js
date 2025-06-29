@@ -1,14 +1,21 @@
-import React from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
-import PageTemplate from '../components/PageTemplate';
-import { 
+import React from 'react'
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+} from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import { styled } from '@mui/material/styles'
+import PageTemplate from '../components/PageTemplate'
+import {
   EventAvailable as EventAvailableIcon,
   Schedule as ScheduleIcon,
   History as HistoryIcon,
-  Pending as PendingIcon
-} from '@mui/icons-material';
+  Pending as PendingIcon,
+} from '@mui/icons-material'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   background: 'rgba(255, 255, 255, 0.98)',
@@ -25,7 +32,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     boxShadow: '0 12px 40px rgba(24,90,157,0.15)',
     '& .icon-wrapper': {
       transform: 'scale(1.1)',
-    }
+    },
   },
   '&::before': {
     content: '""',
@@ -35,8 +42,8 @@ const StyledCard = styled(Card)(({ theme }) => ({
     right: 0,
     height: '4px',
     background: 'linear-gradient(90deg, #185a9d, #43cea2)',
-  }
-}));
+  },
+}))
 
 const IconWrapper = styled(Box)(({ theme }) => ({
   width: 70,
@@ -50,37 +57,38 @@ const IconWrapper = styled(Box)(({ theme }) => ({
   transition: 'transform 0.3s ease',
   boxShadow: '0 8px 16px rgba(24,90,157,0.2)',
   color: 'white',
-}));
+}))
 
 const AppointmentsHub = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const features = [
     {
       title: 'Book Appointment',
-      description: 'Schedule a new appointment with our healthcare professionals',
+      description:
+        'Schedule a new appointment with our healthcare professionals',
       icon: <EventAvailableIcon sx={{ fontSize: 36 }} />,
-      path: '/patient/book-appointment'
+      path: '/patient/book-appointment',
     },
     {
       title: 'Upcoming Appointments',
       description: 'View and manage your scheduled appointments',
       icon: <ScheduleIcon sx={{ fontSize: 36 }} />,
-      path: '/patient/upcoming-appointments'
+      path: '/patient/upcoming-appointments',
     },
     {
       title: 'Pending Requests',
       description: 'Track the status of your appointment requests',
       icon: <PendingIcon sx={{ fontSize: 36 }} />,
-      path: '/patient/pending-requests'
+      path: '/patient/pending-requests',
     },
     {
       title: 'Appointment History',
       description: 'Access your past appointments and medical records',
       icon: <HistoryIcon sx={{ fontSize: 36 }} />,
-      path: '/patient/appointment-history'
-    }
-  ];
+      path: '/patient/appointment-history',
+    },
+  ]
 
   return (
     <PageTemplate>
@@ -121,7 +129,8 @@ const AppointmentsHub = () => {
               fontSize: { xs: '1.1rem', md: '1.25rem' },
             }}
           >
-            Manage all your healthcare appointments in one place. Book new appointments, track requests, and view your medical history.
+            Manage all your healthcare appointments in one place. Book new
+            appointments, track requests, and view your medical history.
           </Typography>
         </Box>
 
@@ -129,11 +138,11 @@ const AppointmentsHub = () => {
           {features.map((feature, index) => (
             <Grid item xs={12} sm={6} key={index}>
               <StyledCard onClick={() => navigate(feature.path)}>
-                <CardContent 
-                  sx={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
+                <CardContent
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
                     textAlign: 'center',
                     p: 4,
                   }}
@@ -141,10 +150,10 @@ const AppointmentsHub = () => {
                   <IconWrapper className="icon-wrapper">
                     {feature.icon}
                   </IconWrapper>
-                  <Typography 
-                    variant="h5" 
-                    component="h2" 
-                    sx={{ 
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    sx={{
                       mb: 2,
                       fontWeight: 700,
                       color: '#185a9d',
@@ -152,8 +161,8 @@ const AppointmentsHub = () => {
                   >
                     {feature.title}
                   </Typography>
-                  <Typography 
-                    variant="body1" 
+                  <Typography
+                    variant="body1"
                     sx={{
                       color: 'text.secondary',
                       lineHeight: 1.6,
@@ -168,7 +177,7 @@ const AppointmentsHub = () => {
         </Grid>
       </Box>
     </PageTemplate>
-  );
-};
+  )
+}
 
-export default AppointmentsHub;
+export default AppointmentsHub

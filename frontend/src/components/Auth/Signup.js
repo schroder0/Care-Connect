@@ -48,7 +48,10 @@ const Signup = () => {
       navigate('/login')
     } catch (error) {
       console.error('Signup failed:', error)
-      setError(error.response?.data?.message || 'Failed to create account. Please try again.')
+      setError(
+        error.response?.data?.message ||
+          'Failed to create account. Please try again.'
+      )
     } finally {
       setLoading(false)
     }
@@ -70,9 +73,10 @@ const Signup = () => {
           sx={{
             p: 4,
             width: '100%',
-            background: theme.palette.mode === 'dark'
-              ? 'rgba(255, 255, 255, 0.05)'
-              : 'rgba(255, 255, 255, 0.8)',
+            background:
+              theme.palette.mode === 'dark'
+                ? 'rgba(255, 255, 255, 0.05)'
+                : 'rgba(255, 255, 255, 0.8)',
             backdropFilter: 'blur(10px)',
             borderRadius: 2,
           }}
@@ -84,7 +88,7 @@ const Signup = () => {
             sx={{
               fontWeight: 600,
               color: theme.palette.primary.main,
-              mb: 3
+              mb: 3,
             }}
           >
             Create Account
@@ -178,7 +182,7 @@ const Signup = () => {
                 py: 1.5,
                 mb: 2,
                 fontWeight: 600,
-                position: 'relative'
+                position: 'relative',
               }}
             >
               {loading ? <CircularProgress size={24} /> : 'Sign Up'}

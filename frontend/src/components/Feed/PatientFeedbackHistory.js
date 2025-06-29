@@ -27,7 +27,10 @@ const PatientFeedbackHistory = () => {
   const [feedbacks, setFeedbacks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [deleteDialog, setDeleteDialog] = useState({ open: false, feedbackId: null })
+  const [deleteDialog, setDeleteDialog] = useState({
+    open: false,
+    feedbackId: null,
+  })
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
@@ -50,7 +53,9 @@ const PatientFeedbackHistory = () => {
       setFeedbacks(response.feedbacks || [])
     } catch (error) {
       console.error('Error fetching patient feedback:', error)
-      setError(error.response?.data?.message || 'Failed to load feedback history')
+      setError(
+        error.response?.data?.message || 'Failed to load feedback history'
+      )
     } finally {
       setLoading(false)
     }
@@ -64,10 +69,12 @@ const PatientFeedbackHistory = () => {
     try {
       setDeleting(true)
       await deleteFeedback(deleteDialog.feedbackId, userData.medicalId)
-      
+
       // Remove from local state
-      setFeedbacks(prev => prev.filter(f => f._id !== deleteDialog.feedbackId))
-      
+      setFeedbacks((prev) =>
+        prev.filter((f) => f._id !== deleteDialog.feedbackId)
+      )
+
       setDeleteDialog({ open: false, feedbackId: null })
     } catch (error) {
       console.error('Error deleting feedback:', error)
@@ -81,7 +88,7 @@ const PatientFeedbackHistory = () => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     })
   }
 
@@ -91,7 +98,7 @@ const PatientFeedbackHistory = () => {
       2: 'Fair',
       3: 'Good',
       4: 'Very Good',
-      5: 'Excellent'
+      5: 'Excellent',
     }
     return labels[rating] || ''
   }
@@ -99,7 +106,12 @@ const PatientFeedbackHistory = () => {
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="400px"
+        >
           <CircularProgress size={60} />
         </Box>
       </Container>
@@ -123,7 +135,7 @@ const PatientFeedbackHistory = () => {
           My Feedback History
         </Typography>
         <Typography variant="body1" color="textSecondary">
-          View and manage the feedback you've submitted to doctors
+          View and manage the feedback you&apos;ve submitted to doctors
         </Typography>
       </Paper>
 
@@ -139,7 +151,8 @@ const PatientFeedbackHistory = () => {
             No feedback submitted yet
           </Typography>
           <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-            Your feedback submissions will appear here once you start reviewing doctors.
+            Your feedback submissions will appear here once you start reviewing
+            doctors.
           </Typography>
         </Paper>
       ) : (
@@ -148,17 +161,30 @@ const PatientFeedbackHistory = () => {
             <Grid item xs={12} key={feedback._id}>
               <Card elevation={2} sx={{ '&:hover': { elevation: 4 } }}>
                 <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                    }}
+                  >
                     <Box sx={{ flexGrow: 1 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2,
+                          mb: 2,
+                        }}
+                      >
                         <Typography variant="h6">
                           Dr. {feedback.doctorName}
                         </Typography>
                         {feedback.isAnonymous && (
-                          <Chip 
-                            label="Anonymous" 
-                            size="small" 
-                            color="primary" 
+                          <Chip
+                            label="Anonymous"
+                            size="small"
+                            color="primary"
                             variant="outlined"
                           />
                         )}
@@ -166,33 +192,42 @@ const PatientFeedbackHistory = () => {
                           {formatDate(feedback.createdAt)}
                         </Typography>
                       </Box>
-                      
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                        <Rating
-                          value={feedback.rating}
-                          readOnly
-                          size="small"
-                        />
+
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2,
+                          mb: 2,
+                        }}
+                      >
+                        <Rating value={feedback.rating} readOnly size="small" />
                         <Typography variant="body2" color="textSecondary">
-                          {getRatingLabel(feedback.rating)} ({feedback.rating}/5)
+                          {getRatingLabel(feedback.rating)} ({feedback.rating}
+                          /5)
                         </Typography>
                       </Box>
-                      
-                      <Typography variant="body1" sx={{ lineHeight: 1.6, mb: 2 }}>
+
+                      <Typography
+                        variant="body1"
+                        sx={{ lineHeight: 1.6, mb: 2 }}
+                      >
                         {feedback.comment}
                       </Typography>
-                      
+
                       {feedback.appointmentId && (
-                        <Chip 
-                          label="From Appointment" 
-                          size="small" 
-                          color="secondary" 
+                        <Chip
+                          label="From Appointment"
+                          size="small"
+                          color="secondary"
                           variant="outlined"
                         />
                       )}
                     </Box>
-                    
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+
+                    <Box
+                      sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
+                    >
                       <IconButton
                         onClick={() => handleDeleteClick(feedback._id)}
                         color="error"
@@ -230,7 +265,10 @@ const PatientFeedbackHistory = () => {
             <Grid item xs={6} sm={3}>
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="h4" color="success.main">
-                  {(feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length).toFixed(1)}
+                  {(
+                    feedbacks.reduce((sum, f) => sum + f.rating, 0) /
+                    feedbacks.length
+                  ).toFixed(1)}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   Average Rating
@@ -240,7 +278,7 @@ const PatientFeedbackHistory = () => {
             <Grid item xs={6} sm={3}>
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="h4" color="info.main">
-                  {feedbacks.filter(f => f.isAnonymous).length}
+                  {feedbacks.filter((f) => f.isAnonymous).length}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   Anonymous Reviews
@@ -250,7 +288,7 @@ const PatientFeedbackHistory = () => {
             <Grid item xs={6} sm={3}>
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="h4" color="warning.main">
-                  {feedbacks.filter(f => f.appointmentId).length}
+                  {feedbacks.filter((f) => f.appointmentId).length}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   From Appointments
@@ -264,20 +302,21 @@ const PatientFeedbackHistory = () => {
       {/* Delete Confirmation Dialog */}
       <Dialog
         open={deleteDialog.open}
-        onClose={() => !deleting && setDeleteDialog({ open: false, feedbackId: null })}
+        onClose={() =>
+          !deleting && setDeleteDialog({ open: false, feedbackId: null })
+        }
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          Delete Feedback
-        </DialogTitle>
+        <DialogTitle>Delete Feedback</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete this feedback? This action cannot be undone.
+            Are you sure you want to delete this feedback? This action cannot be
+            undone.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button 
+          <Button
             onClick={() => setDeleteDialog({ open: false, feedbackId: null })}
             disabled={deleting}
           >

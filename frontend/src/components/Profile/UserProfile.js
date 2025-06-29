@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import { fetchProfile } from './profileUtils'
 import { useAuth } from '../../contexts/AuthContext'
 import {
@@ -34,7 +35,13 @@ const ProfileField = ({ icon, label, value }) => (
       </Typography>
     </Box>
   </Box>
-);
+)
+
+ProfileField.propTypes = {
+  icon: PropTypes.node.isRequired,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string,
+}
 
 const UserProfile = () => {
   const [profile, setProfile] = useState({
@@ -83,7 +90,9 @@ const UserProfile = () => {
           textAlign: 'center',
         }}
       >
-        <Typography variant="h6" sx={{ color: '#666' }}>User not found</Typography>
+        <Typography variant="h6" sx={{ color: '#666' }}>
+          User not found
+        </Typography>
       </Card>
     )
   }
@@ -113,11 +122,16 @@ const UserProfile = () => {
                 boxShadow: '0 8px 32px rgba(67,206,162,0.2)',
               }}
             />
-            <Typography variant="h4" sx={{ color: '#185a9d', fontWeight: 700, mb: 2 }}>
+            <Typography
+              variant="h4"
+              sx={{ color: '#185a9d', fontWeight: 700, mb: 2 }}
+            >
               {profile.username}
             </Typography>
             <Chip
-              label={profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
+              label={
+                profile.role.charAt(0).toUpperCase() + profile.role.slice(1)
+              }
               sx={{
                 background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                 color: '#fff',
@@ -141,14 +155,21 @@ const UserProfile = () => {
           }}
         >
           <CardContent sx={{ p: 4 }}>
-            <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 4 }}>
+            <Typography
+              variant="h5"
+              sx={{ color: '#185a9d', fontWeight: 700, mb: 4 }}
+            >
               Personal Information
             </Typography>
-            
+
             <Grid container spacing={4}>
               <Grid item xs={12} md={6}>
                 <ProfileField
-                  icon={<AccountCircleIcon sx={{ color: '#43cea2', fontSize: 28 }} />}
+                  icon={
+                    <AccountCircleIcon
+                      sx={{ color: '#43cea2', fontSize: 28 }}
+                    />
+                  }
                   label="Username"
                   value={profile.username}
                 />
@@ -179,20 +200,31 @@ const UserProfile = () => {
             {profile.role === 'doctor' && (
               <>
                 <Divider sx={{ my: 4 }} />
-                <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 4 }}>
+                <Typography
+                  variant="h5"
+                  sx={{ color: '#185a9d', fontWeight: 700, mb: 4 }}
+                >
                   Professional Information
                 </Typography>
                 <Grid container spacing={4}>
                   <Grid item xs={12} md={6}>
                     <ProfileField
-                      icon={<LocalHospitalIcon sx={{ color: '#43cea2', fontSize: 28 }} />}
+                      icon={
+                        <LocalHospitalIcon
+                          sx={{ color: '#43cea2', fontSize: 28 }}
+                        />
+                      }
                       label="Specialty"
                       value={profile.specialty}
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <ProfileField
-                      icon={<LocationOnIcon sx={{ color: '#43cea2', fontSize: 28 }} />}
+                      icon={
+                        <LocationOnIcon
+                          sx={{ color: '#43cea2', fontSize: 28 }}
+                        />
+                      }
                       label="Location"
                       value={profile.location}
                     />

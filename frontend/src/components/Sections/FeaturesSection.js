@@ -18,6 +18,7 @@ import SupportAgentRoundedIcon from '@mui/icons-material/SupportAgentRounded'
 import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded'
 import InsightsRoundedIcon from '@mui/icons-material/InsightsRounded'
 import VerifiedUserRoundedIcon from '@mui/icons-material/VerifiedUserRounded'
+import PropTypes from 'prop-types'
 
 const items = [
   {
@@ -75,7 +76,8 @@ export default function Features() {
     <Box
       id="features"
       sx={{
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,249,255,0.95) 100%)',
+        background:
+          'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,249,255,0.95) 100%)',
         position: 'relative',
         overflow: 'hidden',
         minHeight: '100vh',
@@ -97,20 +99,16 @@ export default function Features() {
         },
       }}
     >
-      <Container 
-        maxWidth="xl" 
-        sx={{ 
-          py: { xs: 10, sm: 16 }, 
-          position: 'relative', 
+      <Container
+        maxWidth="xl"
+        sx={{
+          py: { xs: 10, sm: 16 },
+          position: 'relative',
           zIndex: 1,
           px: { xs: 2, sm: 4, md: 8 },
         }}
       >
-        <Stack 
-          spacing={4} 
-          alignItems="center" 
-          sx={{ mb: { xs: 8, md: 12 } }}
-        >
+        <Stack spacing={4} alignItems="center" sx={{ mb: { xs: 8, md: 12 } }}>
           <Typography
             component="h2"
             sx={{
@@ -138,20 +136,20 @@ export default function Features() {
               animation: 'fadeIn 1s ease-out 0.3s both',
             }}
           >
-            Discover the key features of our CareConnect application,
-            designed to provide comprehensive care, security, actionable
-            insights, and more.
+            Discover the key features of our CareConnect application, designed
+            to provide comprehensive care, security, actionable insights, and
+            more.
           </Typography>
         </Stack>
 
         {/* Desktop View */}
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-          <Grid 
-            container 
-            spacing={{ xs: 4, md: 6 }} 
-            sx={{ 
-              maxWidth: '1800px', 
-              mx: 'auto' 
+          <Grid
+            container
+            spacing={{ xs: 4, md: 6 }}
+            sx={{
+              maxWidth: '1800px',
+              mx: 'auto',
             }}
           >
             <Grid item xs={12} md={4}>
@@ -167,13 +165,13 @@ export default function Features() {
                 ))}
               </Stack>
             </Grid>
-            <Grid 
-              item 
-              xs={12} 
-              md={4} 
-              sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
+            <Grid
+              item
+              xs={12}
+              md={4}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
@@ -217,7 +215,7 @@ export default function Features() {
                     key={index + 2}
                     item={item}
                     index={index + 2}
-                    isSelected={selectedItemIndex === (index + 2)}
+                    isSelected={selectedItemIndex === index + 2}
                     onClick={() => handleItemClick(index + 2)}
                   />
                 ))}
@@ -248,21 +246,25 @@ export default function Features() {
                   borderRadius: '12px',
                   padding: '12px',
                   height: 'auto',
-                  background: selectedItemIndex === index
-                    ? 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)'
-                    : 'rgba(255, 255, 255, 0.9)',
+                  background:
+                    selectedItemIndex === index
+                      ? 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)'
+                      : 'rgba(255, 255, 255, 0.9)',
                   color: selectedItemIndex === index ? '#fff' : '#555',
                   border: '1px solid',
-                  borderColor: selectedItemIndex === index
-                    ? 'transparent'
-                    : 'rgba(230, 230, 230, 0.8)',
-                  boxShadow: selectedItemIndex === index
-                    ? '0 4px 16px rgba(24, 90, 157, 0.15)'
-                    : 'none',
+                  borderColor:
+                    selectedItemIndex === index
+                      ? 'transparent'
+                      : 'rgba(230, 230, 230, 0.8)',
+                  boxShadow:
+                    selectedItemIndex === index
+                      ? '0 4px 16px rgba(24, 90, 157, 0.15)'
+                      : 'none',
                   '&:hover': {
-                    background: selectedItemIndex === index
-                      ? 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)'
-                      : 'rgba(67, 206, 162, 0.1)',
+                    background:
+                      selectedItemIndex === index
+                        ? 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)'
+                        : 'rgba(67, 206, 162, 0.1)',
                   },
                   '& .MuiChip-label': {
                     fontSize: '1rem',
@@ -367,9 +369,7 @@ const FeatureCard = ({ item, index, isSelected, onClick }) => (
       borderColor: isSelected
         ? 'rgba(67, 206, 162, 0.3)'
         : 'rgba(230, 230, 230, 0.8)',
-      boxShadow: isSelected
-        ? '0 8px 32px rgba(24, 90, 157, 0.12)'
-        : 'none',
+      boxShadow: isSelected ? '0 8px 32px rgba(24, 90, 157, 0.12)' : 'none',
       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       animation: `fadeInUp 1s ease-out ${index * 0.15}s both`,
       '&:hover': {
@@ -453,3 +453,10 @@ const FeatureCard = ({ item, index, isSelected, onClick }) => (
     </Box>
   </Card>
 )
+
+FeatureCard.propTypes = {
+  item: PropTypes.object.isRequired,
+  index: PropTypes.number.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+}

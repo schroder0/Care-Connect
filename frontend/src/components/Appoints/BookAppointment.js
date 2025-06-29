@@ -56,7 +56,9 @@ const BookAppointment = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!userData?.medicalId) {
-      alert('Please update your profile with a medical ID before booking an appointment.')
+      alert(
+        'Please update your profile with a medical ID before booking an appointment.'
+      )
       return
     }
 
@@ -69,8 +71,10 @@ const BookAppointment = () => {
       setUserProfileLoading(true)
       await createAppointmentRequest(data)
       setUserProfileLoading(false)
-      alert('Appointment request submitted successfully! Please check your pending requests for updates.')
-      
+      alert(
+        'Appointment request submitted successfully! Please check your pending requests for updates.'
+      )
+
       // Reset form
       setFormData({
         doctorMedicalId: '',
@@ -100,7 +104,12 @@ const BookAppointment = () => {
   if (loading || authLoading) {
     return (
       <Container>
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="200px"
+        >
           <CircularProgress />
         </Box>
       </Container>
@@ -124,7 +133,8 @@ const BookAppointment = () => {
             >
               {doctors.map((doctor) => (
                 <MenuItem key={doctor.medicalId} value={doctor.medicalId}>
-                  Dr. {doctor.username} - {doctor.specialty || 'General Practitioner'}
+                  Dr. {doctor.username} -{' '}
+                  {doctor.specialty || 'General Practitioner'}
                 </MenuItem>
               ))}
             </Select>
@@ -181,23 +191,26 @@ const BookAppointment = () => {
               control={
                 <Switch
                   checked={formData.meetingType === 'online'}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    meetingType: e.target.checked ? 'online' : 'offline'
-                  })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      meetingType: e.target.checked ? 'online' : 'offline',
+                    })
+                  }
                   color="primary"
                 />
               }
               label={
                 <Box>
                   <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
-                    {formData.meetingType === 'online' ? 'Online Video Call' : 'In-Person Meeting'}
+                    {formData.meetingType === 'online'
+                      ? 'Online Video Call'
+                      : 'In-Person Meeting'}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {formData.meetingType === 'online' 
-                      ? 'This appointment will be conducted via video call' 
-                      : 'This appointment will be conducted in-person at the clinic'
-                    }
+                    {formData.meetingType === 'online'
+                      ? 'This appointment will be conducted via video call'
+                      : 'This appointment will be conducted in-person at the clinic'}
                   </Typography>
                 </Box>
               }

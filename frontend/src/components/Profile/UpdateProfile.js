@@ -22,7 +22,11 @@ const API_URL = 'http://localhost:5001/api'
 const UpdateProfile = () => {
   const { userData, isLoading: authLoading } = useAuth()
   const userId = userData?.id
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  })
   const [formData, setFormData] = useState({
     userId,
     username: '',
@@ -75,7 +79,7 @@ const UpdateProfile = () => {
         setSnackbar({
           open: true,
           message: 'Profile updated successfully',
-          severity: 'success'
+          severity: 'success',
         })
         setProfile({
           ...profile,
@@ -92,7 +96,7 @@ const UpdateProfile = () => {
         setSnackbar({
           open: true,
           message: 'Failed to update profile',
-          severity: 'error'
+          severity: 'error',
         })
       })
   }
@@ -123,10 +127,13 @@ const UpdateProfile = () => {
     >
       <CardContent sx={{ p: 4 }}>
         <form onSubmit={handleSubmit}>
-          <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 4 }}>
+          <Typography
+            variant="h5"
+            sx={{ color: '#185a9d', fontWeight: 700, mb: 4 }}
+          >
             Personal Information
           </Typography>
-          
+
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <TextField
@@ -213,7 +220,10 @@ const UpdateProfile = () => {
           {profile.role === 'doctor' && (
             <>
               <Divider sx={{ my: 4 }} />
-              <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 4 }}>
+              <Typography
+                variant="h5"
+                sx={{ color: '#185a9d', fontWeight: 700, mb: 4 }}
+              >
                 Professional Information
               </Typography>
               <Grid container spacing={3}>

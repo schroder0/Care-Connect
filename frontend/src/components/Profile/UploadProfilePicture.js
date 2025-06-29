@@ -18,7 +18,11 @@ import DeleteIcon from '@mui/icons-material/Delete'
 const UploadProfilePicture = () => {
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  })
   const { userData } = useAuth()
 
   const handleFileSelect = (e) => {
@@ -48,7 +52,7 @@ const UploadProfilePicture = () => {
           setSnackbar({
             open: true,
             message: 'Profile picture uploaded successfully',
-            severity: 'success'
+            severity: 'success',
           })
           setFile(null)
           setPreview(null)
@@ -58,7 +62,7 @@ const UploadProfilePicture = () => {
           setSnackbar({
             open: true,
             message: 'Failed to upload profile picture',
-            severity: 'error'
+            severity: 'error',
           })
         })
     }
@@ -74,10 +78,13 @@ const UploadProfilePicture = () => {
       }}
     >
       <CardContent sx={{ p: 4 }}>
-        <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 4, textAlign: 'center' }}>
+        <Typography
+          variant="h5"
+          sx={{ color: '#185a9d', fontWeight: 700, mb: 4, textAlign: 'center' }}
+        >
           Update Profile Picture
         </Typography>
-        
+
         <Box
           sx={{
             display: 'flex',
@@ -138,8 +145,15 @@ const UploadProfilePicture = () => {
             style={{ display: 'none' }}
             id="profile-picture-input"
           />
-          
-          <Box sx={{ display: 'flex', gap: 2, flexDirection: 'column', alignItems: 'center' }}>
+
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
             <label htmlFor="profile-picture-input">
               <Button
                 component="span"
@@ -167,7 +181,8 @@ const UploadProfilePicture = () => {
                 onClick={handleSubmit}
                 variant="contained"
                 sx={{
-                  background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                  background:
+                    'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                   borderRadius: '30px',
                   padding: '12px 48px',
                   fontSize: '1.1rem',
@@ -185,8 +200,12 @@ const UploadProfilePicture = () => {
             )}
           </Box>
 
-          <Typography variant="body2" sx={{ color: '#666', textAlign: 'center' }}>
-            Supported formats: JPG, PNG, GIF<br />
+          <Typography
+            variant="body2"
+            sx={{ color: '#666', textAlign: 'center' }}
+          >
+            Supported formats: JPG, PNG, GIF
+            <br />
             Maximum file size: 5MB
           </Typography>
         </Box>

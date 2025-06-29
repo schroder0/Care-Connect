@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useState, useEffect } from 'react'
+import { useAuth } from '../../contexts/AuthContext'
 import {
   getDoctorAppointmentRequests,
   updateAppointmentRequestStatus,
   addMessageToRequest,
-} from '../../services/api';
+} from '../../services/api'
 import {
   Container,
   Paper,
@@ -19,61 +19,63 @@ import {
   Grid,
   Chip,
   CircularProgress,
-} from '@mui/material';
-import { format } from 'date-fns';
+} from '@mui/material'
+import { format } from 'date-fns'
 
 const DoctorPendingRequests = () => {
-  const { userData } = useAuth();
-  const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [message, setMessage] = useState('');
-  const [chatMessages, setChatMessages] = useState([]);
-  
+  const { userData } = useAuth()
+  const [requests, setRequests] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [selectedRequest, setSelectedRequest] = useState(null)
+  const [chatOpen, setChatOpen] = useState(false)
+  const [message, setMessage] = useState('')
+  const [chatMessages, setChatMessages] = useState([])
+
   // Add state for approval dialog
-  const [approvalDialogOpen, setApprovalDialogOpen] = useState(false);
-  const [rejectionDialogOpen, setRejectionDialogOpen] = useState(false);
-  const [scheduledDate, setScheduledDate] = useState('');
-  const [scheduledTime, setScheduledTime] = useState('');
-  const [doctorResponse, setDoctorResponse] = useState('');
-  const [rejectionReason, setRejectionReason] = useState('');
-  const [approvalRequestId, setApprovalRequestId] = useState(null);
-  const [rejectionRequestId, setRejectionRequestId] = useState(null);
+  const [approvalDialogOpen, setApprovalDialogOpen] = useState(false)
+  const [rejectionDialogOpen, setRejectionDialogOpen] = useState(false)
+  const [scheduledDate, setScheduledDate] = useState('')
+  const [scheduledTime, setScheduledTime] = useState('')
+  const [doctorResponse, setDoctorResponse] = useState('')
+  const [rejectionReason, setRejectionReason] = useState('')
+  const [approvalRequestId, setApprovalRequestId] = useState(null)
+  const [rejectionRequestId, setRejectionRequestId] = useState(null)
 
   useEffect(() => {
     if (userData?.medicalId) {
-      fetchRequests();
+      fetchRequests()
     }
-  }, [userData]);
+  }, [userData])
 
   const fetchRequests = async () => {
     try {
-      const response = await getDoctorAppointmentRequests(userData.medicalId);
+      const response = await getDoctorAppointmentRequests(userData.medicalId)
       // Filter only pending requests
-      const pendingRequests = (response.data.requests || []).filter(req => req.status === 'pending');
-      setRequests(pendingRequests);
+      const pendingRequests = (response.data.requests || []).filter(
+        (req) => req.status === 'pending'
+      )
+      setRequests(pendingRequests)
     } catch (error) {
-      console.error('Error fetching requests:', error);
+      console.error('Error fetching requests:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleApprove = (requestId) => {
-    console.log('Approve clicked for request:', requestId); // Debug log
-    setApprovalRequestId(requestId);
-    setScheduledDate('');
-    setScheduledTime('');
-    setDoctorResponse('');
-    setApprovalDialogOpen(true);
-    console.log('Approval dialog should be open now'); // Debug log
-  };
+    console.log('Approve clicked for request:', requestId) // Debug log
+    setApprovalRequestId(requestId)
+    setScheduledDate('')
+    setScheduledTime('')
+    setDoctorResponse('')
+    setApprovalDialogOpen(true)
+    console.log('Approval dialog should be open now') // Debug log
+  }
 
   const confirmApproval = async () => {
     if (!scheduledDate || !scheduledTime) {
-      alert('Please select both date and time for the appointment.');
-      return;
+      alert('Please select both date and time for the appointment.')
+      return
     }
 
     try {
@@ -81,69 +83,74 @@ const DoctorPendingRequests = () => {
         status: 'approved',
         doctorResponse: doctorResponse || 'Appointment approved',
         scheduledDate,
-        scheduledTime
-      });
-      setApprovalDialogOpen(false);
-      fetchRequests();
+        scheduledTime,
+      })
+      setApprovalDialogOpen(false)
+      fetchRequests()
     } catch (error) {
-      console.error('Error approving request:', error);
-      alert('Failed to approve appointment. Please try again.');
+      console.error('Error approving request:', error)
+      alert('Failed to approve appointment. Please try again.')
     }
-  };
+  }
 
   const handleReject = (requestId) => {
-    setRejectionRequestId(requestId);
-    setRejectionReason('');
-    setRejectionDialogOpen(true);
-  };
+    setRejectionRequestId(requestId)
+    setRejectionReason('')
+    setRejectionDialogOpen(true)
+  }
 
   const confirmRejection = async () => {
     if (!rejectionReason.trim()) {
-      alert('Please provide a reason for rejection.');
-      return;
+      alert('Please provide a reason for rejection.')
+      return
     }
 
     try {
       await updateAppointmentRequestStatus(rejectionRequestId, {
         status: 'rejected',
-        doctorResponse: rejectionReason
-      });
-      setRejectionDialogOpen(false);
-      fetchRequests();
+        doctorResponse: rejectionReason,
+      })
+      setRejectionDialogOpen(false)
+      fetchRequests()
     } catch (error) {
-      console.error('Error rejecting request:', error);
-      alert('Failed to reject appointment. Please try again.');
+      console.error('Error rejecting request:', error)
+      alert('Failed to reject appointment. Please try again.')
     }
-  };
+  }
 
   const handleChat = async (request) => {
-    setSelectedRequest(request);
-    setChatMessages(request.messages || []);
-    setChatOpen(true);
-  };
+    setSelectedRequest(request)
+    setChatMessages(request.messages || [])
+    setChatOpen(true)
+  }
 
   const handleSendMessage = async () => {
-    if (!message.trim() || !selectedRequest) return;
+    if (!message.trim() || !selectedRequest) return
 
     try {
       await addMessageToRequest(selectedRequest._id, {
         message: message.trim(),
         senderMedicalId: userData.medicalId,
         senderName: userData.username,
-      });
-      setMessage('');
-      fetchRequests();
+      })
+      setMessage('')
+      fetchRequests()
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error sending message:', error)
     }
-  };
+  }
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
         <CircularProgress />
       </Box>
-    );
+    )
   }
 
   return (
@@ -164,7 +171,11 @@ const DoctorPendingRequests = () => {
                 },
               }}
             >
-              <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="flex-start"
+              >
                 <Box>
                   <Typography variant="h5" gutterBottom>
                     {request.patientName}
@@ -194,7 +205,10 @@ const DoctorPendingRequests = () => {
                     <strong>Contact:</strong> {request.contactInfo}
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Meeting Type:</strong> {request.meetingType === 'online' ? '📹 Online Video Call' : '📍 In-Person Meeting'}
+                    <strong>Meeting Type:</strong>{' '}
+                    {request.meetingType === 'online'
+                      ? '📹 Online Video Call'
+                      : '📍 In-Person Meeting'}
                   </Typography>
                 </Box>
 
@@ -246,9 +260,7 @@ const DoctorPendingRequests = () => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          Approve Appointment
-        </DialogTitle>
+        <DialogTitle>Approve Appointment</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2 }}>
             <TextField
@@ -289,11 +301,7 @@ const DoctorPendingRequests = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setApprovalDialogOpen(false)}>Cancel</Button>
-          <Button
-            onClick={confirmApproval}
-            variant="contained"
-            color="success"
-          >
+          <Button onClick={confirmApproval} variant="contained" color="success">
             Confirm Approval
           </Button>
         </DialogActions>
@@ -306,9 +314,7 @@ const DoctorPendingRequests = () => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          Reject Appointment
-        </DialogTitle>
+        <DialogTitle>Reject Appointment</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2 }}>
             <TextField
@@ -325,11 +331,7 @@ const DoctorPendingRequests = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setRejectionDialogOpen(false)}>Cancel</Button>
-          <Button
-            onClick={confirmRejection}
-            variant="contained"
-            color="error"
-          >
+          <Button onClick={confirmRejection} variant="contained" color="error">
             Confirm Rejection
           </Button>
         </DialogActions>
@@ -342,9 +344,7 @@ const DoctorPendingRequests = () => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          Chat with {selectedRequest?.patientName}
-        </DialogTitle>
+        <DialogTitle>Chat with {selectedRequest?.patientName}</DialogTitle>
         <DialogContent dividers>
           <Box sx={{ mb: 2, maxHeight: '300px', overflowY: 'auto' }}>
             {chatMessages.map((msg, index) => (
@@ -353,12 +353,19 @@ const DoctorPendingRequests = () => {
                 sx={{
                   p: 1,
                   mb: 1,
-                  bgcolor: msg.sender === userData.medicalId ? 'primary.light' : 'background.default',
-                  color: msg.sender === userData.medicalId ? 'primary.contrastText' : 'text.primary',
+                  bgcolor:
+                    msg.sender === userData.medicalId
+                      ? 'primary.light'
+                      : 'background.default',
+                  color:
+                    msg.sender === userData.medicalId
+                      ? 'primary.contrastText'
+                      : 'text.primary',
                 }}
               >
                 <Typography variant="caption" display="block">
-                  {msg.senderName} - {format(new Date(msg.timestamp), 'MMM d, HH:mm')}
+                  {msg.senderName} -{' '}
+                  {format(new Date(msg.timestamp), 'MMM d, HH:mm')}
                 </Typography>
                 <Typography variant="body2">{msg.message}</Typography>
               </Paper>
@@ -385,7 +392,7 @@ const DoctorPendingRequests = () => {
         </DialogActions>
       </Dialog>
     </Container>
-  );
-};
+  )
+}
 
-export default DoctorPendingRequests;
+export default DoctorPendingRequests

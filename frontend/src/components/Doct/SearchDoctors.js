@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { searchDoctors } from '../../services/api';
+import React, { useState } from 'react'
+import { searchDoctors } from '../../services/api'
 import {
   TextField,
   Button,
@@ -15,16 +15,16 @@ import {
   Alert,
   Snackbar,
   IconButton,
-} from '@mui/material';
-import PageTemplate from '../../components/PageTemplate';
-import SearchIcon from '@mui/icons-material/Search';
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
-import StarIcon from '@mui/icons-material/Star';
-import EventAvailableIcon from '@mui/icons-material/EventAvailable';
-import PersonIcon from '@mui/icons-material/Person';
-import ClearIcon from '@mui/icons-material/Clear';
+} from '@mui/material'
+import PageTemplate from '../../components/PageTemplate'
+import SearchIcon from '@mui/icons-material/Search'
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices'
+import StarIcon from '@mui/icons-material/Star'
+import EventAvailableIcon from '@mui/icons-material/EventAvailable'
+import PersonIcon from '@mui/icons-material/Person'
+import ClearIcon from '@mui/icons-material/Clear'
 
 const specialties = [
   'Cardiology',
@@ -35,64 +35,70 @@ const specialties = [
   'Ophthalmology',
   'General Medicine',
   'Psychiatry',
-];
+]
 
 const SearchDoctors = () => {
-  const [name, setName] = useState('');
-  const [specialty, setSpecialty] = useState('');
-  const [location, setLocation] = useState('');
-  const [doctors, setDoctors] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [name, setName] = useState('')
+  const [specialty, setSpecialty] = useState('')
+  const [location, setLocation] = useState('')
+  const [doctors, setDoctors] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  })
 
   const clearSearch = () => {
-    setName('');
-    setSpecialty('');
-    setLocation('');
-  };
+    setName('')
+    setSpecialty('')
+    setLocation('')
+  }
 
   const handleSearch = () => {
-    setLoading(true);
-    setDoctors([]); // Clear previous results
-    
+    setLoading(true)
+    setDoctors([]) // Clear previous results
+
     // Don't search if all fields are empty
     if (!name && !specialty && !location) {
       setSnackbar({
         open: true,
         message: 'Please enter at least one search criteria',
-        severity: 'info'
-      });
-      setLoading(false);
-      return;
+        severity: 'info',
+      })
+      setLoading(false)
+      return
     }
 
-    const params = { name, specialty, location };
-    
+    const params = { name, specialty, location }
+
     searchDoctors(params)
       .then((response) => {
-        console.log('Search response:', response); // Debug log
-        const doctorsList = response.data || [];
-        setDoctors(doctorsList);
-        setLoading(false);
-        
+        console.log('Search response:', response) // Debug log
+        const doctorsList = response.data || []
+        setDoctors(doctorsList)
+        setLoading(false)
+
         if (doctorsList.length === 0) {
           setSnackbar({
             open: true,
             message: `No doctors found matching "${name}"${specialty ? ` in ${specialty}` : ''}${location ? ` at ${location}` : ''}`,
-            severity: 'info'
-          });
+            severity: 'info',
+          })
         }
       })
       .catch((error) => {
-        console.error('Error searching doctors:', error);
+        console.error('Error searching doctors:', error)
         setSnackbar({
           open: true,
-          message: error.response?.data?.message || 'Failed to search doctors. Please try again.',
-          severity: 'error'
-        });
-        setLoading(false);
-      });
-  };
+          message:
+            error.response?.data?.message ||
+            'Failed to search doctors. Please try again.',
+          severity: 'error',
+        })
+        setLoading(false)
+      })
+  }
 
   return (
     <PageTemplate>
@@ -133,7 +139,8 @@ const SearchDoctors = () => {
             mb: 6,
           }}
         >
-          Search for qualified healthcare professionals by name, specialty, or location
+          Search for qualified healthcare professionals by name, specialty, or
+          location
         </Typography>
 
         <Card
@@ -237,7 +244,8 @@ const SearchDoctors = () => {
                     disabled={loading}
                     startIcon={<SearchIcon />}
                     sx={{
-                      background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                      background:
+                        'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                       borderRadius: '30px',
                       padding: '12px',
                       fontSize: '1.1rem',
@@ -281,9 +289,10 @@ const SearchDoctors = () => {
                     label={s}
                     onClick={() => setSpecialty(s)}
                     sx={{
-                      background: specialty === s
-                        ? 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)'
-                        : 'rgba(24,90,157,0.1)',
+                      background:
+                        specialty === s
+                          ? 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)'
+                          : 'rgba(24,90,157,0.1)',
                       color: specialty === s ? '#fff' : '#185a9d',
                       fontWeight: 500,
                       '&:hover': {
@@ -329,7 +338,10 @@ const SearchDoctors = () => {
                         {doctor.username[0].toUpperCase()}
                       </Avatar>
                       <Box sx={{ ml: 2 }}>
-                        <Typography variant="h6" sx={{ color: '#185a9d', fontWeight: 600 }}>
+                        <Typography
+                          variant="h6"
+                          sx={{ color: '#185a9d', fontWeight: 600 }}
+                        >
                           Dr. {doctor.username}
                         </Typography>
                         <Rating
@@ -347,14 +359,18 @@ const SearchDoctors = () => {
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <MedicalServicesIcon sx={{ color: '#43cea2', mr: 1, fontSize: 20 }} />
+                      <MedicalServicesIcon
+                        sx={{ color: '#43cea2', mr: 1, fontSize: 20 }}
+                      />
                       <Typography variant="body1" sx={{ color: '#666' }}>
                         {doctor.specialty}
                       </Typography>
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <LocationOnIcon sx={{ color: '#43cea2', mr: 1, fontSize: 20 }} />
+                      <LocationOnIcon
+                        sx={{ color: '#43cea2', mr: 1, fontSize: 20 }}
+                      />
                       <Typography variant="body1" sx={{ color: '#666' }}>
                         {doctor.location}
                       </Typography>
@@ -365,7 +381,8 @@ const SearchDoctors = () => {
                       fullWidth
                       startIcon={<EventAvailableIcon />}
                       sx={{
-                        background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                        background:
+                          'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                         borderRadius: '30px',
                         padding: '10px',
                         fontSize: '1rem',
@@ -403,7 +420,7 @@ const SearchDoctors = () => {
         </Alert>
       </Snackbar>
     </PageTemplate>
-  );
-};
+  )
+}
 
-export default SearchDoctors;
+export default SearchDoctors

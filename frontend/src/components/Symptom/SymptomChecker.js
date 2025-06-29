@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { checkSymptoms } from '../../services/api';
+import React, { useState } from 'react'
+import { checkSymptoms } from '../../services/api'
 import {
   Grid,
   TextField,
@@ -14,12 +14,12 @@ import {
   IconButton,
   Alert,
   Snackbar,
-} from '@mui/material';
-import PageTemplate from '../../components/PageTemplate';
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import SearchIcon from '@mui/icons-material/Search';
-import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
-import CloseIcon from '@mui/icons-material/Close';
+} from '@mui/material'
+import PageTemplate from '../../components/PageTemplate'
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
+import SearchIcon from '@mui/icons-material/Search'
+import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety'
+import CloseIcon from '@mui/icons-material/Close'
 
 const commonSymptoms = [
   'Headache',
@@ -30,59 +30,65 @@ const commonSymptoms = [
   'Body Ache',
   'Nausea',
   'Dizziness',
-];
+]
 
 const SymptomChecker = () => {
-  const [selectedSymptoms, setSelectedSymptoms] = useState([]);
-  const [customSymptom, setCustomSymptom] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [selectedSymptoms, setSelectedSymptoms] = useState([])
+  const [customSymptom, setCustomSymptom] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState(null)
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  })
 
   const handleAddSymptom = (symptom) => {
     if (!selectedSymptoms.includes(symptom)) {
-      setSelectedSymptoms([...selectedSymptoms, symptom]);
+      setSelectedSymptoms([...selectedSymptoms, symptom])
     }
-  };
+  }
 
   const handleRemoveSymptom = (symptomToRemove) => {
-    setSelectedSymptoms(selectedSymptoms.filter(symptom => symptom !== symptomToRemove));
-  };
+    setSelectedSymptoms(
+      selectedSymptoms.filter((symptom) => symptom !== symptomToRemove)
+    )
+  }
 
   const handleAddCustomSymptom = () => {
     if (customSymptom && !selectedSymptoms.includes(customSymptom)) {
-      setSelectedSymptoms([...selectedSymptoms, customSymptom]);
-      setCustomSymptom('');
+      setSelectedSymptoms([...selectedSymptoms, customSymptom])
+      setCustomSymptom('')
     }
-  };
+  }
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (selectedSymptoms.length === 0) {
       setSnackbar({
         open: true,
         message: 'Please select at least one symptom',
-        severity: 'warning'
-      });
-      return;
+        severity: 'warning',
+      })
+      return
     }
 
-    setLoading(true);
+    setLoading(true)
     checkSymptoms({ symptoms: selectedSymptoms.join(', ') })
       .then((response) => {
-        setResult(response.data.message);
-        setLoading(false);
+        setResult(response.data.message)
+        setLoading(false)
       })
       .catch((error) => {
-        console.error(error);
+        console.error(error)
         setSnackbar({
           open: true,
           message: 'Failed to analyze symptoms',
-          severity: 'error'
-        });
-        setLoading(false);
-      });
-  };
+          severity: 'error',
+        })
+        setLoading(false)
+      })
+  }
 
   return (
     <PageTemplate>
@@ -123,8 +129,8 @@ const SymptomChecker = () => {
             mb: 6,
           }}
         >
-          Check your symptoms and get quick medical guidance. Remember, this is not a substitute
-          for professional medical advice.
+          Check your symptoms and get quick medical guidance. Remember, this is
+          not a substitute for professional medical advice.
         </Typography>
 
         <Grid container spacing={4}>
@@ -140,10 +146,13 @@ const SymptomChecker = () => {
               }}
             >
               <CardContent sx={{ p: 4 }}>
-                <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 3 }}>
+                <Typography
+                  variant="h5"
+                  sx={{ color: '#185a9d', fontWeight: 700, mb: 3 }}
+                >
                   Common Symptoms
                 </Typography>
-                
+
                 <Box sx={{ mb: 4 }}>
                   <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
                     {commonSymptoms.map((symptom) => (
@@ -155,7 +164,9 @@ const SymptomChecker = () => {
                           background: selectedSymptoms.includes(symptom)
                             ? 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)'
                             : 'rgba(24,90,157,0.1)',
-                          color: selectedSymptoms.includes(symptom) ? '#fff' : '#185a9d',
+                          color: selectedSymptoms.includes(symptom)
+                            ? '#fff'
+                            : '#185a9d',
                           fontWeight: 500,
                           '&:hover': {
                             transform: 'translateY(-2px)',
@@ -166,7 +177,10 @@ const SymptomChecker = () => {
                   </Stack>
                 </Box>
 
-                <Typography variant="h6" sx={{ color: '#185a9d', fontWeight: 600, mb: 2 }}>
+                <Typography
+                  variant="h6"
+                  sx={{ color: '#185a9d', fontWeight: 600, mb: 2 }}
+                >
                   Add Custom Symptom
                 </Typography>
 
@@ -193,7 +207,8 @@ const SymptomChecker = () => {
                     disabled={!customSymptom}
                     variant="contained"
                     sx={{
-                      background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                      background:
+                        'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                       color: '#fff',
                       minWidth: '100px',
                       '&:hover': {
@@ -221,13 +236,19 @@ const SymptomChecker = () => {
               }}
             >
               <CardContent sx={{ p: 4 }}>
-                <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 3 }}>
+                <Typography
+                  variant="h5"
+                  sx={{ color: '#185a9d', fontWeight: 700, mb: 3 }}
+                >
                   Selected Symptoms
                 </Typography>
 
                 <Box sx={{ mb: 4, minHeight: '100px' }}>
                   {selectedSymptoms.length === 0 ? (
-                    <Typography variant="body1" sx={{ color: '#666', textAlign: 'center' }}>
+                    <Typography
+                      variant="body1"
+                      sx={{ color: '#666', textAlign: 'center' }}
+                    >
                       No symptoms selected yet
                     </Typography>
                   ) : (
@@ -238,7 +259,8 @@ const SymptomChecker = () => {
                           label={symptom}
                           onDelete={() => handleRemoveSymptom(symptom)}
                           sx={{
-                            background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                            background:
+                              'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                             color: '#fff',
                             fontWeight: 500,
                           }}
@@ -253,9 +275,12 @@ const SymptomChecker = () => {
                     onClick={handleSubmit}
                     disabled={loading || selectedSymptoms.length === 0}
                     variant="contained"
-                    startIcon={loading ? <CircularProgress size={20} /> : <SearchIcon />}
+                    startIcon={
+                      loading ? <CircularProgress size={20} /> : <SearchIcon />
+                    }
                     sx={{
-                      background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                      background:
+                        'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                       borderRadius: '30px',
                       padding: '12px 48px',
                       fontSize: '1.1rem',
@@ -282,13 +307,26 @@ const SymptomChecker = () => {
                       border: '1px solid #43cea2',
                     }}
                   >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        mb: 2,
+                      }}
+                    >
                       <HealthAndSafetyIcon sx={{ color: '#43cea2' }} />
-                      <Typography variant="h6" sx={{ color: '#185a9d', fontWeight: 600 }}>
+                      <Typography
+                        variant="h6"
+                        sx={{ color: '#185a9d', fontWeight: 600 }}
+                      >
                         Analysis Results
                       </Typography>
                     </Box>
-                    <Typography variant="body1" sx={{ color: '#666', lineHeight: 1.6 }}>
+                    <Typography
+                      variant="body1"
+                      sx={{ color: '#666', lineHeight: 1.6 }}
+                    >
                       {result}
                     </Typography>
                   </Box>
@@ -314,7 +352,7 @@ const SymptomChecker = () => {
         </Alert>
       </Snackbar>
     </PageTemplate>
-  );
-};
+  )
+}
 
-export default SymptomChecker;
+export default SymptomChecker

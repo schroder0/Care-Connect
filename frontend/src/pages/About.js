@@ -1,6 +1,6 @@
-import React from 'react';
-import { Typography, Paper, Box, Grid, Card, CardContent } from '@mui/material';
-import PageTemplate from '../components/PageTemplate';
+import React from 'react'
+import { Typography, Paper, Box, Grid, Card, CardContent } from '@mui/material'
+import PageTemplate from '../components/PageTemplate'
 
 const About = () => {
   return (
@@ -26,7 +26,7 @@ const About = () => {
         >
           About Care Connect
         </Typography>
-        
+
         <Typography
           variant="h5"
           sx={{
@@ -37,7 +37,8 @@ const About = () => {
             mb: 6,
           }}
         >
-          Transforming healthcare through technology, making quality care accessible to everyone.
+          Transforming healthcare through technology, making quality care
+          accessible to everyone.
         </Typography>
 
         <Grid container spacing={4} sx={{ mb: 6 }}>
@@ -67,15 +68,19 @@ const About = () => {
                 >
                   Our Mission
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#4a5568', lineHeight: 1.7 }}>
-                  To leverage cutting-edge technology and make healthcare services more accessible,
-                  efficient, and user-friendly for everyone. We believe in transforming the
-                  healthcare experience through innovation.
+                <Typography
+                  variant="body1"
+                  sx={{ color: '#4a5568', lineHeight: 1.7 }}
+                >
+                  To leverage cutting-edge technology and make healthcare
+                  services more accessible, efficient, and user-friendly for
+                  everyone. We believe in transforming the healthcare experience
+                  through innovation.
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
-          
+
           <Grid item xs={12} md={4}>
             <Card
               sx={{
@@ -102,15 +107,18 @@ const About = () => {
                 >
                   Our Vision
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#4a5568', lineHeight: 1.7 }}>
-                  To be the leading platform in digital healthcare solutions, creating a seamless
-                  connection between patients and healthcare providers while setting new standards
-                  in healthcare delivery.
+                <Typography
+                  variant="body1"
+                  sx={{ color: '#4a5568', lineHeight: 1.7 }}
+                >
+                  To be the leading platform in digital healthcare solutions,
+                  creating a seamless connection between patients and healthcare
+                  providers while setting new standards in healthcare delivery.
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
-          
+
           <Grid item xs={12} md={4}>
             <Card
               sx={{
@@ -137,10 +145,13 @@ const About = () => {
                 >
                   Our Values
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#4a5568', lineHeight: 1.7 }}>
-                  We are committed to innovation, accessibility, and excellence in healthcare.
-                  Our platform emphasizes security, user privacy, and delivering the highest
-                  quality of service to our users.
+                <Typography
+                  variant="body1"
+                  sx={{ color: '#4a5568', lineHeight: 1.7 }}
+                >
+                  We are committed to innovation, accessibility, and excellence
+                  in healthcare. Our platform emphasizes security, user privacy,
+                  and delivering the highest quality of service to our users.
                 </Typography>
               </CardContent>
             </Card>
@@ -157,26 +168,34 @@ const About = () => {
             boxShadow: '0 8px 32px rgba(24,90,157,0.1)',
           }}
         >
-          <Typography variant="h4" gutterBottom sx={{ color: '#185a9d', fontWeight: 700 }}>
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={{ color: '#185a9d', fontWeight: 700 }}
+          >
             Why Choose Care Connect?
           </Typography>
           <Grid container spacing={4} sx={{ mt: 2 }}>
             {[
               {
                 title: 'Advanced Technology',
-                description: 'Utilizing cutting-edge AI and machine learning for accurate symptom assessment and healthcare recommendations.',
+                description:
+                  'Utilizing cutting-edge AI and machine learning for accurate symptom assessment and healthcare recommendations.',
               },
               {
                 title: 'Easy Accessibility',
-                description: 'Access healthcare services 24/7 from anywhere, making it convenient for both patients and healthcare providers.',
+                description:
+                  'Access healthcare services 24/7 from anywhere, making it convenient for both patients and healthcare providers.',
               },
               {
                 title: 'Secure Platform',
-                description: 'Your health information is protected with state-of-the-art security measures and HIPAA compliance.',
+                description:
+                  'Your health information is protected with state-of-the-art security measures and HIPAA compliance.',
               },
               {
                 title: 'Expert Support',
-                description: 'Connect with qualified healthcare professionals and receive expert medical guidance.',
+                description:
+                  'Connect with qualified healthcare professionals and receive expert medical guidance.',
               },
             ].map((item, index) => (
               <Grid item xs={12} sm={6} key={index}>
@@ -207,7 +226,7 @@ const About = () => {
         </Paper>
       </Box>
     </PageTemplate>
-  );
-};
+  )
+}
 
-export default About;
+export default About

@@ -286,9 +286,9 @@ const SimpleBooking = () => {
       >
         <h4>How it works:</h4>
         <ul>
-          <li>Select a doctor from the list (uses Medical ID like "DOC001")</li>
+          <li>Select a doctor from the list (uses Medical ID like &quot;DOC001&quot;)</li>
           <li>
-            Select a patient from the list (uses Medical ID like "PAT001")
+            Select a patient from the list (uses Medical ID like &quot;PAT001&quot;)
           </li>
           <li>Fill in appointment details</li>
           <li>No more complex ObjectIds needed!</li>

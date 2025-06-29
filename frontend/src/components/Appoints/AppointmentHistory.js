@@ -24,7 +24,7 @@ const AppointmentHistory = () => {
 
   useEffect(() => {
     if (authLoading) return
-    
+
     if (userData?.medicalId) {
       fetchHistory()
     } else {
@@ -51,7 +51,12 @@ const AppointmentHistory = () => {
   if (authLoading || loading) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="200px"
+        >
           <CircularProgress />
         </Box>
       </Container>
@@ -75,7 +80,8 @@ const AppointmentHistory = () => {
       <Container maxWidth="lg" sx={{ mt: 4 }}>
         <Paper elevation={3} sx={{ p: 4 }}>
           <Typography variant="h6" color="warning.main">
-            Please update your profile with a medical ID to view appointment history.
+            Please update your profile with a medical ID to view appointment
+            history.
           </Typography>
         </Paper>
       </Container>
@@ -104,89 +110,127 @@ const AppointmentHistory = () => {
               <Card elevation={3}>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>
-                    {userData.role === 'doctor' 
+                    {userData.role === 'doctor'
                       ? `Patient: ${appointment.patientName || 'Unknown Patient'}`
-                      : `Dr. ${appointment.doctorName || 'Unknown Doctor'}`
-                    }
+                      : `Dr. ${appointment.doctorName || 'Unknown Doctor'}`}
                   </Typography>
                   <Box sx={{ mt: 2 }}>
                     <Typography variant="body2" color="textSecondary">
-                      <strong>Medical ID:</strong> {
-                        userData.role === 'doctor' 
-                          ? appointment.patientMedicalId || 'N/A'
-                          : appointment.doctorMedicalId || 'N/A'
-                      }
+                      <strong>Medical ID:</strong>{' '}
+                      {userData.role === 'doctor'
+                        ? appointment.patientMedicalId || 'N/A'
+                        : appointment.doctorMedicalId || 'N/A'}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      <strong>Date:</strong> {formatDate(appointment.scheduledDate || appointment.preferredDate)}
+                      <strong>Date:</strong>{' '}
+                      {formatDate(
+                        appointment.scheduledDate || appointment.preferredDate
+                      )}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      <strong>Time:</strong> {appointment.scheduledTime || appointment.preferredTime}
+                      <strong>Time:</strong>{' '}
+                      {appointment.scheduledTime || appointment.preferredTime}
                     </Typography>
                     <Box sx={{ my: 1 }}>
-                      <Chip 
-                        label={appointment.status || 'Unknown'} 
+                      <Chip
+                        label={appointment.status || 'Unknown'}
                         color={
-                          appointment.status === 'approved' ? 'success' : 
-                          appointment.status === 'rejected' ? 'error' : 
-                          appointment.status === 'pending' ? 'warning' : 'default'
+                          appointment.status === 'approved'
+                            ? 'success'
+                            : appointment.status === 'rejected'
+                              ? 'error'
+                              : appointment.status === 'pending'
+                                ? 'warning'
+                                : 'default'
                         }
                         size="small"
                       />
                       {appointment.meetingType && (
-                        <Chip 
-                          icon={appointment.meetingType === 'online' ? <VideoCall /> : <LocationOn />}
-                          label={appointment.meetingType === 'online' ? 'Video Call' : 'In-Person'} 
-                          color={appointment.meetingType === 'online' ? 'primary' : 'secondary'}
+                        <Chip
+                          icon={
+                            appointment.meetingType === 'online' ? (
+                              <VideoCall />
+                            ) : (
+                              <LocationOn />
+                            )
+                          }
+                          label={
+                            appointment.meetingType === 'online'
+                              ? 'Video Call'
+                              : 'In-Person'
+                          }
+                          color={
+                            appointment.meetingType === 'online'
+                              ? 'primary'
+                              : 'secondary'
+                          }
                           size="small"
                           sx={{ ml: 1 }}
                         />
                       )}
                     </Box>
-                    {appointment.status === 'approved' && appointment.meetingType === 'online' && appointment.videoCallLink && (
-                      <Box sx={{ mt: 2 }}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          startIcon={<VideoCall />}
-                          href={appointment.videoCallLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          size="small"
-                        >
-                          Join Video Call
-                        </Button>
-                        <Typography variant="caption" display="block" sx={{ mt: 1, color: 'text.secondary' }}>
-                          Available 10 minutes before appointment time
-                        </Typography>
-                      </Box>
-                    )}
+                    {appointment.status === 'approved' &&
+                      appointment.meetingType === 'online' &&
+                      appointment.videoCallLink && (
+                        <Box sx={{ mt: 2 }}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            startIcon={<VideoCall />}
+                            href={appointment.videoCallLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            size="small"
+                          >
+                            Join Video Call
+                          </Button>
+                          <Typography
+                            variant="caption"
+                            display="block"
+                            sx={{ mt: 1, color: 'text.secondary' }}
+                          >
+                            Available 10 minutes before appointment time
+                          </Typography>
+                        </Box>
+                      )}
                     {appointment.doctorResponse?.message && (
-                      <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+                      <Box
+                        sx={{
+                          mt: 2,
+                          p: 2,
+                          bgcolor: 'grey.100',
+                          borderRadius: 1,
+                        }}
+                      >
                         <Typography variant="body2" color="textSecondary">
-                          <strong>Doctor's Note:</strong> {appointment.doctorResponse.message}
+                          <strong>Doctor&apos;s Note:</strong>{' '}
+                          {appointment.doctorResponse.message}
                         </Typography>
                       </Box>
                     )}
                     {/* Give Feedback Button for Patients with Approved Appointments */}
-                    {userData?.role === 'patient' && appointment.status === 'approved' && (
-                      <Box sx={{ mt: 2 }}>
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          startIcon={<Feedback />}
-                          size="small"
-                          onClick={() => navigate('/patient/feedback', { 
-                            state: { 
-                              preselectedDoctor: appointment.doctorMedicalId,
-                              appointmentId: appointment._id
+                    {userData?.role === 'patient' &&
+                      appointment.status === 'approved' && (
+                        <Box sx={{ mt: 2 }}>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            startIcon={<Feedback />}
+                            size="small"
+                            onClick={() =>
+                              navigate('/patient/feedback', {
+                                state: {
+                                  preselectedDoctor:
+                                    appointment.doctorMedicalId,
+                                  appointmentId: appointment._id,
+                                },
+                              })
                             }
-                          })}
-                        >
-                          Give Feedback
-                        </Button>
-                      </Box>
-                    )}
+                          >
+                            Give Feedback
+                          </Button>
+                        </Box>
+                      )}
                   </Box>
                 </CardContent>
               </Card>

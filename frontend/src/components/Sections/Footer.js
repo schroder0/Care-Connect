@@ -67,15 +67,16 @@ export default function Footer() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'url("data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z" fill="%23ffffff" fill-opacity="0.05" fill-rule="evenodd"/%3E%3C/svg%3E")',
+          background:
+            'url("data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z" fill="%23ffffff" fill-opacity="0.05" fill-rule="evenodd"/%3E%3C/svg%3E")',
           opacity: 0.1,
           zIndex: 0,
         },
       }}
     >
-      <Container 
+      <Container
         maxWidth={false}
-        sx={{ 
+        sx={{
           position: 'relative',
           zIndex: 1,
           maxWidth: '1440px',
@@ -94,7 +95,8 @@ export default function Footer() {
                   fontSize: '1.5rem',
                   fontWeight: 700,
                   mb: 2,
-                  background: 'linear-gradient(90deg, #ffffff 0%, #e0e0e0 100%)',
+                  background:
+                    'linear-gradient(90deg, #ffffff 0%, #e0e0e0 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
@@ -110,10 +112,11 @@ export default function Footer() {
                   lineHeight: 1.6,
                 }}
               >
-                Transforming healthcare through technology. Making quality healthcare accessible to everyone, everywhere.
+                Transforming healthcare through technology. Making quality
+                healthcare accessible to everyone, everywhere.
               </Typography>
-              <Stack 
-                direction="row" 
+              <Stack
+                direction="row"
                 spacing={2}
                 sx={{
                   '& .MuiIconButton-root': {
@@ -219,13 +222,25 @@ export default function Footer() {
               },
             }}
           >
-            <IconButton href="https://github.com/your-github" target="_blank" rel="noopener">
+            <IconButton
+              href="https://github.com/your-github"
+              target="_blank"
+              rel="noopener"
+            >
               <GitHubIcon />
             </IconButton>
-            <IconButton href="https://linkedin.com/your-linkedin" target="_blank" rel="noopener">
+            <IconButton
+              href="https://linkedin.com/your-linkedin"
+              target="_blank"
+              rel="noopener"
+            >
               <LinkedInIcon />
             </IconButton>
-            <IconButton href="https://twitter.com/your-twitter" target="_blank" rel="noopener">
+            <IconButton
+              href="https://twitter.com/your-twitter"
+              target="_blank"
+              rel="noopener"
+            >
               <TwitterIcon />
             </IconButton>
           </Stack>

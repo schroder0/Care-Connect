@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   Box,
   Typography,
@@ -10,11 +10,11 @@ import {
   Chip,
   Stack,
   CircularProgress,
-} from '@mui/material';
-import PageTemplate from '../components/PageTemplate';
-import SearchIcon from '@mui/icons-material/Search';
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+} from '@mui/material'
+import PageTemplate from '../components/PageTemplate'
+import SearchIcon from '@mui/icons-material/Search'
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
 
 const commonSymptoms = [
   'Headache',
@@ -25,37 +25,37 @@ const commonSymptoms = [
   'Body Ache',
   'Nausea',
   'Dizziness',
-];
+]
 
 const SymptomChecker = () => {
-  const [selectedSymptoms, setSelectedSymptoms] = useState([]);
-  const [customSymptom, setCustomSymptom] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [selectedSymptoms, setSelectedSymptoms] = useState([])
+  const [customSymptom, setCustomSymptom] = useState('')
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
 
   const handleAddSymptom = (symptom) => {
     if (!selectedSymptoms.includes(symptom)) {
-      setSelectedSymptoms([...selectedSymptoms, symptom]);
+      setSelectedSymptoms([...selectedSymptoms, symptom])
     }
-  };
+  }
 
   const handleRemoveSymptom = (symptom) => {
-    setSelectedSymptoms(selectedSymptoms.filter((s) => s !== symptom));
-  };
+    setSelectedSymptoms(selectedSymptoms.filter((s) => s !== symptom))
+  }
 
   const handleAddCustomSymptom = () => {
     if (customSymptom && !selectedSymptoms.includes(customSymptom)) {
-      setSelectedSymptoms([...selectedSymptoms, customSymptom]);
-      setCustomSymptom('');
+      setSelectedSymptoms([...selectedSymptoms, customSymptom])
+      setCustomSymptom('')
     }
-  };
+  }
 
   const handleAnalyzeSymptoms = () => {
-    setIsAnalyzing(true);
+    setIsAnalyzing(true)
     // Simulate API call
     setTimeout(() => {
-      setIsAnalyzing(false);
-    }, 2000);
-  };
+      setIsAnalyzing(false)
+    }, 2000)
+  }
 
   return (
     <PageTemplate>
@@ -91,8 +91,8 @@ const SymptomChecker = () => {
             mb: 8,
           }}
         >
-          Get a preliminary assessment of your symptoms and receive recommendations
-          for appropriate medical care.
+          Get a preliminary assessment of your symptoms and receive
+          recommendations for appropriate medical care.
         </Typography>
 
         <Grid container spacing={4}>
@@ -107,10 +107,13 @@ const SymptomChecker = () => {
               }}
             >
               <CardContent sx={{ p: 4 }}>
-                <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 3 }}>
+                <Typography
+                  variant="h5"
+                  sx={{ color: '#185a9d', fontWeight: 700, mb: 3 }}
+                >
                   Select Your Symptoms
                 </Typography>
-                
+
                 {/* Custom Symptom Input */}
                 <Box sx={{ mb: 4 }}>
                   <TextField
@@ -127,9 +130,11 @@ const SymptomChecker = () => {
                           onClick={handleAddCustomSymptom}
                           disabled={!customSymptom}
                           sx={{
-                            background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                            background:
+                              'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                             '&:hover': {
-                              background: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
+                              background:
+                                'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
                             },
                           }}
                         >
@@ -152,10 +157,12 @@ const SymptomChecker = () => {
                       onClick={() => handleAddSymptom(symptom)}
                       sx={{
                         m: 0.5,
-                        background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                        background:
+                          'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                         color: '#fff',
                         '&:hover': {
-                          background: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
+                          background:
+                            'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
                         },
                       }}
                     />
@@ -199,8 +206,13 @@ const SymptomChecker = () => {
                 }}
               >
                 <CardContent sx={{ p: 4, textAlign: 'center' }}>
-                  <LocalHospitalIcon sx={{ fontSize: 40, color: '#185a9d', mb: 2 }} />
-                  <Typography variant="h6" sx={{ color: '#185a9d', fontWeight: 600, mb: 2 }}>
+                  <LocalHospitalIcon
+                    sx={{ fontSize: 40, color: '#185a9d', mb: 2 }}
+                  />
+                  <Typography
+                    variant="h6"
+                    sx={{ color: '#185a9d', fontWeight: 600, mb: 2 }}
+                  >
                     Analyze Symptoms
                   </Typography>
                   <Typography variant="body1" sx={{ color: '#666', mb: 3 }}>
@@ -212,11 +224,13 @@ const SymptomChecker = () => {
                     onClick={handleAnalyzeSymptoms}
                     disabled={selectedSymptoms.length === 0 || isAnalyzing}
                     sx={{
-                      background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                      background:
+                        'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                       color: '#fff',
                       py: 1.5,
                       '&:hover': {
-                        background: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
+                        background:
+                          'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
                       },
                     }}
                   >
@@ -238,12 +252,18 @@ const SymptomChecker = () => {
                 }}
               >
                 <CardContent sx={{ p: 4, textAlign: 'center' }}>
-                  <AssignmentTurnedInIcon sx={{ fontSize: 40, color: '#185a9d', mb: 2 }} />
-                  <Typography variant="h6" sx={{ color: '#185a9d', fontWeight: 600, mb: 2 }}>
+                  <AssignmentTurnedInIcon
+                    sx={{ fontSize: 40, color: '#185a9d', mb: 2 }}
+                  />
+                  <Typography
+                    variant="h6"
+                    sx={{ color: '#185a9d', fontWeight: 600, mb: 2 }}
+                  >
                     Book Appointment
                   </Typography>
                   <Typography variant="body1" sx={{ color: '#666', mb: 3 }}>
-                    Consult with a healthcare professional for a thorough evaluation
+                    Consult with a healthcare professional for a thorough
+                    evaluation
                   </Typography>
                   <Button
                     fullWidth
@@ -267,7 +287,7 @@ const SymptomChecker = () => {
         </Grid>
       </Box>
     </PageTemplate>
-  );
-};
+  )
+}
 
-export default SymptomChecker;
+export default SymptomChecker

@@ -125,7 +125,8 @@ export default function Highlights() {
               letterSpacing: '0.01em',
             }}
           >
-            Experience healthcare reimagined with our cutting-edge platform designed for your comfort and convenience
+            Experience healthcare reimagined with our cutting-edge platform
+            designed for your comfort and convenience
           </Typography>
         </Stack>
 
@@ -154,7 +155,8 @@ export default function Highlights() {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    background: 'linear-gradient(135deg, rgba(67, 206, 162, 0.05), rgba(24, 90, 157, 0.05))',
+                    background:
+                      'linear-gradient(135deg, rgba(67, 206, 162, 0.05), rgba(24, 90, 157, 0.05))',
                     opacity: 0,
                     transition: 'opacity 0.5s ease',
                   },
@@ -167,7 +169,8 @@ export default function Highlights() {
                     },
                     '& .feature-icon-wrapper': {
                       transform: 'scale(1.1) rotate(5deg)',
-                      background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                      background:
+                        'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                       boxShadow: '0 10px 20px rgba(24, 90, 157, 0.15)',
                       '& svg': {
                         color: '#ffffff',
@@ -175,7 +178,8 @@ export default function Highlights() {
                       },
                     },
                     '& .feature-title': {
-                      background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                      background:
+                        'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       transform: 'translateX(8px)',

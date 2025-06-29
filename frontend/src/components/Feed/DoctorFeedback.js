@@ -25,12 +25,14 @@ const DoctorFeedback = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    console.log('DoctorFeedback - userData:', userData); // Debug log
+    console.log('DoctorFeedback - userData:', userData) // Debug log
     if (userData?.medicalId && userData?.role === 'doctor') {
       fetchFeedback()
     } else if (userData?.role && userData?.role !== 'doctor') {
       setLoading(false)
-      setError(`Access denied. Current role: ${userData.role}. Only doctors can view their feedback.`)
+      setError(
+        `Access denied. Current role: ${userData.role}. Only doctors can view their feedback.`
+      )
     } else if (!userData) {
       setLoading(false)
       setError('Please log in to view feedback.')
@@ -55,7 +57,7 @@ const DoctorFeedback = () => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     })
   }
 
@@ -72,7 +74,7 @@ const DoctorFeedback = () => {
       4: '#8bc34a',
       3: '#ffc107',
       2: '#ff9800',
-      1: '#f44336'
+      1: '#f44336',
     }
     return colors[stars] || '#e0e0e0'
   }
@@ -80,7 +82,12 @@ const DoctorFeedback = () => {
   if (loading) {
     return (
       <Container maxWidth="lg">
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="400px"
+        >
           <CircularProgress size={60} />
         </Box>
       </Container>
@@ -119,11 +126,14 @@ const DoctorFeedback = () => {
         <Typography variant="h6" color="textSecondary">
           Dr. {doctor.name} - {doctor.specialty}
         </Typography>
-        
+
         {/* Overall Rating */}
         <Box sx={{ mt: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
           <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h2" color={getRatingColor(stats.averageRating)}>
+            <Typography
+              variant="h2"
+              color={getRatingColor(stats.averageRating)}
+            >
               {stats.averageRating}
             </Typography>
             <Rating
@@ -134,32 +144,42 @@ const DoctorFeedback = () => {
               sx={{ mb: 1 }}
             />
             <Typography variant="body2" color="textSecondary">
-              Based on {stats.totalFeedbacks} review{stats.totalFeedbacks !== 1 ? 's' : ''}
+              Based on {stats.totalFeedbacks} review
+              {stats.totalFeedbacks !== 1 ? 's' : ''}
             </Typography>
           </Box>
-          
+
           {/* Rating Distribution */}
           <Box sx={{ flexGrow: 1, ml: 4 }}>
             <Typography variant="h6" gutterBottom>
               Rating Distribution
             </Typography>
             {[5, 4, 3, 2, 1].map((stars) => (
-              <Box key={stars} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Box
+                key={stars}
+                sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
+              >
                 <Typography variant="body2" sx={{ minWidth: 20 }}>
                   {stars}
                 </Typography>
                 <Star sx={{ fontSize: 16, mx: 1 }} />
                 <LinearProgress
                   variant="determinate"
-                  value={stats.totalFeedbacks > 0 ? (stats.ratingDistribution[stars] / stats.totalFeedbacks) * 100 : 0}
+                  value={
+                    stats.totalFeedbacks > 0
+                      ? (stats.ratingDistribution[stars] /
+                          stats.totalFeedbacks) *
+                        100
+                      : 0
+                  }
                   sx={{
                     height: 8,
                     flexGrow: 1,
                     mx: 1,
                     bgcolor: 'grey.200',
                     '& .MuiLinearProgress-bar': {
-                      bgcolor: getRatingBarColor(stars)
-                    }
+                      bgcolor: getRatingBarColor(stars),
+                    },
                   }}
                 />
                 <Typography variant="body2" sx={{ minWidth: 30 }}>
@@ -182,7 +202,8 @@ const DoctorFeedback = () => {
             No feedback received yet
           </Typography>
           <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-            Feedback from patients will appear here once they start reviewing your services.
+            Feedback from patients will appear here once they start reviewing
+            your services.
           </Typography>
         </Paper>
       ) : (
@@ -191,21 +212,36 @@ const DoctorFeedback = () => {
             <Grid item xs={12} key={feedback._id}>
               <Card elevation={2} sx={{ '&:hover': { elevation: 4 } }}>
                 <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                    <Avatar sx={{ bgcolor: feedback.isAnonymous ? 'grey.400' : 'primary.main' }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}
+                  >
+                    <Avatar
+                      sx={{
+                        bgcolor: feedback.isAnonymous
+                          ? 'grey.400'
+                          : 'primary.main',
+                      }}
+                    >
                       {feedback.isAnonymous ? <PersonOff /> : <Person />}
                     </Avatar>
-                    
+
                     <Box sx={{ flexGrow: 1 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2,
+                          mb: 1,
+                        }}
+                      >
                         <Typography variant="h6">
                           {feedback.patientName}
                         </Typography>
                         {feedback.isAnonymous && (
-                          <Chip 
-                            label="Anonymous" 
-                            size="small" 
-                            color="default" 
+                          <Chip
+                            label="Anonymous"
+                            size="small"
+                            color="default"
                             variant="outlined"
                           />
                         )}
@@ -213,14 +249,14 @@ const DoctorFeedback = () => {
                           {formatDate(feedback.createdAt)}
                         </Typography>
                       </Box>
-                      
+
                       <Rating
                         value={feedback.rating}
                         readOnly
                         size="small"
                         sx={{ mb: 2 }}
                       />
-                      
+
                       <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
                         {feedback.comment}
                       </Typography>
@@ -273,7 +309,7 @@ const DoctorFeedback = () => {
             <Grid item xs={6} sm={3}>
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="h4" color="info.main">
-                  {feedbacks.filter(f => f.isAnonymous).length}
+                  {feedbacks.filter((f) => f.isAnonymous).length}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   Anonymous Reviews

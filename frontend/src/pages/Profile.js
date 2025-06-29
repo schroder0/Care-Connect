@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   Box,
   Typography,
@@ -9,12 +9,12 @@ import {
   Button,
   TextField,
   Divider,
-} from '@mui/material';
-import PageTemplate from '../components/PageTemplate';
-import EditIcon from '@mui/icons-material/Edit';
-import SecurityIcon from '@mui/icons-material/Security';
-import HistoryIcon from '@mui/icons-material/History';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+} from '@mui/material'
+import PageTemplate from '../components/PageTemplate'
+import EditIcon from '@mui/icons-material/Edit'
+import SecurityIcon from '@mui/icons-material/Security'
+import HistoryIcon from '@mui/icons-material/History'
+import NotificationsIcon from '@mui/icons-material/Notifications'
 
 const Profile = () => {
   return (
@@ -61,7 +61,10 @@ const Profile = () => {
                     border: '4px solid #43cea2',
                   }}
                 />
-                <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 1 }}>
+                <Typography
+                  variant="h5"
+                  sx={{ color: '#185a9d', fontWeight: 700, mb: 1 }}
+                >
                   John Doe
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#666', mb: 3 }}>
@@ -71,10 +74,12 @@ const Profile = () => {
                   variant="contained"
                   startIcon={<EditIcon />}
                   sx={{
-                    background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                    background:
+                      'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                     color: '#fff',
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
+                      background:
+                        'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
                     },
                   }}
                 >
@@ -95,7 +100,10 @@ const Profile = () => {
               }}
             >
               <CardContent sx={{ p: 4 }}>
-                <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 3 }}>
+                <Typography
+                  variant="h5"
+                  sx={{ color: '#185a9d', fontWeight: 700, mb: 3 }}
+                >
                   Personal Information
                 </Typography>
                 <Grid container spacing={3}>
@@ -141,9 +149,12 @@ const Profile = () => {
             <Grid container spacing={4}>
               {[
                 {
-                  icon: <SecurityIcon sx={{ fontSize: 40, color: '#185a9d' }} />,
+                  icon: (
+                    <SecurityIcon sx={{ fontSize: 40, color: '#185a9d' }} />
+                  ),
                   title: 'Security Settings',
-                  description: 'Manage your account security and privacy preferences',
+                  description:
+                    'Manage your account security and privacy preferences',
                 },
                 {
                   icon: <HistoryIcon sx={{ fontSize: 40, color: '#185a9d' }} />,
@@ -151,7 +162,11 @@ const Profile = () => {
                   description: 'View your complete medical history and records',
                 },
                 {
-                  icon: <NotificationsIcon sx={{ fontSize: 40, color: '#185a9d' }} />,
+                  icon: (
+                    <NotificationsIcon
+                      sx={{ fontSize: 40, color: '#185a9d' }}
+                    />
+                  ),
                   title: 'Notifications',
                   description: 'Configure your notification preferences',
                 },
@@ -191,7 +206,7 @@ const Profile = () => {
         </Grid>
       </Box>
     </PageTemplate>
-  );
-};
+  )
+}
 
-export default Profile;
+export default Profile

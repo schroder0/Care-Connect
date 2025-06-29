@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   Box,
   Typography,
@@ -15,12 +15,12 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-} from '@mui/material';
-import PageTemplate from '../components/PageTemplate';
-import SearchIcon from '@mui/icons-material/Search';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import StarIcon from '@mui/icons-material/Star';
+} from '@mui/material'
+import PageTemplate from '../components/PageTemplate'
+import SearchIcon from '@mui/icons-material/Search'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
+import FilterListIcon from '@mui/icons-material/FilterList'
+import StarIcon from '@mui/icons-material/Star'
 
 const mockDoctors = [
   {
@@ -46,12 +46,12 @@ const mockDoctors = [
     image: 'https://example.com/doctor2.jpg',
   },
   // Add more mock doctors as needed
-];
+]
 
 const SearchDoctor = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [specialization, setSpecialization] = useState('');
-  const [sortBy, setSortBy] = useState('rating');
+  const [searchTerm, setSearchTerm] = useState('')
+  const [specialization, setSpecialization] = useState('')
+  const [sortBy, setSortBy] = useState('rating')
 
   return (
     <PageTemplate>
@@ -87,7 +87,8 @@ const SearchDoctor = () => {
             mb: 8,
           }}
         >
-          Connect with top healthcare professionals and book appointments instantly
+          Connect with top healthcare professionals and book appointments
+          instantly
         </Typography>
 
         {/* Search and Filter Section */}
@@ -153,9 +154,11 @@ const SearchDoctor = () => {
                   variant="contained"
                   sx={{
                     height: '100%',
-                    background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                    background:
+                      'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
+                      background:
+                        'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
                     },
                   }}
                 >
@@ -197,19 +200,40 @@ const SearchDoctor = () => {
                       />
                     </Grid>
                     <Grid item xs={12} sm={8}>
-                      <Typography variant="h5" sx={{ color: '#185a9d', fontWeight: 700, mb: 1 }}>
+                      <Typography
+                        variant="h5"
+                        sx={{ color: '#185a9d', fontWeight: 700, mb: 1 }}
+                      >
                         {doctor.name}
                       </Typography>
                       <Typography variant="body1" sx={{ color: '#666', mb: 2 }}>
                         {doctor.specialization} • {doctor.experience} Experience
                       </Typography>
-                      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Rating value={doctor.rating} precision={0.1} readOnly />
+                      <Box
+                        sx={{
+                          mb: 2,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                        }}
+                      >
+                        <Rating
+                          value={doctor.rating}
+                          precision={0.1}
+                          readOnly
+                        />
                         <Typography variant="body2" sx={{ color: '#666' }}>
                           ({doctor.reviews} reviews)
                         </Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          mb: 2,
+                        }}
+                      >
                         <LocationOnIcon sx={{ color: '#185a9d' }} />
                         <Typography variant="body2" sx={{ color: '#666' }}>
                           {doctor.location}
@@ -218,9 +242,11 @@ const SearchDoctor = () => {
                       <Button
                         variant="contained"
                         sx={{
-                          background: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
+                          background:
+                            'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)',
                           '&:hover': {
-                            background: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
+                            background:
+                              'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
                           },
                         }}
                       >
@@ -235,7 +261,7 @@ const SearchDoctor = () => {
         </Grid>
       </Box>
     </PageTemplate>
-  );
-};
+  )
+}
 
-export default SearchDoctor;
+export default SearchDoctor
