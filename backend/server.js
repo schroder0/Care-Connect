@@ -78,35 +78,64 @@ feedbackRoutes(app)
 // Static file serving
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))) //eslint-disable-line
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGODB_URI ?? 'mongodb://localhost/mydatabase', {
-    serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-    socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
-  })
-  .then(() => {
+// MongoDB connection (non-blocking)
+const connectToMongoDB = async () => {
+  try {
+    console.info('🔍 Environment Variables Debug:')
+    console.info('NODE_ENV:', process.env.NODE_ENV)
+    console.info('PORT:', process.env.PORT)
+    console.info('MONGODB_URI exists:', !!process.env.MONGODB_URI)
+    console.info('MONGODB_URI length:', process.env.MONGODB_URI?.length || 0)
+    console.info('MONGODB_URI starts with mongodb+srv:', process.env.MONGODB_URI?.startsWith('mongodb+srv://') || false)
+    
+    if (!process.env.MONGODB_URI) {
+      console.error('❌ MONGODB_URI environment variable is not set!')
+      console.error('Available env vars:', Object.keys(process.env).filter(key => key.includes('MONGO')))
+      return
+    }
+    
+    // Hide credentials in logs but show structure
+    const mongoUri = process.env.MONGODB_URI.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@')
+    console.info('🔄 Connecting to:', mongoUri)
+    
+    await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000, // 10 second timeout
+      socketTimeoutMS: 45000,
+      bufferCommands: false, // Disable mongoose buffering
+      bufferMaxEntries: 0 // Disable mongoose buffering
+    })
     console.info('✅ Connected to MongoDB successfully')
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error('❌ Database connection error:', err.message)
-    // Don't exit process, let Render retry
-  })
+    console.error('Full error:', err)
+    // Don't exit process, let server run without DB for now
+  }
+}
+
+// Connect to MongoDB (don't await - let it happen in background)
+connectToMongoDB()
 
 const PORT = process.env.PORT || 10000
-const HOST = process.env.HOST || '0.0.0.0'
+const HOST = '0.0.0.0' // Force bind to all interfaces
+
+console.info(`🚀 Starting server...`)
+console.info(`📡 Port: ${PORT}`)
+console.info(`🏠 Host: ${HOST}`)
+console.info(`🔧 Node ENV: ${process.env.NODE_ENV}`)
+console.info(`💾 MongoDB URI exists: ${!!process.env.MONGODB_URI}`)
 
 const server = http.createServer(app)
-initSocket(server)
 
-// Removed WebSocket upgrade handler to avoid conflicts with Socket.IO
-// server.on('upgrade', (request, socket, head) => {
-//   wss.handleUpgrade(request, socket, head, (ws) => {
-//     wss.emit('connection', ws, request)
-//   })
-// })
-
-server.listen(PORT, HOST, () => {
-  console.info(`Server running on ${HOST}:${PORT}`)
+// Start server BEFORE initializing socket to ensure port binding happens first
+server.listen(PORT, HOST, (err) => {
+  if (err) {
+    console.error('❌ Failed to start server:', err)
+    process.exit(1)
+  }
+  console.info(`✅ Server running on ${HOST}:${PORT}`)
+  
+  // Initialize socket AFTER server is listening
+  initSocket(server)
 })
 
 // Graceful shutdown
