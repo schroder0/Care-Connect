@@ -101,8 +101,7 @@ const connectToMongoDB = async () => {
     await mongoose.connect(process.env.MONGODB_URI, {
       serverSelectionTimeoutMS: 10000, // 10 second timeout
       socketTimeoutMS: 45000,
-      bufferCommands: false, // Disable mongoose buffering
-      bufferMaxEntries: 0 // Disable mongoose buffering
+      // Removed deprecated options that cause errors
     })
     console.info('✅ Connected to MongoDB successfully')
   } catch (err) {
@@ -119,7 +118,8 @@ const PORT = process.env.PORT || 10000
 const HOST = '0.0.0.0' // Force bind to all interfaces
 
 console.info(`🚀 Starting server...`)
-console.info(`📡 Port: ${PORT}`)
+console.info(`📡 Port from env: ${process.env.PORT}`)
+console.info(`📡 Port final: ${PORT}`)
 console.info(`🏠 Host: ${HOST}`)
 console.info(`🔧 Node ENV: ${process.env.NODE_ENV}`)
 console.info(`💾 MongoDB URI exists: ${!!process.env.MONGODB_URI}`)
