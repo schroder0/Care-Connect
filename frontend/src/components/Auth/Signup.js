@@ -50,7 +50,8 @@ const Signup = () => {
       console.error('Signup failed:', error)
       setError(
         error.response?.data?.message ||
-          'Failed to create account. Please try again.'
+        error.response?.data?.error ||
+        'Failed to create account. Please try again.'
       )
     } finally {
       setLoading(false)

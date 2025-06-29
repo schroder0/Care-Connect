@@ -39,7 +39,9 @@ const Login = () => {
     } catch (error) {
       console.error('Login failed:', error)
       setError(
-        error.response?.data?.message || 'Failed to login. Please try again.'
+        error.response?.data?.message || 
+        error.response?.data?.error || 
+        'Failed to login. Please try again.'
       )
     } finally {
       setLoading(false)

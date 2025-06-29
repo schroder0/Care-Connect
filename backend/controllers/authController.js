@@ -29,7 +29,7 @@ exports.signup = async (req, res) => {
       },
     })
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    res.status(400).json({ message: err.message })
   }
 }
 
@@ -38,7 +38,7 @@ exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ username })
     if (!user || !(await user.comparePassword(password))) {
-      return res.status(401).json({ error: 'Invalid credentials' })
+      return res.status(401).json({ message: 'Invalid credentials' })
     }
     const token = jwt.sign(
       { id: user._id, role: user.role },
@@ -56,7 +56,7 @@ exports.login = async (req, res) => {
       },
     })
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    res.status(400).json({ message: err.message })
   }
 }
 
@@ -67,7 +67,7 @@ exports.refreshToken = async (req, res) => {
     : authHeader
 
   if (!token) {
-    return res.status(401).json({ error: 'No token provided' })
+    return res.status(401).json({ message: 'No token provided' })
   }
 
   try {
@@ -77,7 +77,7 @@ exports.refreshToken = async (req, res) => {
     // Check if user still exists
     const user = await User.findById(decoded.id)
     if (!user) {
-      return res.status(401).json({ error: 'User not found' })
+      return res.status(401).json({ message: 'User not found' })
     }
 
     // Generate new token
@@ -97,6 +97,6 @@ exports.refreshToken = async (req, res) => {
       },
     })
   } catch (err) {
-    res.status(401).json({ error: 'Invalid token' })
+    res.status(401).json({ message: 'Invalid token' })
   }
 }
