@@ -27,27 +27,16 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
   : [process.env.FRONTEND_URL]
 
-console.log('🔧 CORS Configuration:')
-console.log('📍 FRONTEND_URL:', process.env.FRONTEND_URL)
-console.log('🌐 ALLOWED_ORIGINS:', process.env.ALLOWED_ORIGINS)
-console.log('📋 Parsed allowedOrigins:', allowedOrigins)
-
 app.use(
   cors({
     origin: (origin, callback) => {
-      console.log('🔍 CORS Request from origin:', origin)
-      
       // Allow requests with no origin (like mobile apps, curl requests)
       if (!origin) return callback(null, true)
       
-      // Check if origin is in allowed list
       if (allowedOrigins.includes(origin)) {
-        console.log('✅ Origin approved:', origin)
         return callback(null, true)
       } else {
-        console.log('❌ Origin blocked:', origin)
-        console.log('🔧 Allowed origins are:', allowedOrigins)
-        return callback(null, true) // Temporarily allow all origins for debugging
+        return callback(new Error('Not allowed by CORS'))
       }
     },
     credentials: true, // Allow cookies to be sent with requests
