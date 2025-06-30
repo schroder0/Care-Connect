@@ -4,6 +4,7 @@ CareConnect is a full-stack web application designed for college health centers,
 
 ---
 
+
 ## Features
 
 - **User Authentication**: Secure JWT-based login/signup for students, doctors, and admins
