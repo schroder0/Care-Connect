@@ -76,23 +76,7 @@ npm start
 - **Frontend**: Deploy `/frontend` to Netlify. Set `REACT_APP_API_URL` to your Render backend URL.
 - **Backend**: Deploy `/backend` to Render. Set environment variables for MongoDB, JWT, and allowed origins.
 
----
 
-## Security & Best Practices
-- **JWT Authentication**: Stateless, scalable, and secure
-- **CORS**: Only allows requests from approved frontend origins
-- **Role-Based Authorization**: Middleware restricts access by user role
-- **Environment Variables**: Secrets and config are never hardcoded
-- **Input Validation**: All user input is validated and sanitized
-
----
-
-## Material-UI Highlights
-- Custom theming and dark/light mode
-- Responsive layouts and accessibility
-- Consistent, modern look and feel
-
----
 
 ## API Overview
 - `/api/auth/login` – User login
@@ -104,22 +88,14 @@ npm start
 
 ---
 
-## Common Interview Questions & Answers
-- Why JWT over sessions? Stateless, scalable, and cross-domain friendly
-- How is CORS handled? Only approved origins can access the API
-- Why Material-UI? Fast development, accessibility, and theming
-- How is role-based access enforced? Middleware checks JWT payload role
-
----
-
 ## License
 MIT
 
 ---
 
 ## Contributors
-- [Your Name](https://github.com/yourusername)
-- [Other contributors...]
+- [Kumar Prateek](https://github.com/prateek2105)
+- [Aaryan Kuntal](https://github.com/schroder0)
 
 ---
 
